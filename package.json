@@ -6,13 +6,15 @@
   "license": "ISC",
   "author": "",
   "workspaces": [
-    "core"
+    "core",
+    "user-task-fiori",
+    "websocket"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@sap/cds": ">=8"
+    "@sap/cds": "^8"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.6",

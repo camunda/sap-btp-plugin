@@ -1,0 +1,14 @@
+{
+  "name": "@camunda/user-task-fiori",
+  "version": "1.0.0",
+  "description": "rendering of forms in User Task into the Fiori Design System",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "@sap/cds": "^8"
+  }
+}
