@@ -1,0 +1,21 @@
+{
+  "name": "btp-integration",
+  "version": "1.0.0",
+  "description": "mono repo for the Camunda BTP Integration, part of the SAP Integration",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "workspaces": [
+    "core"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@sap/cds": ">=8"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.6",
+    "@cap-js/sqlite": "^1"
+  }
+}
