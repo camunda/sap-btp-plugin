@@ -1,6 +1,5 @@
 const cds = require("@sap/cds")
 const LOGGER = cds.log("websocket", { level: "debug" })
-// eslint-disable-next-line no-undef
 const DEBUG = cds.log("websocket")._debug || process.env.DEBUG?.includes("camunda")
 
 const { WebSocket } = require("ws")
