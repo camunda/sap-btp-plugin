@@ -1,5 +1,13 @@
 {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.autoClosingBrackets": "languageDefined"
+    },
     "cSpell.words": [
         "fiori"
-    ]
+    ],
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "files.autoSave": "onFocusChange"
 }
