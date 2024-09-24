@@ -1,7 +1,6 @@
 {
   "name": "@camunda/sap-integration-core",
   "version": "1.0.0",
-  "private": true,
   "description": "Camunda BTP Integration: core module",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
