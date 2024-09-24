@@ -1,6 +1,6 @@
 {
-  "name": "btp-integration",
-  "version": "1.0.0",
+  "name": "sap-btp-integration",
+  "version": "1.0.0-alpha.1",
   "description": "mono repo for the Camunda BTP Integration, part of the SAP Integration",
   "keywords": [],
   "license": "ISC",
