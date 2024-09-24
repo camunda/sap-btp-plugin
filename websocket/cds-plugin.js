@@ -1,5 +1,5 @@
 const cds = require("@sap/cds")
-const LOGGER = cds.log("websocket")
+const LOGGER = cds.log("websocket", { level: "debug" })
 // eslint-disable-next-line no-undef
 const DEBUG = cds.log("websocket")._debug || process.env.DEBUG?.includes("camunda")
 
@@ -43,7 +43,13 @@ class _ {
           LOGGER.debug(`received ${data.toString()}`)
           LOGGER.debug(`total ws clients: ${this.wss.clients.size}`)
           // send message to dedicated client only (incl except itself)
-          const _data = JSON.parse(data) // de-serialize
+          let _data
+          try {
+            _data = JSON.parse(data) // de-serialize
+          } catch (e) {
+            LOGGER.error(`not JSON: ${e}`)
+            _data = data
+          }
           this.wss.clients.forEach((client) => {
             if (client !== ws && client.channelId === _data.channelId && client.readyState === WebSocket.OPEN) {
               LOGGER.debug(`sending data for channelId '${_data.channelId}' to client '${client.channelId}'`)
