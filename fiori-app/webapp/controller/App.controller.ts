@@ -16,15 +16,19 @@ import Button from "sap/m/Button"
 import SingletonWebSocket from "../util/WebSocket"
 import MessageBox, { Action } from "sap/m/MessageBox"
 import { URLHelper } from "sap/m/library"
+import ResourceModel from "sap/ui/model/resource/ResourceModel"
 
 /**
  * @namespace io.camunda.connector.sap.btp.controller
  */
 export default class App extends BaseController {
+  private generalMenu: Menu
+  private runThisProcessDialog: Dialog
+
   public onInit(): void {}
 
   async onGeneralMenuPress(oEvent: Event): Promise<void> {
-    const oSourceControl: Control = oEvent.getSource() as Control
+    const oSourceControl: Control = oEvent.getSource()
     const generalMenu = await this.getGeneralMenu()
     generalMenu.openBy(oSourceControl, false)
   }
@@ -42,5 +46,41 @@ export default class App extends BaseController {
       oView.addDependent(this.generalMenu)
     }
     return this.generalMenu
+  }
+
+  run(processId: string) {
+    const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
+    const ws = SingletonWebSocket.getInstance(channelId)
+    ws.runProcess(processId, channelId)
+  }
+
+  async runThis(): Promise<void> {
+    const processId = this.getView().byId("processName").getValue() as string
+    this.run(processId)
+    this.closeSRunThisProcessDialog()
+  }
+
+  async onRunThisPress(): Promise<void> {
+    const specialProcessDialog = await this.getRunThisProcessDialog()
+    specialProcessDialog.open()
+  }
+
+  private async getRunThisProcessDialog() {
+    const oView = this.getView()
+
+    // create popover lazily (singleton)
+    if (!this.runThisProcessDialog) {
+      this.runThisProcessDialog = (await Fragment.load({
+        id: oView.getId(),
+        name: "io.camunda.connector.sap.btp.view.ProcessDialog",
+        controller: this
+      })) as Dialog
+      oView.addDependent(this.runThisProcessDialog)
+    }
+    return this.runThisProcessDialog
+  }
+
+  closeSRunThisProcessDialog(): void {
+    this.runThisProcessDialog.close()
   }
 }
