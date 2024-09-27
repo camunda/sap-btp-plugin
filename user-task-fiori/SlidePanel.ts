@@ -7,7 +7,7 @@ import { ButtonType } from "sap/m/library"
 import Text from "sap/m/Text"
 
 /**
- * @namespace io.camunda.connector.sap.btp.control
+ * @namespace porsche.rt.control
  */
 class SlidePanel extends Panel {
   /* Add new property */

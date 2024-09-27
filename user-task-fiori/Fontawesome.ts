@@ -2,7 +2,7 @@ import Control from "sap/ui/core/Control"
 import RenderManager from "sap/ui/core/RenderManager"
 
 /**
- * @namespace io.camunda.connector.sap.btp.control
+ * @namespace bdaas.control
  */
 class Fontawesome extends Control {
   metadata = {

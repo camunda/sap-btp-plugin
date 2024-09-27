@@ -29,11 +29,11 @@ import Select from "sap/m/Select"
 import JSONModel from "sap/ui/model/json/JSONModel"
 import Filter from "sap/ui/model/Filter"
 import FilterOperator from "sap/ui/model/FilterOperator"
-import { WebSocketData } from "../util/WebSocketData"
+import { WebSocketData } from "../../../BDaaS/app/src/util/WebSocketData"
 import Icon from "sap/ui/core/Icon"
 import Log from "sap/base/Log"
 import Button from "sap/m/Button"
-import Clipboard from "../util/Clipboard"
+import Clipboard from "../../../BDaaS/app/src/util/Clipboard"
 import Sorter from "sap/ui/model/Sorter"
 import MultiComboBox from "sap/m/MultiComboBox"
 
@@ -41,7 +41,7 @@ import MultiComboBox from "sap/m/MultiComboBox"
 const localModelName = uid()
 
 /**
- * @namespace io.camunda.connector.sap.btp.control
+ * @namespace bdaas.control
  */
 class BPMNform extends Control {
   metadata = {

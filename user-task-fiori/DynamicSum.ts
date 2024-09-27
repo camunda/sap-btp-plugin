@@ -25,7 +25,7 @@ enum CalculationTypes {
 }
 
 /**
- * @namespace io.camunda.connector.sap.btp.control
+ * @namespace bdaas.control
  */
 class DynamicSum extends Control {
   metadata = {

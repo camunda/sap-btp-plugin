@@ -8,9 +8,9 @@
   "author": "",
   "workspaces": [
     "core",
+    "fiori-app",
     "user-task-fiori",
-    "websocket",
-    "fiori-app"
+    "websocket"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
