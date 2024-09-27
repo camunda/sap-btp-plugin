@@ -1,0 +1,19 @@
+{
+  "generator-ui5-ts-app": {
+    "namespace": "io.camunda.connector.sap.btp",
+    "framework": "OpenUI5",
+    "frameworkVersion": "1.128.0",
+    "author": "Volker Buzek",
+    "initrepo": false,
+    "tstypes": "@openui5/types",
+    "tstypesVersion": "1.128.0",
+    "appId": "io.camunda.connector.sap.btp",
+    "appURI": "io/camunda/connector/sap/btp",
+    "cdnDomain": "sdk.openui5.org",
+    "defaultTheme": "sap_horizon",
+    "gte1_98_0": true,
+    "gte1_104_0": true,
+    "gte1_115_0": true,
+    "setupCompleted": true
+  }
+}
