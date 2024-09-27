@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Menu>
+        <MenuItem text="{i18n>menu_text_process_progress}" />
+        <MenuItem text="{i18n>menu_text_help}" visible="false" />
+        <!-- <MenuItem text="{i18n>menu_text_run_pm}"
+            press=".run('Process_0_Control')" /> -->
+        <MenuItem text="{i18n>generalMenu.btn_runThis}"
+            press=".onSpecialProcessPress" />
+        <!-- <MenuItem text="{i18n>menu_text_switch_theme}"
+            press="switch" /> -->
+    </Menu>
+</core:FragmentDefinition>

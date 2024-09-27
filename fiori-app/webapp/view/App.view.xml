@@ -20,7 +20,7 @@
 				</Toolbar>
 			</customHeader>
 
-			<f:FlexibleColumnLayout id="flexibleColumnLayout"
+			<!-- <f:FlexibleColumnLayout id="flexibleColumnLayout"
 				layout="MidColumnFullScreen"
 				backgroundDesign="Solid">
 				<f:beginColumnPages>
@@ -29,7 +29,7 @@
 				<f:midColumnPages>
 					<mvc:XMLView viewName="io.camunda.connector.sap.btp.view.MainStage" />
 				</f:midColumnPages>
-			</f:FlexibleColumnLayout>
+			</f:FlexibleColumnLayout> -->
 		</Page>
 	</App>
 
