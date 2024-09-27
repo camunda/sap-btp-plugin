@@ -1,7 +1,7 @@
+  <!-- xmlns:bdaas="io.camunda.connector.sap.btp.control" -->
 <mvc:View xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:core="sap.ui.core"
-  xmlns:bdaas="io.camunda.connector.sap.btp.control"
   xmlns:main="sap.ui.webc.main"
   displayBlock="true"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -9,68 +9,48 @@
   height="100%"
   controllerName="io.camunda.connector.sap.btp.controller.MainStage">
   <HBox height="100%">
-    <main:Switch textOff="Log"
+    <!-- <main:Switch textOff="Log"
       textOn="Log"
-      change="onProtocol" />
+      change="onProtocol" /> -->
     <VBox alignItems="Center"
       id="idContent"
       busyIndicatorDelay="0"
       justifyContent="Start"
       width="100%">
-      <bdaas:Fontawesome class="wpsBackgroundIcon"
-        type="{
-          path: 'AppView>/WPS4_ProcessStart',
-          formatter: 'formatter.mapToWpsIcon'
-        }" />
       <ScrollContainer height="100%"
         width="100%"
         horizontal="false"
         vertical="true">
         <content>
-          <bdaas:BPMNform id="BPMNform"
+          <!-- <bdaas:BPMNform id="BPMNform"
             buttonText="{i18n>btn_text_submit}"
-            valid="{App>/currentForm/isValid}"
+            valid="{AppView>/currentForm/isValid}"
             formStep="{AppView>/formStep}"
             placeHolderText="{i18n>bpmn_placeholder_text}"
             finalResultTextSuccess="{i18n>bpmn_final_result_text_success}"
             finalResultTextFail="{i18n>bpmn_final_result_text_fail}"
             summary="onShowSummary"
             finishedForm="onFinishedForm"
-            class="sapUiSizeCompact" />
+            class="sapUiSizeCompact" /> -->
           <FlexBox justifyContent="End">
-          <!-- 2024-04-22 - disable cucumber for demo purposes -->
-            <Button text="{i18n>btn_cucumber_copy}"
-              press="onDownloadCucumberFormStreak"
-              visible="false"
-              icon="sap-icon://download"
-              class="sapUiMediumMarginEnd" />
-            <Button text="{i18n>btn_cucumber_copy}"
-              press="onCopyCucumber"
-              visible="false"
-              icon="sap-icon://copy"
-              class="sapUiMediumMarginEnd" />
-            <Button text="{i18n>btn_text_next}"
+            
+            <Button text="{i18n>Progress.btn_text_next}"
               press="onSubmit"
               visible="{= ${AppView>/formStep} === 1}"
               id="btnNextStep"
               iconFirst="false"
               icon="sap-icon://navigation-right-arrow"
-              enabled="{App>/currentForm/isValid}"
+              enabled="{AppView>/currentForm/isValid}"
               class="sapUiMediumMarginEnd" />
-            <Button text="{i18n>btn_text_finish}"
+            <Button text="{i18n>Progress.btn_text_finish}"
               press="onFinish"
               visible="{= ${AppView>/formStep} === 2}"
               id="btnFinish"
               iconFirst="false"
               icon="sap-icon://navigation-right-arrow"
-              enabled="{App>/currentForm/isValid}"
+              enabled="{AppView>/currentForm/isValid}"
               class="sapUiMediumMarginEnd" />
-            <Button text="{i18n>btn_text_close_failed}"
-              press="onClose"
-              visible="{= ${AppView>/formStep} === 4}"
-              iconFirst="false"
-              icon="sap-icon://navigation-right-arrow"
-              class="sapUiMediumMarginEnd" />
+            
           </FlexBox>
         </content>
       </ScrollContainer>
