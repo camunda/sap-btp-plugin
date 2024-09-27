@@ -6,6 +6,7 @@ const config = {
   endOfLine: "lf",
   printWidth: 120,
   tabWidth: 2,
+  useTabs: false,
   trailingComma: "none",
   singleQuote: false,
   semi: false,
