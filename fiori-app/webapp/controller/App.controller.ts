@@ -17,6 +17,7 @@ import SingletonWebSocket from "../util/WebSocket"
 import MessageBox, { Action } from "sap/m/MessageBox"
 import { URLHelper } from "sap/m/library"
 import ResourceModel from "sap/ui/model/resource/ResourceModel"
+import Input from "sap/m/Input"
 
 /**
  * @namespace io.camunda.connector.sap.btp.controller
@@ -49,13 +50,14 @@ export default class App extends BaseController {
   }
 
   run(processId: string) {
-    const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
-    const ws = SingletonWebSocket.getInstance(channelId)
-    ws.runProcess(processId, channelId)
+    console.log("//> runnning process: ", processId)
+    // const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
+    // const ws = SingletonWebSocket.getInstance(channelId)
+    // ws.runProcess(processId, channelId)
   }
 
-  async runThis(): Promise<void> {
-    const processId = this.getView().byId("processName").getValue() as string
+  runThis() {
+    const processId = (this.getView().byId("processName") as Input).getValue()
     this.run(processId)
     this.closeSRunThisProcessDialog()
   }
