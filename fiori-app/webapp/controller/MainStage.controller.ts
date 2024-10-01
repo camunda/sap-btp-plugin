@@ -8,7 +8,6 @@ import { WebSocketData } from "../util/WebSocketData"
 import { CamundaRequest } from "../util/CamundaData"
 import BaseController from "./BaseController"
 import { ControlType, CucumberType, userFormData, userQuestionAnswer } from "../control/BPMNformData"
-import BPMNform from "../control/BPMNform"
 import Dialog from "sap/m/Dialog"
 import { ButtonType, DialogType } from "sap/m/library"
 import Label from "sap/m/Label"
@@ -43,134 +42,8 @@ export default class MainStageController extends BaseController {
 
   private busyIndicator: BusyIndicator
 
-  /**
-   * generates when step definition for current formular
-   */
-  copyCucumberFormStepToClipboard() {
-    const commands = this.generateCucumberDataForCurrentForm()
 
-    Clipboard.copyTextToClipboard(commands.join("\n"))
-  }
-
-  generateCucumberDataForCurrentForm() {
-    if (!this.getModel("AppView").getProperty("/debug")) {
-      return
-    }
-
-    const commands = []
-    const wrapWith = { begin: "", end: "" }
-
-    const bpmnForm = this.getView().byId("BPMNform") as BPMNform
-
-    for (const index in bpmnForm.getItems()) {
-      const data = bpmnForm.getItems()[index].data() as {
-        controlType: ControlType
-        control: Control
-        varsToShow: [{ modelKey: string; value: string }]
-      }
-      if (data.controlType === ControlType.Summary) {
-        const varsWhiteList = ["sachkonto", "investKosten", "anlagenklasse", "pspElement", "coElement"]
-        commands.push("        Then I want to see as result")
-        data.varsToShow.forEach((item) => {
-          if (varsWhiteList.indexOf(item.modelKey) !== -1) {
-            commands.push(`            | ${item.modelKey} | ${item.value} |`)
-          }
-        })
-      } else {
-        wrapWith.begin = "        When I fill the form"
-        wrapWith.end = "        And I click next"
-        let value = bpmnForm.getValueFromControl(data.element.type, data.control)
-        if (data.control instanceof SelectList) {
-          data.control.getItems().forEach((item) => {
-            // get label from control
-            if (item.getKey() === value) {
-              value = item.getText()
-            }
-          })
-        }
-        if (data.control instanceof RadioButtonGroup) {
-          data.control.getButtons().forEach((item: RadioButton) => {
-            // get label from control
-            if (item.getCustomData()[0].getKey() === value) {
-              value = item.getText()
-            }
-          })
-        }
-        if (value) {
-          commands.push(`            | ${CucumberType[data.controlType]} | ${value} | ${data.element.key} |`)
-        }
-      }
-    }
-    wrapWith.begin ? commands.unshift(wrapWith.begin) : ""
-
-    wrapWith.end ? commands.push(wrapWith.end) : ""
-    return commands
-  }
-
-  downloadCucumberFormStreak() {
-    function download(filename: string, text: string) {
-      const element = document.createElement("a")
-      element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text))
-      element.setAttribute("download", filename)
-
-      element.style.display = "none"
-      document.body.appendChild(element)
-
-      element.click()
-
-      document.body.removeChild(element)
-    }
-
-    this.getModel("AppView").setProperty("/FeatureTitle", "")
-    if (!this._cucumberFeatureTitleDialog) {
-      this._cucumberFeatureTitleDialog = new Dialog({
-        title: "Cucumber Feature",
-        type: DialogType.Message,
-        content: [
-          new Label({
-            text: "Wie lautet die Beschreibung des Features?",
-            labelFor: "rejectionNote"
-          }),
-          new TextArea("rejectionNote", {
-            width: "100%",
-            placeholder: "Beschreibung",
-            value: "{AppView>/FeatureTitle}"
-          })
-        ],
-        beginButton: new Button({
-          type: ButtonType.Emphasized,
-          text: "Download",
-          press: () => {
-            var sText = this.getModel("AppView").getProperty("/FeatureTitle")
-            let commands = this._cucumberStatements.slice().concat(this.generateCucumberDataForCurrentForm())
-            commands.unshift(`Feature: ${sText}\n\n    Scenario: ExecuteForm\n        Given I start the "bdaas"`)
-            download("cucumber.feature", commands.join("\n"))
-            this._cucumberFeatureTitleDialog.close()
-          }
-        }),
-        endButton: new Button({
-          text: "Cancel",
-          press: () => {
-            this._cucumberFeatureTitleDialog.close()
-          }
-        })
-      })
-    }
-
-    this.getView().addDependent(this._cucumberFeatureTitleDialog)
-
-    this._cucumberFeatureTitleDialog.open()
-  }
-
-  onDownloadCucumberFormStreak() {
-    this.downloadCucumberFormStreak()
-  }
-
-  onCopyCucumber() {
-    this.copyCucumberFormStepToClipboard()
-  }
-
-  async onClose() {
+  onClose() {
     const viewModel = this.getView().getModel("AppView") as JSONModel
     const _sachkonto = viewModel.getProperty("/sachkonto") as string
     const _psp = viewModel.getProperty("/coElement") as string

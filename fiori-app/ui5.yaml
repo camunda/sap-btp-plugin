@@ -13,6 +13,9 @@ framework:
     - name: sap.ui.webc.main
     - name: themelib_sap_horizon
 builder:
+  settings:
+    includeDependency:
+      - "@camunda/user-task-fiori"
   resources:
     excludes:
       - "test/e2e/**"

@@ -46,6 +46,6 @@
 		"wdio-ui5-service": "^2.0.10"
 	},
 	"dependencies": {
-		"user-task-fiori": "file:../user-task-fiori"
+		"@camunda/user-task-fiori": "file:../user-task-fiori"
 	}
 }
