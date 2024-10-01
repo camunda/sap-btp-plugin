@@ -1,7 +1,7 @@
 {
-	"name": "io.camunda.connector.sap.btp",
+	"name": "@camunda/fiori-app",
 	"version": "1.0.0",
-	"description": "UI5 Application: io.camunda.connector.sap.btp",
+	"description": "generic Fiori/UI5 app for Camunda BTP Integration",
 	"author": "Volker Buzek",
 	"license": "Apache-2.0",
 	"scripts": {
