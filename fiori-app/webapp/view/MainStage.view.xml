@@ -6,7 +6,7 @@
   xmlns:utf="io.camunda.connector.sap.btp.lib"
   displayBlock="true"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  core:require="{formatter: 'io/camunda/connector/sap/btp/model/formatter'}"
+  core:require="{formatter: 'io/camunda/connector/sap/btp/app/model/formatter'}"
   height="100%"
   controllerName="io.camunda.connector.sap.btp.app.controller.MainStage">
   <HBox height="100%">

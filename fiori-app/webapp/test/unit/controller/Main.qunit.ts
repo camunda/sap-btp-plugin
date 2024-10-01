@@ -1,4 +1,4 @@
-import Main from "io/camunda/connector/sap/btp/controller/Main.controller";
+import Main from "io/camunda/connector/sap/btp/app/controller/Main.controller";
 
 QUnit.module("Sample Main controller test");
 

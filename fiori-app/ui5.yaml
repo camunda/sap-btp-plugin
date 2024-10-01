@@ -15,7 +15,7 @@ framework:
 builder:
   settings:
     includeDependency:
-      - "io.camunda.connector.sap.btp.app.lib"
+      - "io.camunda.connector.sap.btp.lib"
   resources:
     excludes:
       - "test/e2e/**"

@@ -41,7 +41,7 @@
 
   "sap.ui5": {
     "rootView": {
-      "viewName": "io.camunda.connector.sap.btp.view.App",
+      "viewName": "io.camunda.connector.sap.btp.app.view.App",
       "type": "XML",
       "async": true,
       "id": "app"
