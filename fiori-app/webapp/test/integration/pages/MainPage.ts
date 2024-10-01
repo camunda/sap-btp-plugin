@@ -1,7 +1,7 @@
 import Opa5 from "sap/ui/test/Opa5";
 import Press from "sap/ui/test/actions/Press";
 
-const viewName = "io.camunda.connector.sap.btp.view.Main";
+const viewName = "io.camunda.connector.sap.btp.app.view.Main";
 
 export default class MainPage extends Opa5 {
 	// Actions

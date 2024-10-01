@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="io.camunda.connector.sap.btp.controller.Main"
+	controllerName="io.camunda.connector.sap.btp.app.controller.Main"
 	displayBlock="true"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"

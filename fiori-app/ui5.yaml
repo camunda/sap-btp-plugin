@@ -1,6 +1,6 @@
 specVersion: "4.0"
 metadata:
-  name: io.camunda.connector.sap.btp
+  name: io.camunda.connector.sap.btp.app
 type: application
 framework:
   name: SAPUI5
@@ -15,7 +15,7 @@ framework:
 builder:
   settings:
     includeDependency:
-      - "@camunda/user-task-fiori"
+      - "io.camunda.connector.sap.btp.app.lib"
   resources:
     excludes:
       - "test/e2e/**"

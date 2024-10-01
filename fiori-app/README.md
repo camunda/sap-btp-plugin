@@ -1,4 +1,4 @@
-# UI5 Application io.camunda.connector.sap.btp
+# UI5 Application io.camunda.connector.sap.btp.app
 
 Insert the purpose of this project and some interesting info here...
 

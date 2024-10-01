@@ -3,7 +3,7 @@ import models from "./model/models";
 import Device from "sap/ui/Device";
 
 /**
- * @namespace io.camunda.connector.sap.btp
+ * @namespace io.camunda.connector.sap.btp.app
  */
 export default class Component extends UIComponent {
 	public static metadata = {

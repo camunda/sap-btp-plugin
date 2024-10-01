@@ -20,7 +20,7 @@ import ResourceModel from "sap/ui/model/resource/ResourceModel"
 import Input from "sap/m/Input"
 
 /**
- * @namespace io.camunda.connector.sap.btp.controller
+ * @namespace io.camunda.connector.sap.btp.app.controller
  */
 export default class App extends BaseController {
   private generalMenu: Menu
@@ -41,7 +41,7 @@ export default class App extends BaseController {
     if (!this.generalMenu) {
       this.generalMenu = (await Fragment.load({
         id: oView.getId(),
-        name: "io.camunda.connector.sap.btp.view.GeneralMenu",
+        name: "io.camunda.connector.sap.btp.app.view.GeneralMenu",
         controller: this
       })) as Menu
       oView.addDependent(this.generalMenu)
@@ -74,7 +74,7 @@ export default class App extends BaseController {
     if (!this.runThisProcessDialog) {
       this.runThisProcessDialog = (await Fragment.load({
         id: oView.getId(),
-        name: "io.camunda.connector.sap.btp.view.ProcessDialog",
+        name: "io.camunda.connector.sap.btp.app.view.ProcessDialog",
         controller: this
       })) as Dialog
       oView.addDependent(this.runThisProcessDialog)

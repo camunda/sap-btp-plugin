@@ -31,7 +31,7 @@ enum FormStep {
 }
 
 /**
- * @namespace io.camunda.connector.sap.btp.controller
+ * @namespace io.camunda.connector.sap.btp.app.controller
  */
 export default class MainStageController extends BaseController {
   ws: WebSocket

@@ -1,13 +1,14 @@
-  <!-- xmlns:bdaas="io.camunda.connector.sap.btp.control" -->
+  <!-- xmlns:bdaas="io.camunda.connector.sap.btp.app.control" -->
 <mvc:View xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:core="sap.ui.core"
   xmlns:main="sap.ui.webc.main"
+  xmlns:utf="io.camunda.connector.sap.btp.lib"
   displayBlock="true"
   xmlns:html="http://www.w3.org/1999/xhtml"
   core:require="{formatter: 'io/camunda/connector/sap/btp/model/formatter'}"
   height="100%"
-  controllerName="io.camunda.connector.sap.btp.controller.MainStage">
+  controllerName="io.camunda.connector.sap.btp.app.controller.MainStage">
   <HBox height="100%">
     <!-- <main:Switch textOff="Log"
       textOn="Log"
@@ -22,6 +23,8 @@
         horizontal="false"
         vertical="true">
         <content>
+        <utf:Example text="testerooney!">
+        </utf:Example>
           <!-- <bdaas:BPMNform id="BPMNform"
             buttonText="{i18n>btn_text_submit}"
             valid="{AppView>/currentForm/isValid}"

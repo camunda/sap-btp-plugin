@@ -1,4 +1,4 @@
-<mvc:View controllerName="io.camunda.connector.sap.btp.controller.App"
+<mvc:View controllerName="io.camunda.connector.sap.btp.app.controller.App"
 	displayBlock="true"
 	height="100%"
 	xmlns="sap.m"
@@ -24,10 +24,10 @@
 				layout="MidColumnFullScreen"
 				backgroundDesign="Solid">
 				<f:beginColumnPages>
-					<!-- <mvc:XMLView viewName="io.camunda.connector.sap.btp.view.Protocol" /> -->
+					<!-- <mvc:XMLView viewName="io.camunda.connector.sap.btp.app.view.Protocol" /> -->
 				</f:beginColumnPages>
 				<f:midColumnPages>
-					<mvc:XMLView viewName="io.camunda.connector.sap.btp.view.MainStage" />
+					<mvc:XMLView viewName="io.camunda.connector.sap.btp.app.view.MainStage" />
 				</f:midColumnPages>
 			</f:FlexibleColumnLayout>
 		</Page>

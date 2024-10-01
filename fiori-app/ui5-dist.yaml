@@ -1,6 +1,6 @@
 specVersion: "4.0"
 metadata:
-  name: io.camunda.connector.sap.btp
+  name: io.camunda.connector.sap.btp.app
 type: application
 resources:
   configuration:

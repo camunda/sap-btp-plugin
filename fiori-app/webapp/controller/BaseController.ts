@@ -8,7 +8,7 @@ import Router from "sap/ui/core/routing/Router";
 import History from "sap/ui/core/routing/History";
 
 /**
- * @namespace io.camunda.connector.sap.btp.controller
+ * @namespace io.camunda.connector.sap.btp.app.controller
  */
 export default abstract class BaseController extends Controller {
 	/**
