@@ -27,8 +27,16 @@ export default {
 
     console.debug(`[${control.getMetadata().getName()}] > rendering`)
     rm.openStart("div", control)
-    rm.style("width", "35rem")
-    rm.openEnd()
+    // rm.style("width", "35rem")
+    // make a horizontally and vertically centered container
+    // rm.style("display", "flex")
+    // rm.style("flex-direction", "column")
+    // rm.style("justify-content", "center")
+    // rm.style("align-items", "center")
+    // // rm.style("height", "100%")
+    // // rm.style("width", "100%")
+    // rm.style("padding", "1rem")
+    // rm.openEnd()
     if (control.getAggregation("items")) {
       ;(control.getAggregation("items") as Control[]).forEach((control: Control) => {
         rm.renderControl(control)

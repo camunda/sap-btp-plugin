@@ -87,7 +87,9 @@
         "dataSource": "AppViewDataSource"
       }
     },
-
+    "resources": {
+      "css": [{ "uri": "css/style.css" }]
+    },
     "routing": {}
   }
 }

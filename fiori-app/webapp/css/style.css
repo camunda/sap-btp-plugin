@@ -1,0 +1,22 @@
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#busyText {
+  text-align: center;
+  position: fixed;
+  top: 55%;
+}
+
+.loading {
+  height: 4rem;
+  position: fixed;
+  top: 52%;
+  animation: beaming 2s normal infinite;
+}
+
+.loading img {
+  width: 100%;
+}
