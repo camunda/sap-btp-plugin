@@ -7,8 +7,5 @@
   "author": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "peerDependencies": {
-    "@sap/cds": "^8"
   }
 }
