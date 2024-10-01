@@ -23,7 +23,7 @@
         horizontal="false"
         vertical="true">
         <content>
-        <utf:Example text="testerooney!">
+        <utf:Example text="d!">
         </utf:Example>
           <!-- <bdaas:BPMNform id="BPMNform"
             buttonText="{i18n>btn_text_submit}"

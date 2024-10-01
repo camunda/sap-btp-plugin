@@ -22,7 +22,7 @@ const thisLib: { [key: string]: unknown } = Lib.init({
 	],
 	types: ["io.camunda.connector.sap.btp.lib.ExampleColor"],
 	interfaces: [],
-	controls: ["io.camunda.connector.sap.btp.lib.Example"],
+	controls: ["io.camunda.connector.sap.btp.lib.Example", "io.camunda.connector.sap.btp.lib.BPMNForm"],
 	elements: [],
 	noLibraryCSS: false // if no CSS is provided, you can disable the library.css load here
 }) as { [key: string]: unknown };
