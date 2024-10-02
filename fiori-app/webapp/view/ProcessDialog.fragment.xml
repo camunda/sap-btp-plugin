@@ -20,7 +20,7 @@
 		<endButton>
 			<Button
 				text="{i18n>ProcessDialog.close}"
-				press=".closeSRunThisProcessDialog"
+				press=".closeRunThisProcessDialog"
 			/>
 		</endButton>
 	</Dialog>

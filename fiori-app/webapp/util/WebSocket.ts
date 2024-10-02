@@ -22,7 +22,7 @@ class SingletonWebSocket extends WebSocket {
    */
   private constructor(channelId: string) {
     super(`${channel}/${channelId}`)
-    this.i18n = (Core.getModel("i18n") as ResourceModel).getResourceBundle()
+    // this.i18n = (Core.getModel("i18n") as ResourceModel).getResourceBundle()
   }
 
   /**
@@ -80,8 +80,10 @@ class SingletonWebSocket extends WebSocket {
           "all-messages",
           "message",
           new Message({
-            message: (this.i18n as ResourceBundle).getText("WebSocket.errorMessageHeader", [processId]),
-            additionalText: (this.i18n as ResourceBundle).getText("WebSocket.errorMessageHeader", [message]),
+            // message: (this.i18n as ResourceBundle).getText("WebSocket.errorMessageHeader", [processId]),
+            message: `Error running process ${processId} for client ${channelId}`,
+            // additionalText: (this.i18n as ResourceBundle).getText("WebSocket.errorMessageHeader", [message]),
+            additionalText: `error: ${message}`,
             type: MessageType.Error
           })
         )
