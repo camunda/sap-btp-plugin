@@ -5,9 +5,9 @@ import Message from "sap/ui/core/message/Message"
 import MessageType from "sap/ui/core/message/MessageType"
 import Log from "sap/base/Log"
 import EventBus from "sap/ui/core/EventBus"
-import Core from "sap/ui/core/Core"
-import ResourceModel from "sap/ui/model/resource/ResourceModel"
-import ResourceBundle from "sap/base/i18n/ResourceBundle"
+// import Core from "sap/ui/core/Core"
+// import ResourceModel from "sap/ui/model/resource/ResourceModel"
+// import ResourceBundle from "sap/base/i18n/ResourceBundle"
 
 const channel = "/channel"
 
