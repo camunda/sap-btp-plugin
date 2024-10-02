@@ -14,5 +14,11 @@
   "dependencies": {
     "@camunda/websocket": "*",
     "@camunda8/sdk": "^8.6.12"
+  },
+  "devDependencies": {
+    "@cap-js/cds-typer": ">=0.1"
+  },
+  "imports": {
+    "#cds-models/*": "./@cds-models/*/index.js"
   }
 }
