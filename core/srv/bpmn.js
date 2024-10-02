@@ -22,7 +22,10 @@ module.exports = async (bpmn) => {
      * @type {import("@camunda8/sdk").Zeebe.ZeebeGrpcClient}
      */
     const zbc = _zbc.getClient()
-    const processVariables = JSON.parse(req.data.variables) || {}
+    let processVariables = {}
+    if (req.data.variables) {
+      processVariables = JSON.parse(req.data.variables)
+    }
     processVariables["channelId"] = channelId
     const result = await zbc.createProcessInstance({
       bpmnProcessId: req.data.bpmnProcessId,
