@@ -1,11 +1,11 @@
-const LOGGER = cds.log("bpmn")
 const cds = require("@sap/cds")
+const LOGGER = cds.log("bpmn")
 const _zbc = require("../lib/camunda")
 
 const DEBUG = cds.log("bpmn")._debug || process.env.DEBUG?.includes("bpmn")
 
 module.exports = async (bpmn) => {
-  bpmn.on("run", async (req) => {
+  bpmn.on("runProcess", async (req) => {
     const channelId = req.data.channelId
     // the channel id represents the individual client/browser running things
     // it is mandatory for driving push-channel based communication from Camunda Cloud to the client/browser UI

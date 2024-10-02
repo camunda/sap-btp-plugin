@@ -8,7 +8,7 @@ service BPMN {
 
     // channel id is a unique identifier linking
     // a UI client's websocket with the service layer
-    action run(bpmnProcessId : String, channelId : String, variables : String) returns RunTime;
+    action runProcess(bpmnProcessId : String, channelId : String, variables : String) returns RunTime;
     action completeUsertask(jobKey : String, variables : String);
 }
 
