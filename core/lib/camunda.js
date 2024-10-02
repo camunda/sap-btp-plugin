@@ -27,20 +27,22 @@ module.exports = Object.assign(
     init() {
       if (!this.zeebe) {
         LOGGER.info("init'ing camunda client...")
-        const options = {
+        const callbacks = {
           onReady: () => {
             LOGGER.info("zeebe grpc client connected!")
           },
           onConnectionError: () => LOGGER.info("zeebe grpc client disconnected...")
         }
-        this._c8 = new Camunda8(options)
-        this.zeebe = this._c8.getZeebeGrpcApiClient(options)
-        this.zeebe.onReady = options.onReady
+        this._c8 = new Camunda8()
+        this.zeebe = this._c8.getZeebeGrpcApiClient()
+        this.zeebe.onReady = callbacks.onReady
+        this.zeebe.onConnectionError = callbacks.onConnectionError
         this.zeebeRest = this._c8.getZeebeRestClient()
         this.tl = this._c8.getTasklistApiClient()
-        DEBUG && this.zeebe.topology().then((topology) => {
-          LOGGER.debug(JSON.stringify(topology, null, 2))
-        })
+        DEBUG &&
+          this.zeebe.topology().then((topology) => {
+            LOGGER.debug(JSON.stringify(topology, null, 2))
+          })
       }
     },
 
