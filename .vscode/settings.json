@@ -10,5 +10,8 @@
     ],
     "editor.formatOnSave": false,
     "editor.formatOnPaste": false,
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "[cds]": {
+        "editor.defaultFormatter": "SAPSE.vscode-cds"
+    }
 }
