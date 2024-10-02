@@ -1,6 +1,8 @@
 {
   "__channelId": "is the id of the websocket to communicate with the service layer",
   "channelId": "",
+  "__debug": "debug mode of the app",
+  "debug": false,
   "__formStep": "once a user task gets pushed to UI, formStep++ to display Next button",
   "formStep": 0,
   "currentForm": {

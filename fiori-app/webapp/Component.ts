@@ -2,6 +2,7 @@
 import Log from "sap/base/Log"
 import EventBus from "sap/ui/core/EventBus"
 import UIComponent from "sap/ui/core/UIComponent"
+import JSONModel from "sap/ui/model/json/JSONModel"
 
 /**
  * @namespace io.camunda.connector.sap.btp.app
@@ -17,6 +18,7 @@ export default class Component extends UIComponent {
     this.DEBUG = new URL(document.location.href).searchParams.get("debug")
     if (this.DEBUG) {
       Log.setLevel(Log.Level.DEBUG)
+	  ;(this.getModel("AppView") as JSONModel).setProperty("/debug", true)
       Log.debug(`[${this.getMetadata().getName()}] - Debug mode is enabled`)
     }
 
@@ -45,16 +47,15 @@ export default class Component extends UIComponent {
     if (!channelId) {
       Log.info(`[${this.getMetadata().getName()} NO channel id detected...reloading`)
       this.redirect()
+    } else {
+      // "persist" the channel id for app-wide reference
+      ;(this.getModel("AppView") as JSONModel).setProperty("/channelId", channelId)
+      Log.info(`[${this.getMetadata().getName()}] -- channel id detected: ${channelId}!`)
+
+      //   Log.info("//> triggering BPMN run...")
+
+      //   const ws = SingletonWebSocket.getInstance(channelId)
+      //   ws.runProcess("Process_X_SteuerungPACS", channelId)
     }
-    // else {
-    //   // "persist" the channel id for app-wide reference
-    //   ;(this.getModel("AppView") as JSONModel).setProperty("/channelId", channelId)
-    //   Log.info(`[${this.getMetadata().getName()}] -- channel id detected: ${channelId}!`)
-
-    //   Log.info("//> triggering BPMN run...")
-
-    //   const ws = SingletonWebSocket.getInstance(channelId)
-    //   ws.runProcess("Process_X_SteuerungPACS", channelId)
-    // }
   }
 }
