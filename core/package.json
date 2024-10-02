@@ -20,5 +20,14 @@
   },
   "imports": {
     "#cds-models/*": "./@cds-models/*/index.js"
+  },
+  "cds": {
+    "[development]": {
+      "requires": {
+        "db": {
+          "kind": "sqlite"
+        }
+      }
+    }
   }
 }
