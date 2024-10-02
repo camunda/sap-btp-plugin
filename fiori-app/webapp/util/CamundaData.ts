@@ -6,7 +6,7 @@ export enum CamundaRequest {
 export interface CamundaRunReturn {
   channelId: string
   processInstanceKey: string
-  processKey?: string
+  processDefinitionKey?: string
   version: number
   "@odata": {
     context: string
