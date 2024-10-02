@@ -7,11 +7,9 @@
   "scripts": {
     "start": "cds-serve"
   },
-  "peerDependencies": {
-    "@sap/cds": "^8",
-    "express": "^4"
-  },
   "dependencies": {
+    "@sap/cds": "^8",
+    "express": "^4",
     "@camunda/websocket": "*",
     "@camunda8/sdk": "^8.6.12"
   },
