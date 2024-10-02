@@ -66,9 +66,9 @@ class SingletonWebSocket extends WebSocket {
           variables
         })
       })
-      const runData = (await response.json()) as CamundaRunReturn
       if (response.ok && response.status < 300) {
-        EventBus.getInstance().publish("Camunda", "run", runData)
+        // const runData = (await response.json()) as CamundaRunReturn
+        // EventBus.getInstance().publish("Camunda", "run", runData)
         if (new URL(document.location.href).searchParams.get("debug")) {
           const message = `${processId} for client ${channelId} started!`
           MessageToast.show(message)
