@@ -1,16 +1,20 @@
 import WebSocket from "sap/ui/core/ws/WebSocket"
 import MessageToast from "sap/m/MessageToast"
-import UriParameters from "sap/base/util/UriParameters"
 import { CamundaRequest, CamundaRunReturn } from "./CamundaData"
 import Message from "sap/ui/core/message/Message"
-import { MessageType } from "sap/ui/core/library"
+import MessageType from "sap/ui/core/message/MessageType"
 import Log from "sap/base/Log"
+import EventBus from "sap/ui/core/EventBus"
+import Core from "sap/ui/core/Core"
+import ResourceModel from "sap/ui/model/resource/ResourceModel"
+import ResourceBundle from "sap/base/i18n/ResourceBundle"
 
 const channel = "/channel"
 
 class SingletonWebSocket extends WebSocket {
   private static instance: SingletonWebSocket
   private static channelId: string
+  i18n: import("sap/base/i18n/ResourceBundle").default | Promise<import("sap/base/i18n/ResourceBundle").default>
 
   /**
    * The Singleton's constructor should always be private to prevent direct
@@ -18,6 +22,7 @@ class SingletonWebSocket extends WebSocket {
    */
   private constructor(channelId: string) {
     super(`${channel}/${channelId}`)
+    this.i18n = (Core.getModel("i18n") as ResourceModel).getResourceBundle()
   }
 
   /**
@@ -42,17 +47,12 @@ class SingletonWebSocket extends WebSocket {
     return SingletonWebSocket.channelId
   }
 
-  public runProcess(processId: string, channelId?: string, variables?: string) {
-    if (!channelId || channelId === "") {
-      channelId = UriParameters.fromURL(window.location.href).get("channelId")
-      Log.info(`//> backup: channelId from url: ${channelId}`)
-    }
-
-    sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+  public runProcess(processId: string, channelId: string, variables?: string) {
+    EventBus.getInstance().publish("Camunda", "request", {
       status: CamundaRequest.started,
       channelId
     })
-    sap.ui.getCore().getEventBus().publish("Camunda", "startProcess", {})
+    EventBus.getInstance().publish("Camunda", "startProcess", {})
     void (async () => {
       const response = await fetch("/bpmn/run", {
         method: "POST",
@@ -67,32 +67,24 @@ class SingletonWebSocket extends WebSocket {
         })
       })
       const runData = (await response.json()) as CamundaRunReturn
-      sap.ui.getCore().getEventBus().publish("Camunda", "run", runData)
+      EventBus.getInstance().publish("Camunda", "run", runData)
       if (response.ok && response.status < 300) {
-        if (jQuery.sap.getUriParameters().get("bdaas-debug") === "true") {
+        if (new URL(document.location.href).searchParams.get("debug")) {
           const message = `${processId} for client ${channelId} started!`
           MessageToast.show(message)
           Log.info(message)
         }
       } else {
-        let message = JSON.stringify(response.body)
-        if (response.status === 403) {
-          message =
-            "Sie verfügen derzeit nicht über eine BDaaS Berechtigung. Bitte wenden Sie sich an Ihren Administrator."
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        sap.ui
-          .getCore()
-          .getEventBus()
-          .publish(
-            "all-messages",
-            "message",
-            new Message({
-              message: `Fehler beim Start von ${processId}\n`,
-              additionalText: message,
-              type: MessageType.Error
-            })
-          )
+        const message = JSON.stringify(response.body)
+        EventBus.getInstance().publish(
+          "all-messages",
+          "message",
+          new Message({
+            message: (this.i18n as ResourceBundle).getText("WebSocket.errorMessageHeader", [processId]),
+            additionalText: (this.i18n as ResourceBundle).getText("WebSocket.errorMessageHeader", [message]),
+            type: MessageType.Error
+          })
+        )
       }
     })()
   }
