@@ -10,7 +10,8 @@
     "core",
     "fiori-app",
     "user-task-fiori",
-    "websocket"
+    "websocket",
+    "worker/user-task"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
