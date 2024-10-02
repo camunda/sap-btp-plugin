@@ -54,7 +54,7 @@ class SingletonWebSocket extends WebSocket {
     })
     EventBus.getInstance().publish("Camunda", "startProcess", {})
     void (async () => {
-      const response = await fetch("/bpmn/runProcess", {
+      const response = await fetch("/backend/odata/v4/bpmn/runProcess", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

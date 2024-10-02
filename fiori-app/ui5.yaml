@@ -30,6 +30,7 @@ server:
       afterMiddleware: compression
     - name: ui5-middleware-cap
       afterMiddleware: compression
+      mountPath: "/backend"
     - name: ui5-tooling-transpile-middleware
       afterMiddleware: compression
     - name: ui5-middleware-livereload
