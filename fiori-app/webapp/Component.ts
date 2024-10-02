@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import UIComponent from "sap/ui/core/UIComponent"
-import models from "./model/models"
-import Device from "sap/ui/Device"
 import Log from "sap/base/Log"
-import Core from "sap/ui/core/Core"
 import EventBus from "sap/ui/core/EventBus"
+import UIComponent from "sap/ui/core/UIComponent"
 
 /**
  * @namespace io.camunda.connector.sap.btp.app
@@ -14,10 +11,9 @@ export default class Component extends UIComponent {
     manifest: "json"
   }
 
-  private contentDensityClass: string
   DEBUG: string
 
-  public init(): void {
+  init(): void {
     this.DEBUG = new URL(document.location.href).searchParams.get("debug")
     if (this.DEBUG) {
       Log.setLevel(Log.Level.DEBUG)
@@ -27,38 +23,38 @@ export default class Component extends UIComponent {
     super.init()
 
     // pipe sap ui core event bus messages through to component event bus
-	EventBus.getInstance().subscribe("all-messages", "message", (channel: string, event: string, data: object) => {
-		this.getEventBus().publish("all-messages", "message", data)
+    EventBus.getInstance().subscribe("all-messages", "message", (channel: string, event: string, data: object) => {
+      this.getEventBus().publish("all-messages", "message", data)
     })
-
-
-    // create the device model
-    this.setModel(models.createDeviceModel(), "device")
-
-	//> TODO: do we need this?
-    // create the views based on the url/hash
-    // this.getRouter().initialize();
   }
 
-  /**
-   * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy
-   * design mode class should be set, which influences the size appearance of some controls.
-   * @public
-   * @returns css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy' - or an empty string if no css class should be set
-   */
-  public getContentDensityClass(): string {
-    if (this.contentDensityClass === undefined) {
-      // check whether FLP has already set the content density class; do nothing in this case
-      if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
-        this.contentDensityClass = ""
-      } else if (!Device.support.touch) {
-        // apply "compact" mode if touch is not supported
-        this.contentDensityClass = "sapUiSizeCompact"
-      } else {
-        // "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
-        this.contentDensityClass = "sapUiSizeCozy"
-      }
+  redirect() {
+    const startUrl = new URL(window.location.href)
+    if (!window.location.pathname.includes("index.html")) {
+      startUrl.pathname += "index.html"
     }
-    return this.contentDensityClass
+    const channelId = (Math.random() + 1).toString(36).substring(2)
+    startUrl.searchParams.set("channelId", channelId)
+    window.location.href = startUrl.toString() // bye-bye
+  }
+
+  onAfterRendering() {
+    // "channelId" must be passed by the calling application as it
+    // _uniquely_ links the service layer's websocket server with the client running this code
+    const channelId = new URL(document.location.href).searchParams.get("channelId")
+    if (!channelId) {
+      Log.info(`[${this.getMetadata().getName()} NO channel id detected...reloading`)
+      this.redirect()
+    }
+    // else {
+    //   // "persist" the channel id for app-wide reference
+    //   ;(this.getModel("AppView") as JSONModel).setProperty("/channelId", channelId)
+    //   Log.info(`[${this.getMetadata().getName()}] -- channel id detected: ${channelId}!`)
+
+    //   Log.info("//> triggering BPMN run...")
+
+    //   const ws = SingletonWebSocket.getInstance(channelId)
+    //   ws.runProcess("Process_X_SteuerungPACS", channelId)
+    // }
   }
 }

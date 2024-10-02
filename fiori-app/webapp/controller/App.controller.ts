@@ -50,16 +50,16 @@ export default class App extends BaseController {
   }
 
   run(processId: string) {
-    console.log("//> runnning process: ", processId)
-    // const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
-    // const ws = SingletonWebSocket.getInstance(channelId)
-    // ws.runProcess(processId, channelId)
+    console.log(`[${this.getMetadata().getName()}] - runnning process:`, processId)
+    const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
+    const ws = SingletonWebSocket.getInstance(channelId)
+    ws.runProcess(processId, channelId)
   }
 
   runThis() {
     const processId = (this.getView().byId("processName") as Input).getValue()
     this.run(processId)
-    this.closeSRunThisProcessDialog()
+    this.closeRunThisProcessDialog()
   }
 
   async onRunThisPress(): Promise<void> {
@@ -82,7 +82,7 @@ export default class App extends BaseController {
     return this.runThisProcessDialog
   }
 
-  closeSRunThisProcessDialog(): void {
+  closeRunThisProcessDialog(): void {
     this.runThisProcessDialog.close()
   }
 }
