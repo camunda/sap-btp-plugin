@@ -6,6 +6,7 @@ const { getForm } = require("./formFetcher")
 const ws = require("@camunda/websocket")
 // const msteams = require("./msteams")
 const retry = require("./retry")
+const { message } = require("@sap/cds/lib/log/cds-error")
 
 /**
  * @param {import("@camunda8/sdk/dist/zeebe/types.d.ts").Job} job
@@ -14,39 +15,29 @@ const retry = require("./retry")
  */
 module.exports = async (job, worker) => {
   LOGGER.info("user task worker executing...")
-  LOGGER.info(`user task variables: ${JSON.stringify(job.variables)}`)
+  job.variables && LOGGER.info(`user task variables: ${JSON.stringify(job.variables)}`)
 
-  // either from WPS or Fiori
-  const id = job.variables.WPS4_BasketId || job.variables.BANF
-  const subId = job.variables.WPS4_ReferencedItemID || job.variables.LineItemId
-
-  // eslint-disable-next-line no-unused-vars
 
   const channelId = job.variables.channelId
-  // TODO: handle errorStack
 
+  //> TODO: pass an instance of @camunda/btp-integration-core into here for canceling the process
   // bail out if no recipient (aka browser aka channel id) could be determined
   if (!channelId || channelId === "") {
-    // const message = `🪓 ${process.env.btp_org}: orphan user form task cancelled with id ${
-    //   job.processInstanceKey
-    // } (for parent process ${job.variables.parentProcessInstanceKey || "-none-"}) containing variables: ${JSON.stringify(
-    //   job.variables
-    // )}`
-    // no mas as of 2022/12/02
-    // await msteams(process.env.msteams_webhook, message)
-    // return job.fail(message)
-
-    const zbc = require("./camundaCloud").getClient()
-    const jobToCancel = job.variables.parentProcessInstanceKey || job.processInstanceKey
-    LOGGER.info(`attempting to cancel process instance ${jobToCancel}...`)
-    try {
-      await zbc.cancelProcessInstance(jobToCancel)
-      LOGGER.info(`successfully cancelled process instance ${jobToCancel}!`)
-    } catch (err) {
-      LOGGER.error(`couldn't cancel process instance ${jobToCancel}, b/c:`)
-      LOGGER.error(err.message)
-    }
-    return job.complete()
+    const msg = msg
+    LOGGER.error("No channel id provided -> can't continue!")
+    // throw new Error("No channel id provided -> can't continue!")
+    // const zbc = require("./camundaCloud").getClient()
+    // const jobToCancel = job.variables.parentProcessInstanceKey || job.processInstanceKey
+    // LOGGER.info(`attempting to cancel process instance ${jobToCancel}...`)
+    // try {
+    //   await zbc.cancelProcessInstance(jobToCancel)
+    //   LOGGER.info(`successfully cancelled process instance ${jobToCancel}!`)
+    // } catch (err) {
+    //   LOGGER.error(`couldn't cancel process instance ${jobToCancel}, b/c:`)
+    //   LOGGER.error(err.message)
+    // }
+    // return job.complete()
+    return job.fail(msg)
   }
   LOGGER.debug(`dedicated client channel: ${channelId}`)
 
@@ -57,7 +48,7 @@ module.exports = async (job, worker) => {
     const promise = async () => {
       return getForm(
         job.customHeaders["io.camunda.zeebe:formKey"],
-        job.processKey || job.processDefinitionKey, // pre zeebe v8, it is processKey
+        job.processDefinitionKey,
         undefined,
         job.processInstanceKey
       )
@@ -93,10 +84,6 @@ module.exports = async (job, worker) => {
     type: "form",
     jobKey: job.key, // this is the correlation id for sending the "complete job" signal to camunda later
     formData,
-    basket: {
-      id,
-      subId
-    },
     variables: job.variables
   }
   // "persist" parent process id for use in subprocess worker via global variable scope
