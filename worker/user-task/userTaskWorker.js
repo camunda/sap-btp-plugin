@@ -1,12 +1,10 @@
 const cds = require("@sap/cds")
-const LOGGER = cds.log("woker:user-task")
+const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
 
 const { getForm } = require("./formFetcher")
 const ws = require("@camunda/websocket")
-// const msteams = require("./msteams")
 const retry = require("./retry")
-const { message } = require("@sap/cds/lib/log/cds-error")
 
 /**
  * @param {import("@camunda8/sdk/dist/zeebe/types.d.ts").Job} job
@@ -39,7 +37,7 @@ module.exports = async (job, worker) => {
     // return job.complete()
     return job.fail(msg)
   }
-  LOGGER.debug(`dedicated client channel: ${channelId}`)
+  DEBUG && LOGGER.debug(`dedicated client channel: ${channelId}`)
 
   let formData = ""
   // try to retrieve the form 3 times via the Camunda Tasklist graphql api
@@ -53,7 +51,7 @@ module.exports = async (job, worker) => {
         job.processInstanceKey
       )
     }
-    formData = await retry(promise, 3)
+    formData = await retry(promise, 21, 300)
   } catch (err) {
     // this frequently happens when in the modelling layer,
     // the association btw user task service and form is cut/lost
