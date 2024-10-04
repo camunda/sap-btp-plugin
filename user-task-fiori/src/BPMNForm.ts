@@ -135,6 +135,76 @@ export default class BPMNForm extends Control {
     return value
   }
 
+    /**
+   * returns questions and answers from form streak as array
+   * @returns the questions and answers as array
+   */
+    getUserData(): userFormData[] {
+      const data: userFormData[] = []
+      // for each dynamically generated cdontrol,
+      // get its' "key" data for submitting -> job worker
+      // and its' value that was supplied/chosen by the user
+      this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+        const ui5Control = Core.byId(control.id) as Control
+  
+        // represents the form key as modelled in Camunda
+        const key = ui5Control.getCustomData()[0].getKey()
+  
+        const value = this.getValueFromControl(control.type, ui5Control) as string
+        let answer
+        switch (control.type) {
+          case ControlType.ValueHelpInput:
+            {
+              answer = (ui5Control.getAggregation("_input") as Input).getValue()
+            }
+            break
+          case ControlType.CheckBox:
+            {
+              if (ui5Control.getVisible()) {
+                answer = String((ui5Control as CheckBox).getSelected())
+              }
+            }
+            break
+          case ControlType.Select:
+            {
+              const selectedItem = (ui5Control as Select).getSelectedItem()
+              if (selectedItem) {
+                if (selectedItem.getText() === value) {
+                  answer = value
+                } else {
+                  answer = `${value} (${selectedItem.getText()})`
+                }
+              }
+            }
+            break
+          case ControlType.Radio:
+            {
+              const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
+              if (selectedButton) {
+                if (selectedButton.getText() === value) {
+                  answer = value
+                } else {
+                  answer = `${value} (${selectedButton.getText()})`
+                }
+              }
+            }
+            break
+          default: {
+            answer = this.getValueFromControl(control.type, ui5Control) as string
+          }
+        }
+        data.push({
+          key,
+          value,
+          question: control.question as string,
+          answer,
+          linkedControlId: control.id,
+          linkedControlType: control.type
+        })
+      })
+      return data
+    }
+
   /**
    * set the value state for the given control and trigger form validation afterwards
    *
@@ -178,6 +248,8 @@ export default class BPMNForm extends Control {
    * @returns true, if form is validated
    */
   private _validate(): boolean {
+    return true
+    debugger
     const invalidControls = this.generatedControls.filter((generatedControl: GeneratedControl) => {
       let valid = true
       const control = Core.byId(generatedControl.id) as Control
@@ -303,128 +375,6 @@ export default class BPMNForm extends Control {
 
     return control
   }
-
-  /**
-   * add select control, register it and bind validation
-   * @param element the component configuration from camunda
-   *
-   * @return the created and addded control
-   */
-  private addDynamicSumAutomatic(element: Component): Control {
-    if (this._checkIfNotSet(element)) {
-      return
-    }
-
-    const visible = this._getVisibleStatement(element)
-
-    const control = new MultiComboBox(this._generateControlId(element), {
-      visible: visible,
-      selectionChange: (event) => {
-        this._provideValueToView(element, control)
-        this._setValueState(control, element, event.getSource().getSelectedKeys().length)
-      }
-    })
-
-    // hardcoded values or dynmic (json or odata)?
-    if (!this.mandatoryFieldCheck(["service", "key", "display"], element)) {
-      return
-    }
-
-    const displayElements = element.properties?.display.split(",")
-    const prefix = element.properties.service ? element.properties.service + ">" : ""
-    let display = `{${prefix}${displayElements[0]}}`
-    if (displayElements.length > 1) {
-      display = `{${prefix}${displayElements[0]}} - {${prefix}${displayElements[1]}}`
-    }
-    const regex = /(.*){(.*)}(.*)/gm
-    element.properties.for = element.properties.for.replace(regex, (total: string, a: string, b: string, c: string) => {
-      const value = this.getModel(localModelName).getProperty(`/BPMNform/${b}`)
-      return `${a}${value}${c}`
-    })
-
-    // get all filter properties in camunda
-    const filters = this.getDynamicFiltersFromCamundaProperties(element)
-    let sorter
-
-    if (element.properties?.sorter) {
-      const sorterProperties = element.properties?.sorter.split(",")
-      const desc = sorterProperties[1] === "DESC" ? true : false
-      sorter = [new Sorter(sorterProperties[0], desc)]
-    }
-
-    control.bindAggregation("items", {
-      path: `${prefix}/${element.properties.for}`,
-      filters: filters ? filters : undefined,
-      sorter: sorter,
-      template: new Item({
-        key: `{${prefix}${element.properties.key}}`,
-        text: display
-      })
-    })
-
-    this._addControl(element, control, ControlType.DynamicSumAutomatic)
-    this._setValueState(control, element, undefined)
-    this._validate()
-  }
-
-  // /**
-  //  * add textfield control, register it and bind validation
-  //  * @param element the component configuration from camunda
-  //  *
-  //  * @return the created and addded control
-  //  */
-  // private addDynamicSum(element: Component): Control {
-  //   if (this._checkIfNotSet(element)) {
-  //     return
-  //   }
-  //   let mandatoryFields: string[] = []
-
-  //   switch (element.properties.selectionMode) {
-  //     case SelectionModes.select:
-  //       {
-  //         mandatoryFields = ["type", "for", "key", "display"]
-  //       }
-  //       break
-  //     case SelectionModes.valuehelp:
-  //     default: {
-  //       mandatoryFields = ["type", "for", "display", "suggestFields"]
-  //     }
-  //   }
-  //   if (!this.mandatoryFieldCheck(mandatoryFields, element)) {
-  //     return
-  //   }
-
-  //   const visible = this._getVisibleStatement(element)
-  //   let accountingValue = element.properties?.accountingValue
-  //   if (accountingValue.startsWith("{")) {
-  //     accountingValue = this.getModel(localModelName).getProperty(
-  //       `/BPMNform/${/{(.*)}/.exec(accountingValue)[1]}`
-  //     ) as string
-  //   }
-  //   let quantity = element.properties?.quantity
-  //   if (quantity.startsWith("{")) {
-  //     quantity = this.getModel(localModelName).getProperty(`/BPMNform/${/{(.*)}/.exec(quantity)[1]}`) as string
-  //   }
-
-  //   element.properties.for = this.resolveVariables(element.properties.for)
-
-  //   const controlConfiguration = {
-  //     visible,
-  //     accountingValue: accountingValue,
-  //     quantity: quantity,
-  //     staticFilters: this.getStaticFiltersFromCamundaProperties(element),
-  //     camundaConfiguration: element,
-  //     change: () => {
-  //       this._validate()
-  //     }
-  //   }
-
-  //   const control = new DynamicSum(controlConfiguration)
-
-  //   this._addControl(element, control, ControlType.Textfield)
-  //   this._validate()
-  //   return
-  // }
 
   /**
    * add checkbox as control
