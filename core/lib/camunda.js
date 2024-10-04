@@ -1,6 +1,8 @@
+
 const cds = require("@sap/cds")
 const LOGGER = cds.log("camunda")
 const { Camunda8 } = require("@camunda8/sdk")
+const Duration  = require("@camunda8/sdk").Zeebe.Duration
 
 const DEBUG = cds.log("camunda")._debug || process.env.DEBUG?.includes("camunda")
 
@@ -30,6 +32,7 @@ module.exports = Object.assign(
         const callbacks = {
           onReady: () => {
             LOGGER.info("zeebe grpc client connected!")
+            this.registerWorker()
           },
           onConnectionError: () => LOGGER.info("zeebe grpc client disconnected...")
         }
@@ -44,6 +47,31 @@ module.exports = Object.assign(
             LOGGER.debug(JSON.stringify(topology, null, 2))
           })
       }
+    },
+
+    registerWorker() {
+      this._createWorker("io.camunda.zeebe:userTask", require("@camunda/user-task-worker"), "user task worker")
+    },
+
+    /**
+     * generic create worker function, that registers the system task in camunda
+     *
+     * @param {string} taskType identifier for the task
+     * @param {function} taskHandler Worker function, when task is called
+     * @param {string} description human readable worker description to describe task, when worker is connected
+     * @param {object} options additional options, that extend or may override the options in zeebeeclient`s createWorker function
+     */
+    _createWorker(taskType, taskHandler, description = "", options = { maxJobsToActivate: 1, timeout: Duration.hours.of(2) /* give the task handler 2 hrs to complete the job... */ }) {
+      LOGGER.info(`creating worker "${taskType}" ${description ? "for" + description : description} ...`)
+      const worker = /** @type {import("@camunda8/sdk").Zeebe.ZeebeGrpcClient}  */ (this.getClient()).createWorker({
+        taskType,
+        taskHandler,
+        ...options
+      })
+      worker.on("ready", () => LOGGER.info(`Worker "${taskType}" connected!`))
+      worker.on("connectionError", () => LOGGER.info(`Worker "${taskType}" disconnected...`))
+      worker.on("close", () => LOGGER.info(`Worker "${taskType}" closed...`))
+      worker.on("unknown", () => LOGGER.info(`Worker "${taskType}": unknown!!!`))
     },
 
     /**
