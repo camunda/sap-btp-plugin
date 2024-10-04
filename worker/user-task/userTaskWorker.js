@@ -64,7 +64,7 @@ module.exports = async (job, worker) => {
       type: "message",
       channelId,
       message: {
-        text: "Fehler Abruf Eingabeformular",
+        text: "Error retrieving Form",
         description: "Camunda",
         additionalText: JSON.stringify(err),
         type: "Error"
