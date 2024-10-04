@@ -1,11 +1,11 @@
+import EventBus from "sap/ui/core/EventBus"
 import { CamundaRequest } from "../util/CamundaData"
 
 export default class BusyIndicator {
   private _status: Boolean
 
   constructor() {
-    const eventBus = sap.ui.getCore().getEventBus()
-    eventBus.subscribe("Camunda", "request", (channel: string, event: string, data: { status: CamundaRequest }) => {
+    EventBus.getInstance().subscribe("Camunda", "request", (channel: string, event: string, data: { status: CamundaRequest }) => {
       switch (data.status) {
         case CamundaRequest.started:
           {

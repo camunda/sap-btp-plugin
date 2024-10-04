@@ -21,6 +21,8 @@ import Clipboard from "../util/Clipboard"
 import SingletonWebSocket from "../util/WebSocket"
 import Log from "sap/base/Log"
 import { MessageType } from "sap/ui/core/library"
+import EventBus from "sap/ui/core/EventBus"
+import { BPMNform } from "io/camunda/connector/sap/btp/lib/BPMNformData"
 
 enum FormStep {
   LOADING = 0,
@@ -36,12 +38,7 @@ enum FormStep {
 export default class MainStageController extends BaseController {
   ws: WebSocket
 
-  private _cucumberStatements: string[]
-
-  private _cucumberFeatureTitleDialog: Dialog
-
   private busyIndicator: BusyIndicator
-
 
   onClose() {
     const viewModel = this.getView().getModel("AppView") as JSONModel
@@ -104,20 +101,20 @@ export default class MainStageController extends BaseController {
   }
 
   getBpmnForm(): BPMNform {
-    return this.getView().byId("BPMNform") as BPMNform
+    return this.getView().byId("BPMNform") as unknown as BPMNform
   }
 
-  async onSubmit(/* sChannel: string, sEvent: string, oEvent: Event */): Promise<void> {
+  async onSubmit(/* sChannel: string, sEvent: string, oEvent: Event */) {
+    debugger
     const viewModel = this.getView().getModel("AppView") as JSONModel
     viewModel.setProperty("/formStep", FormStep.LOADING)
-    this._cucumberStatements = this._cucumberStatements.concat(this.generateCucumberDataForCurrentForm())
-    sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+    EventBus.getInstance().publish("Camunda", "request", {
       status: CamundaRequest.started
     })
     const rawData = this.getView().getModel("AppView").getProperty("/userFormData") as string
     const _json: WebSocketData = JSON.parse(rawData) as WebSocketData
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const form: BPMNform = this.getView().byId("BPMNform") as BPMNform
+    const form: BPMNform = this.getBpmnForm() 
     const userSuppliedData: userFormData[] = form.getUserData()
     // if a user (form) task has supplied a process id for
     // re-use in user (form) tasks located in subprocess
@@ -135,19 +132,8 @@ export default class MainStageController extends BaseController {
         })
         .join(",") +
       "}"
-    const historyModel = this.getModel("HistoryView")
-    let qa = []
-    userSuppliedData.forEach((data) => {
-      if (data.answer) {
-        qa.push({
-          question: data.question,
-          linkedControlType: data.linkedControlType,
-          answer: data.answer
-        })
-      }
-    })
+
     // provide data to protocoll
-    historyModel.setProperty("/qa", historyModel.getProperty("/qa").concat(qa))
     this.getBpmnForm().reset()
     try {
       const res = await fetch("/bpmn/completeUsertask", {
@@ -156,18 +142,13 @@ export default class MainStageController extends BaseController {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          bdaasBasketId: _json.variables.bdaasBasketId,
-          bdaasBasketPositionId: _json.variables.bdaasBasketPositionId,
           jobKey: _json.jobKey,
-          historicBasketPositionId: this.getBpmnForm().getHistoricBasketPositionId(),
-          qa: JSON.stringify(qa),
           variables: formVariables
         })
       })
       if (!res.ok) {
         const message = await res.json()
-        this.getOwnerComponent()
-          .getEventBus()
+        EventBus.getInstance()
           .publish(
             "all-messages",
             "message",
@@ -179,8 +160,7 @@ export default class MainStageController extends BaseController {
           )
       }
     } catch (error) {
-      this.getOwnerComponent()
-        .getEventBus()
+      EventBus.getInstance()
         .publish(
           "all-messages",
           "message",
@@ -195,19 +175,10 @@ export default class MainStageController extends BaseController {
   }
 
   onInit(): void {
-    this._cucumberStatements = []
-
     this.busyIndicator = new BusyIndicator()
 
-    const eventBus = sap.ui.getCore().getEventBus()
-
-    eventBus.subscribe("App", "submit", this.onSubmit)
+    EventBus.getInstance().subscribe("App", "submit", this.onSubmit)
     this._attachWebSocketMessageHandler()
-  }
-
-  onProtocol(oEvent: Event): void {
-    const eventBus = this.getOwnerComponent().getEventBus()
-    eventBus.publish("App", "showProtocol", oEvent.getSource())
   }
 
   _getChannelId(): string {
@@ -277,15 +248,9 @@ export default class MainStageController extends BaseController {
             case "variables":
               this.getBpmnForm().processVariables(_data)
               break
-            case "errorObserver":
-              if (_data.data.duration) {
-                sap.ui.getCore().getEventBus().publish("ErrorObserver", "duration", {
-                  duration: _data.data.duration
-                })
-              }
-              break
+      
             case "form":
-              sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+              EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
@@ -297,7 +262,7 @@ export default class MainStageController extends BaseController {
               break
 
             case "message":
-              sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+              EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
@@ -307,12 +272,12 @@ export default class MainStageController extends BaseController {
                 additionalText: _data.message.additionalText || "",
                 type: _data.message.type
               })
-              this.getOwnerComponent().getEventBus().publish("all-messages", "message", receivedMessage)
+              EventBus.getInstance().publish("all-messages", "message", receivedMessage)
               break
 
             case "final-task-fail":
               viewModel.setProperty("/formStep", FormStep.FAILED)
-              sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+              EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
@@ -321,7 +286,7 @@ export default class MainStageController extends BaseController {
               break
             case "final-task-success":
               viewModel.setProperty("/formStep", FormStep.SUMMARY)
-              sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+              EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
@@ -330,7 +295,7 @@ export default class MainStageController extends BaseController {
               break
 
             default:
-              sap.ui.getCore().getEventBus().publish("Camunda", "request", {
+              EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
@@ -341,11 +306,5 @@ export default class MainStageController extends BaseController {
       }
     })
   }
-  historicizeUserData(data: userQuestionAnswer[]): void {
-    const model = this.getOwnerComponent().getModel("HistoryView") as JSONModel
-    const originalData = model.getProperty("/qa") as userQuestionAnswer[]
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const newData = originalData.concat(data)
-    model.setProperty("/qa", newData)
-  }
+  
 }
