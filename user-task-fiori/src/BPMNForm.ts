@@ -6,7 +6,7 @@ import Markdown from "./Markdown"
 import Control from "sap/ui/core/Control"
 import type { MetadataOptions } from "sap/ui/core/Element"
 import BPMNFormRenderer from "./BPMNFormRenderer"
-import { Component, ControlType, GeneratedControl, SelectionModes } from "./BPMNformData"
+import { BPMNformData, Component, ControlType, GeneratedControl, SelectionModes } from "./BPMNformData"
 import Core from "sap/ui/core/Core"
 import { ValueState } from "sap/ui/core/library"
 import JSONModel from "sap/ui/model/json/JSONModel"
@@ -32,6 +32,7 @@ import CustomData from "sap/ui/core/CustomData"
 import DatePicker from "sap/m/DatePicker"
 import MessageStrip from "sap/m/MessageStrip"
 import SmartField from "sap/ui/comp/smartfield/SmartField"
+import Label from "sap/m/Label"
 
 // import { ExampleColor } from "./library";
 
