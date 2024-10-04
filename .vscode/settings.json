@@ -13,5 +13,7 @@
     "files.autoSave": "onFocusChange",
     "[cds]": {
         "editor.defaultFormatter": "SAPSE.vscode-cds"
-    }
+    },
+    "search.useGlobalIgnoreFiles": true,
+    "search.useParentIgnoreFiles": true
 }
