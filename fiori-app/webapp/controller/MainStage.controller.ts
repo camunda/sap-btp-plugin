@@ -118,7 +118,7 @@ export default class MainStageController extends BaseController {
     // provide data to protocoll
     this.getBpmnForm().reset()
     try {
-      const res = await fetch("/bpmn/completeUsertask", {
+      const res = await fetch("/backend/odata/v4/bpmn/completeUsertask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
