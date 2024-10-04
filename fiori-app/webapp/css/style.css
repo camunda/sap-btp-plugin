@@ -55,3 +55,18 @@
 #splash.fadeIn {
   opacity: 1;
 }
+
+.markdown,
+.markdown-description {
+  color: #6a6d70;
+}
+
+.markdown-description h1,
+.markdown-description h2,
+.markdown-description h3,
+.markdown-description h4,
+.markdown-description p,
+.markdown-description ul {
+  margin: 0;
+  font-size: 0.875rem;
+}

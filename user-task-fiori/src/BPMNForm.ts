@@ -881,9 +881,9 @@ export default class BPMNForm extends Control {
       visible: visible
     }) as Control
     if (element.properties?.type === "Description") {
-      text.addStyleClass("bdaas-markdown-description")
+      text.addStyleClass("markdown-description")
     } else {
-      text.addStyleClass("bdaas-markdown")
+      text.addStyleClass("markdown")
     }
     this._addControl(element, text, ControlType.Text, false, false, true)
   }
