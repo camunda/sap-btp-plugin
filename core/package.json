@@ -4,14 +4,16 @@
   "description": "Camunda BTP Integration: core module",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
+  "main": "srv/server.js",
   "scripts": {
     "start": "cds-serve"
   },
   "dependencies": {
-    "@sap/cds": "^8",
-    "express": "^4",
+    "@camunda/user-task-worker": "*",
     "@camunda/websocket": "*",
-    "@camunda8/sdk": "^8.6.12"
+    "@camunda8/sdk": "^8.6.12",
+    "@sap/cds": "^8",
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-typer": ">=0.1"
