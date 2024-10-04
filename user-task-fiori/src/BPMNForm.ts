@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/*!
- * ${copyright}
- */
 import Markdown from "./Markdown"
 import Control from "sap/ui/core/Control"
 import type { MetadataOptions } from "sap/ui/core/Element"
@@ -33,8 +30,8 @@ import DatePicker from "sap/m/DatePicker"
 import MessageStrip from "sap/m/MessageStrip"
 import SmartField from "sap/ui/comp/smartfield/SmartField"
 import Label from "sap/m/Label"
+import Icon from "sap/ui/core/Icon"
 
-// import { ExampleColor } from "./library";
 
 // name of local json model used for local bindings
 const localModelName = uid()
@@ -46,7 +43,6 @@ const localModelName = uid()
  * @extends Control
  *
  * @author Volker Buzek
- * @version ${version}
  *
  * @constructor
  * @public
@@ -934,8 +930,7 @@ export default class BPMNForm extends Control {
   }
 
   /**
-   * layout final process step screen,
-   * also update the persisted "bdaas run" w/ the QAs
+   * layout final process step screen
    *
    * @param data received data via websocket
    */
@@ -954,7 +949,7 @@ export default class BPMNForm extends Control {
       width: "100%"
     })
     content.addStyleClass("sapUiResponsiveMargin")
-    // add heading to the q+a container
+
     if (data.type === "final-task-success") {
       content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
     }
@@ -972,8 +967,6 @@ export default class BPMNForm extends Control {
       })
       content.addItem(title)
     }
-
-    const viewModel = sap.ui.core.Component.getOwnerComponentFor(this).getModel("AppView") as JSONModel
 
     container.addItem(content)
     container.data("controlType", ControlType.Summary)
