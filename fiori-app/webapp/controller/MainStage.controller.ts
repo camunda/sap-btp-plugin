@@ -166,33 +166,12 @@ export default class MainStageController extends BaseController {
 
   _getChannelId(): string {
     // only process further when the emitter sent "us" (aka our channel id) the ws-message
-    let storedChannelId = this.getView()?.getModel("AppView")?.getProperty("/channelId") as string
+    let channelId = this.getView()?.getModel("AppView")?.getProperty("/channelId") as string
     // safety net -> try to retrieve the channel id from the url
-    if (!storedChannelId || storedChannelId === "") {
-      storedChannelId = UriParameters.fromURL(window.location.href).get("channelId")
+    if (!channelId || channelId === "") {
+      channelId = new URL(document.location.href).searchParams.get("channelId")
     }
-    return storedChannelId
-  }
-
-  async setFinishedAnimationStep(step: number, timeout: number): Promise<void> {
-    return new Promise((resolve) => {
-      window.setTimeout(() => {
-        $("body").addClass(`step${step}`)
-        resolve()
-      }, timeout)
-    })
-  }
-
-  async startFinishAnimation(): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      // new Audio("./media/short_sound.mp3").play()
-
-      $("body").addClass("finishedPacs")
-      await this.setFinishedAnimationStep(1, 0)
-      await this.setFinishedAnimationStep(2, 2000)
-      await this.setFinishedAnimationStep(3, 1000)
-      resolve()
-    })
+    return channelId
   }
 
   _attachWebSocketMessageHandler(): void {
@@ -212,16 +191,11 @@ export default class MainStageController extends BaseController {
         Log.info(`//> received data for channel ${_data.channelId}, self: ${storedChannelId}`)
 
         if (_data.channelId && storedChannelId && _data.channelId === storedChannelId) {
-          if (_data.variables?.bdaasTitle) {
-            viewModel.setProperty("/bdaasTitle", _data.variables?.bdaasTitle)
+          if (_data.variables?.appTitle) {
+            viewModel.setProperty("/appTitle", _data.variables?.appTitle)
           }
           if (_data.variables?.bdaasBusyText) {
-            document.getElementById("bdaas-busyText").innerHTML = _data.variables?.bdaasBusyText
-          }
-          if (_data.variables?.WPS4_ProcessStart) {
-            viewModel.setProperty("/WPS4_ProcessStart", _data.variables?.WPS4_ProcessStart)
-            viewModel.setProperty("/PPCBusinessTransaction", _data.variables?.PPCBusinessTransaction)
-            viewModel.setProperty("/PPCItemCategory", _data.variables?.PPCItemCategory)
+            document.getElementById("busyText").innerHTML = _data.variables?.busyText
           }
 
           //> it's us! let's go

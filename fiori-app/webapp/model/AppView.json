@@ -7,5 +7,6 @@
   "formStep": 0,
   "currentForm": {
     "isValid": true
-  }
+  },
+  "appTitle": "Camunda SAP Integration"
 }
