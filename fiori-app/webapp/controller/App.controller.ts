@@ -18,6 +18,7 @@ import MessageBox, { Action } from "sap/m/MessageBox"
 import { URLHelper } from "sap/m/library"
 import ResourceModel from "sap/ui/model/resource/ResourceModel"
 import Input from "sap/m/Input"
+import EventBus from "sap/ui/core/EventBus"
 
 /**
  * @namespace io.camunda.connector.sap.btp.app.controller
@@ -26,7 +27,32 @@ export default class App extends BaseController {
   private generalMenu: Menu
   private runThisProcessDialog: Dialog
 
-  public onInit(): void {}
+  public onInit() {
+
+    EventBus.getInstance().subscribe("all-messages", "message", this.onMessageReceived.bind(this), this)
+  }
+
+  private onMessageReceived(channel: string, event: string, eventData: Message) {
+    let buttons = [Action.OK]
+    if (eventData.getType() === "Error")
+      if (eventData.getTechnicalDetails()) {
+        buttons = ["Support", Action.OK]
+      }
+
+    // TODO: json parse auf Descrption
+    // show message additionally
+    MessageBox.alert(eventData.getDescription(), {
+      title: eventData.getMessage(),
+      details: eventData.getAdditionalText(),
+      actions: buttons,
+      emphasizedAction: Action.OK,
+      onClose: (data: string) => {
+        if (data === "Support") {
+          window.open(this.getModel("AppView").getProperty("/supportChannel"), "_blank")
+        }
+      }
+    })
+  }
 
   async onGeneralMenuPress(oEvent: Event): Promise<void> {
     const oSourceControl: Control = oEvent.getSource()

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import Log from "sap/base/Log"
-import EventBus from "sap/ui/core/EventBus"
 import UIComponent from "sap/ui/core/UIComponent"
 import JSONModel from "sap/ui/model/json/JSONModel"
 
@@ -23,11 +22,6 @@ export default class Component extends UIComponent {
     }
 
     super.init()
-
-    // pipe sap ui core event bus messages through to component event bus
-    EventBus.getInstance().subscribe("all-messages", "message", (channel: string, event: string, data: object) => {
-      this.getEventBus().publish("all-messages", "message", data)
-    })
   }
 
   redirect() {
@@ -50,7 +44,7 @@ export default class Component extends UIComponent {
     } else {
       // "persist" the channel id for app-wide reference
       ;(this.getModel("AppView") as JSONModel).setProperty("/channelId", channelId)
-      Log.info(`[${this.getMetadata().getName()}] -- channel id detected: ${channelId}!`)
+      Log.info(`[${this.getMetadata().getName()}] - channel id detected: ${channelId}!`)
 
       //   Log.info("//> triggering BPMN run...")
 

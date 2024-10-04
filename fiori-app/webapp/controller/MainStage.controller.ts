@@ -88,7 +88,6 @@ export default class MainStageController extends BaseController {
   }
 
   async onSubmit(/* sChannel: string, sEvent: string, oEvent: Event */) {
-    debugger
     const viewModel = this.getView().getModel("AppView") as JSONModel
     viewModel.setProperty("/formStep", FormStep.LOADING)
     EventBus.getInstance().publish("Camunda", "request", {
@@ -150,7 +149,7 @@ export default class MainStageController extends BaseController {
           new Message({
             type: MessageType.Error,
             message: "Abschließen des Schritts nicht möglich",
-            description: `Die Kommunikation mit Camunda wurde unterbrochen und der Schritt konnte nicht abgeschlossen werden. \n\n Error 1673253816952: ${res.status} ${res.statusText}`,
+            description: "Die Kommunikation mit Camunda wurde unterbrochen und der Schritt konnte nicht abgeschlossen werden. \n\n Error 1673253816952",
             additionalText: JSON.stringify(error)
           })
         )
