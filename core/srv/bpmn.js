@@ -69,20 +69,6 @@ module.exports = async (bpmn) => {
     const variables = JSON.parse(req.data.variables)
     const zbc = _zbc.getClient()
     try {
-      // get historic basket position ID
-      const { BasketPositionHistoric } = cds.entities("bdaas")
-      const position = await SELECT.one.from(BasketPositionHistoric)
-        .where`basket_basketID = ${req.data.bdaasBasketId} and positionId = ${req.data.bdaasBasketPositionId}`.orderBy(
-        "modifiedAt desc"
-      )
-      const historicBasketPositionId = position.ID
-
-      await bdaasHistorize.addQAToHistory(historicBasketPositionId, JSON.parse(req.data.qa))
-    } catch (error) {
-      const message = `Error 1674738344989: Could not historize data ${JSON.stringify(req.data)}`
-      return req.error(500, message)
-    }
-    try {
       await zbc.completeJob({
         jobKey: req.data.jobKey,
         variables
@@ -94,15 +80,4 @@ module.exports = async (bpmn) => {
     }
     return {}
   })
-  const makeSureBasketExists = async function (basketId, basketName) {
-    const { Basket } = cds.entities("bdaas")
-
-    const baskets = await SELECT.from(Basket).where`basketID = ${basketId}`
-    if (baskets.length === 0) {
-      LOGGER.debug(`BDaaS DB: found no basket, inserting ${basketId}`)
-      await INSERT.into(Basket, { basketId, basketName })
-    } else {
-      await UPDATE(Basket, basketId).with({ basketName, deleted: false })
-    }
-  }
 }
