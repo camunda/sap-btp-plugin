@@ -66,32 +66,15 @@ export default class MainStageController extends BaseController {
     window.close()
   }
 
-  async onFinish() {
+  onFinish() {
     const viewModel = this.getView().getModel("AppView") as JSONModel
-    const _sachkonto = viewModel.getProperty("/sachkonto") as string
-    const _psp = viewModel.getProperty("/coElement") as string
-    const _historyLink = viewModel.getProperty("/historyLink") as string
     const channelId = viewModel.getProperty("/channelId") as string
-
-    if (viewModel.getProperty("/sourceSystem") === "Fiori") {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      window.opener.postMessage(
-        {
-          sachkonto: _sachkonto,
-          psp: _psp,
-          historyLink: _historyLink
-        },
-        "*"
-      )
-      Log.info(`//> postback w/ sachkonto: ${_sachkonto}, psp: ${_psp}, historyLink: ${_historyLink}`)
-    }
 
     // clean up ws inventory server-side
     SingletonWebSocket.getInstance(channelId).close()
 
     viewModel.setProperty("/formStep", FormStep.FINISHED)
 
-    await this.startFinishAnimation()
     window.close()
   }
 
