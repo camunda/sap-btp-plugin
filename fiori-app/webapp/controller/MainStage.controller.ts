@@ -23,6 +23,7 @@ import Log from "sap/base/Log"
 import { MessageType } from "sap/ui/core/library"
 import EventBus from "sap/ui/core/EventBus"
 import { BPMNform } from "io/camunda/connector/sap/btp/lib/BPMNformData"
+import ResourceBundle from "sap/base/i18n/ResourceBundle"
 
 enum FormStep {
   LOADING = 0,
@@ -39,32 +40,6 @@ export default class MainStageController extends BaseController {
   ws: WebSocket
 
   private busyIndicator: BusyIndicator
-
-  onClose() {
-    const viewModel = this.getView().getModel("AppView") as JSONModel
-    const _sachkonto = viewModel.getProperty("/sachkonto") as string
-    const _psp = viewModel.getProperty("/coElement") as string
-    const _historyLink = viewModel.getProperty("/historyLink") as string
-    const channelId = viewModel.getProperty("/channelId") as string
-
-    if (viewModel.getProperty("/sourceSystem") === "Fiori") {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      window.opener.postMessage(
-        {
-          sachkonto: _sachkonto,
-          psp: _psp,
-          historyLink: _historyLink
-        },
-        "*"
-      )
-      Log.info(`//> postback w/ sachkonto: ${_sachkonto}, psp: ${_psp}, historyLink: ${_historyLink}`)
-    }
-
-    // clean up ws inventory server-side
-    SingletonWebSocket.getInstance(channelId).close()
-
-    window.close()
-  }
 
   onFinish() {
     const viewModel = this.getView().getModel("AppView") as JSONModel
@@ -96,7 +71,7 @@ export default class MainStageController extends BaseController {
     const rawData = this.getView().getModel("AppView").getProperty("/userFormData") as string
     const _json: WebSocketData = JSON.parse(rawData) as WebSocketData
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const form: BPMNform = this.getBpmnForm() 
+    const form: BPMNform = this.getBpmnForm()
     const userSuppliedData: userFormData[] = form.getUserData()
     // if a user (form) task has supplied a process id for
     // re-use in user (form) tasks located in subprocess
@@ -129,30 +104,31 @@ export default class MainStageController extends BaseController {
         })
       })
       if (!res.ok) {
-        const message = await res.json()
-        EventBus.getInstance()
-          .publish(
-            "all-messages",
-            "message",
-            new Message({
-              type: MessageType.Error,
-              message: "Abschließen des Schritts nicht möglich",
-              description: `Camunda hat einen Fehler zurückgemeldet und der Schritt konnte nicht abgeschlossen werden. \n\n Error 1673253575610: ${res.status} ${res.statusText}\n\n ${message.error.message}`
-            })
-          )
-      }
-    } catch (error) {
-      EventBus.getInstance()
-        .publish(
+        EventBus.getInstance().publish(
           "all-messages",
           "message",
           new Message({
             type: MessageType.Error,
-            message: "Abschließen des Schritts nicht möglich",
-            description: "Die Kommunikation mit Camunda wurde unterbrochen und der Schritt konnte nicht abgeschlossen werden. \n\n Error 1673253816952",
-            additionalText: JSON.stringify(error)
+            message: (this.getResourceBundle() as ResourceBundle).getText("Error.cant_proceed.message"),
+            description: (this.getResourceBundle() as ResourceBundle).getText("Error.cant_proceed.message", [
+              res.status,
+              res.statusText,
+              res.text()
+            ])
           })
         )
+      }
+    } catch (error) {
+      EventBus.getInstance().publish(
+        "all-messages",
+        "message",
+        new Message({
+          type: MessageType.Error,
+          message: (this.getResourceBundle() as ResourceBundle).getText("Error.cant_proceed.message"),
+          description: (this.getResourceBundle() as ResourceBundle).getText("Error.cant_proceed.backend_error"),
+          additionalText: JSON.stringify(error)
+        })
+      )
     }
   }
 
@@ -204,7 +180,7 @@ export default class MainStageController extends BaseController {
             case "variables":
               this.getBpmnForm().processVariables(_data)
               break
-      
+
             case "form":
               EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
@@ -262,5 +238,4 @@ export default class MainStageController extends BaseController {
       }
     })
   }
-  
 }
