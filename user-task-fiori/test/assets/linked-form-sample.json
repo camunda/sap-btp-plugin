@@ -1,0 +1,124 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "0c3ed06"
+  },
+  "schemaVersion": 16,
+  "id": "fiori-user-task-1",
+  "components": [
+    {
+      "text": "# fiori user task 1",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_0z0pgle",
+        "columns": null
+      },
+      "id": "Field_0jlfvvg"
+    },
+    {
+      "label": "label for text field",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0bfg5dz",
+        "columns": null
+      },
+      "id": "Field_1bdb0af",
+      "key": "textfield_768xff",
+      "description": "description for text field"
+    },
+    {
+      "label": "Text area",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_1kw9xy8",
+        "columns": null
+      },
+      "id": "Field_08qewud",
+      "key": "textarea_i8ril"
+    },
+    {
+      "label": "Number",
+      "type": "number",
+      "layout": {
+        "row": "Row_1qdvjle",
+        "columns": null
+      },
+      "id": "Field_06k07cr",
+      "key": "number_ow107h"
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Date",
+      "label": "Date time",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_0m1hzyt",
+        "columns": null
+      },
+      "id": "Field_16aa8x2",
+      "key": "datetime_bac8lp"
+    },
+    {
+      "label": "Checkbox",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1whjr6z",
+        "columns": null
+      },
+      "id": "Field_1q2j2vp",
+      "key": "checkbox_7rnwl"
+    },
+    {
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "label": "Checkbox group",
+      "type": "checklist",
+      "layout": {
+        "row": "Row_1j02171",
+        "columns": null
+      },
+      "id": "Field_029rsrk",
+      "key": "checklist_kvmn2"
+    },
+    {
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "label": "Radio group",
+      "type": "radio",
+      "layout": {
+        "row": "Row_0i82iuz",
+        "columns": null
+      },
+      "id": "Field_0wxfxv9",
+      "key": "radio_b94wq6"
+    },
+    {
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "label": "Select",
+      "type": "select",
+      "layout": {
+        "row": "Row_159bqti",
+        "columns": null
+      },
+      "id": "Field_11pcvsp",
+      "key": "select_6qxoqt"
+    }
+  ],
+  "type": "default"
+}
