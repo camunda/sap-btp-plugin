@@ -53,7 +53,7 @@ module.exports = async (job, worker) => {
         job.processDefinitionKey
       )
     }
-    form = await retry(promise, 21, 300) //> max 7 sec
+    form = await retry(promise, 30, 300) //> max 9 sec
   } catch (err) {
     // this frequently happens when in the modelling layer,
     // the association btw user task service and form is cut/lost
@@ -65,7 +65,7 @@ module.exports = async (job, worker) => {
       channelId,
       message: {
         text: "Error retrieving Form",
-        description: "Camunda",
+        description: "Camunda experienced a hiccup",
         additionalText: JSON.stringify(err),
         type: "Error"
       }
@@ -80,10 +80,10 @@ module.exports = async (job, worker) => {
 
   let type
   switch(job.customHeaders["final-user-task"]) {
-    case "final-user-task-success":
+    case "success":
       type = "final-task-success"
       break
-    case "final-user-task-fail":
+    case "fail":
       type = "final-task-fail"
       break
     default:

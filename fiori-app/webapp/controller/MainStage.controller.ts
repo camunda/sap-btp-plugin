@@ -213,24 +213,26 @@ export default class MainStageController extends BaseController {
             }
 
             case "final-task-fail":
-              viewModel.setProperty("/formStep", FormStep.FAILED)
+              debugger
               EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
               this.getBpmnForm().processVariables(_data)
               this.getBpmnForm().reset()
+              viewModel.setProperty("/formStep", FormStep.SUMMARY)
               this.getBpmnForm().processForm(_data)
               this.getBpmnForm().endProcess(_data)
               break
             case "final-task-success":
-              viewModel.setProperty("/formStep", FormStep.SUMMARY)
+              debugger
               EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
               this.getBpmnForm().processVariables(_data)
               this.getBpmnForm().reset()
+              viewModel.setProperty("/formStep", FormStep.SUMMARY)
               this.getBpmnForm().processForm(_data)
               this.getBpmnForm().endProcess(_data)
               break
