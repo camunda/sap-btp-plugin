@@ -3,7 +3,7 @@ const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
 
 // const { getForm } = require("./formFetcher")
-const ws = require("@camunda/websocket")
+const ws = require("@camunda8/websocket")
 const retry = require("./retry")
 
 /**
@@ -17,7 +17,7 @@ module.exports = async (job, worker) => {
 
   const channelId = job.variables.channelId
 
-  //> TODO: pass an instance of @camunda/btp-integration-core into here for canceling the process
+  //> TODO: pass an instance of @camunda8/btp-integration-core into here for canceling the process
   // bail out if no recipient (aka browser aka channel id) could be determined
   if (!channelId || channelId === "") {
     const msg = msg
@@ -46,7 +46,7 @@ module.exports = async (job, worker) => {
     /**
      * @type {import("@camunda8/sdk").Tasklist.TasklistApiClient}
      */
-    const tl = require("@camunda/btp-integration-core/lib/camunda").getClient("tl")
+    const tl = require("@camunda8/btp-integration-core/lib/camunda").getClient("tl")
     const promise = async () => {
       return tl.getForm(
         job.customHeaders["io.camunda.zeebe:formKey"],

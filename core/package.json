@@ -1,5 +1,5 @@
 {
-  "name": "@camunda/btp-integration-core",
+  "name": "@camunda8/btp-integration-core",
   "version": "1.0.0",
   "description": "Camunda BTP Integration: core module",
   "repository": "<Add your repository here>",
@@ -9,8 +9,8 @@
     "start": "cds-serve"
   },
   "dependencies": {
-    "@camunda/user-task-worker": "*",
-    "@camunda/websocket": "*",
+    "@camunda8/user-task-worker": "*",
+    "@camunda8/websocket": "*",
     "@camunda8/sdk": "^8.6.12",
     "@sap/cds": "^8",
     "express": "^4"

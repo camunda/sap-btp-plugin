@@ -1,5 +1,5 @@
 {
-	"name": "@camunda/user-task-fiori",
+	"name": "@camunda8/user-task-fiori",
 	"version": "1.0.0",
 	"description": "rendering of forms in User Task into the Fiori Design System",
 	"author": "Volker Buzek",

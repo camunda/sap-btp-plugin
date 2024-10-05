@@ -1,5 +1,5 @@
 {
-  "name": "@camunda/user-task-worker",
+  "name": "@camunda8/user-task-worker",
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,6 @@
     "@sap/cds": "^8"
   },
   "dependencies": {
-    "@camunda/btp-integration-core": "*"
+    "@camunda8/btp-integration-core": "*"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@camunda/websocket",
+  "name": "@camunda8/websocket",
   "version": "1.0.0",
   "description": "websocket enablement for the BTP Integration, part of Camunda's SAP Integration",
   "keywords": [],

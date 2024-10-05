@@ -1,5 +1,5 @@
 {
-	"name": "@camunda/fiori-app",
+	"name": "@camunda8/fiori-app",
 	"version": "1.0.0",
 	"description": "generic Fiori/UI5 app for Camunda BTP Integration",
 	"author": "Volker Buzek",
@@ -21,7 +21,7 @@
 		"wdi5": "wdio run ./webapp/test/e2e/wdio.conf.ts"
 	},
 	"devDependencies": {
-		"@camunda/btp-integration-core": "*",
+		"@camunda8/btp-integration-core": "*",
 		"@openui5/types": "^1.128.0",
 		"@ui5/cli": "^4.0.6",
 		"@wdio/cli": "^8.40.5",
@@ -46,6 +46,6 @@
 		"wdio-ui5-service": "^2.0.10"
 	},
 	"dependencies": {
-		"@camunda/user-task-fiori": "file:../user-task-fiori"
+		"@camunda8/user-task-fiori": "file:../user-task-fiori"
 	}
 }
