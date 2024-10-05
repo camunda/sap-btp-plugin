@@ -118,9 +118,9 @@ export interface BasketInWebsocket {
 
 // only for TS UI5 scope to "know" about auto-generated
 // add* method for aggregation
-export interface BPMNform {
-  addItem(control: Control): BPMNform
-}
+// export interface BPMNform {
+//   addItem(control: Control): BPMNform
+// }
 
 // delivers the user-chosen values of a form element
 // along with their key

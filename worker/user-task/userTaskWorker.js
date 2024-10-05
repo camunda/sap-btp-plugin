@@ -78,10 +78,22 @@ module.exports = async (job, worker) => {
   }
   LOGGER.info(`retrieved form data: ${form.schema}`)
 
+  let type
+  switch(job.customHeaders["final-user-task"]) {
+    case "final-user-task-success":
+      type = "final-task-success"
+      break
+    case "final-user-task-fail":
+      type = "final-task-fail"
+      break
+    default:
+      type = "form"
+  }
+
   // send received json form data via websocket to UI layer for further processing
   const wsData = {
     channelId,
-    type: "form",
+    type,
     jobKey: job.key, // this is the correlation id for sending the "complete job" signal to camunda later
     formData: form.schema,
     variables: job.variables

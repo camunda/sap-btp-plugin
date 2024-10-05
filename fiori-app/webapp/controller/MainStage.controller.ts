@@ -24,6 +24,7 @@ import { MessageType } from "sap/ui/core/library"
 import EventBus from "sap/ui/core/EventBus"
 import { BPMNform } from "io/camunda/connector/sap/btp/lib/BPMNformData"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
+import BPMNForm from "io/camunda/connector/sap/btp/lib/BPMNForm"
 
 enum FormStep {
   LOADING = 0,
@@ -43,14 +44,16 @@ export default class MainStageController extends BaseController {
 
   onFinish() {
     const viewModel = this.getView().getModel("AppView") as JSONModel
-    const channelId = viewModel.getProperty("/channelId") as string
+    // const channelId = viewModel.getProperty("/channelId") as string
 
     // clean up ws inventory server-side
-    SingletonWebSocket.getInstance(channelId).close()
+    // SingletonWebSocket.getInstance(channelId).close()
 
     viewModel.setProperty("/formStep", FormStep.FINISHED)
 
-    window.close()
+    void this.onSubmit() //> we don't care about async side effects on the browser at the last UI task
+
+    // window.close()
   }
 
   onFinishedForm() {
@@ -58,13 +61,15 @@ export default class MainStageController extends BaseController {
     viewModel.setProperty("/formStep", FormStep.FINISHED)
   }
 
-  getBpmnForm(): BPMNform {
-    return this.getView().byId("BPMNform") as unknown as BPMNform
+  getBpmnForm(): BPMNForm {
+    return this.getView().byId("BPMNform") as unknown as BPMNForm
   }
 
   async onSubmit(/* sChannel: string, sEvent: string, oEvent: Event */) {
     const viewModel = this.getView().getModel("AppView") as JSONModel
-    viewModel.setProperty("/formStep", FormStep.LOADING)
+    if (viewModel.getProperty("/formStep") !== FormStep.FINISHED) {
+      viewModel.setProperty("/formStep", FormStep.LOADING)
+    }
     EventBus.getInstance().publish("Camunda", "request", {
       status: CamundaRequest.started
     })
@@ -187,13 +192,12 @@ export default class MainStageController extends BaseController {
                 channelId: _data.channelId
               })
               this.getBpmnForm().processVariables(_data)
-              // eslint-disable-next-line @typescript-eslint/no-extra-semi
               viewModel.setProperty("/formStep", FormStep.STARTED)
               this.getBpmnForm().reset()
               this.getBpmnForm().processForm(_data)
               break
 
-            case "message":
+            case "message": {
               EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
@@ -206,6 +210,7 @@ export default class MainStageController extends BaseController {
               })
               EventBus.getInstance().publish("all-messages", "message", receivedMessage)
               break
+            }
 
             case "final-task-fail":
               viewModel.setProperty("/formStep", FormStep.FAILED)
@@ -213,7 +218,9 @@ export default class MainStageController extends BaseController {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
-              // eslint-disable-next-line @typescript-eslint/no-extra-semi
+              this.getBpmnForm().processVariables(_data)
+              this.getBpmnForm().reset()
+              this.getBpmnForm().processForm(_data)
               this.getBpmnForm().endProcess(_data)
               break
             case "final-task-success":
@@ -222,7 +229,9 @@ export default class MainStageController extends BaseController {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
               })
-              // eslint-disable-next-line @typescript-eslint/no-extra-semi
+              this.getBpmnForm().processVariables(_data)
+              this.getBpmnForm().reset()
+              this.getBpmnForm().processForm(_data)
               this.getBpmnForm().endProcess(_data)
               break
 

@@ -32,7 +32,6 @@ import SmartField from "sap/ui/comp/smartfield/SmartField"
 import Label from "sap/m/Label"
 import Icon from "sap/ui/core/Icon"
 
-
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -131,75 +130,75 @@ export default class BPMNForm extends Control {
     return value
   }
 
-    /**
+  /**
    * returns questions and answers from form streak as array
    * @returns the questions and answers as array
    */
-    getUserData(): userFormData[] {
-      const data: userFormData[] = []
-      // for each dynamically generated cdontrol,
-      // get its' "key" data for submitting -> job worker
-      // and its' value that was supplied/chosen by the user
-      this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
-        const ui5Control = Core.byId(control.id) as Control
-  
-        // represents the form key as modelled in Camunda
-        const key = ui5Control.getCustomData()[0].getKey()
-  
-        const value = this.getValueFromControl(control.type, ui5Control) as string
-        let answer
-        switch (control.type) {
-          case ControlType.ValueHelpInput:
-            {
-              answer = (ui5Control.getAggregation("_input") as Input).getValue()
-            }
-            break
-          case ControlType.CheckBox:
-            {
-              if (ui5Control.getVisible()) {
-                answer = String((ui5Control as CheckBox).getSelected())
-              }
-            }
-            break
-          case ControlType.Select:
-            {
-              const selectedItem = (ui5Control as Select).getSelectedItem()
-              if (selectedItem) {
-                if (selectedItem.getText() === value) {
-                  answer = value
-                } else {
-                  answer = `${value} (${selectedItem.getText()})`
-                }
-              }
-            }
-            break
-          case ControlType.Radio:
-            {
-              const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
-              if (selectedButton) {
-                if (selectedButton.getText() === value) {
-                  answer = value
-                } else {
-                  answer = `${value} (${selectedButton.getText()})`
-                }
-              }
-            }
-            break
-          default: {
-            answer = this.getValueFromControl(control.type, ui5Control) as string
+  getUserData(): userFormData[] {
+    const data: userFormData[] = []
+    // for each dynamically generated cdontrol,
+    // get its' "key" data for submitting -> job worker
+    // and its' value that was supplied/chosen by the user
+    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+      const ui5Control = Core.byId(control.id) as Control
+
+      // represents the form key as modelled in Camunda
+      const key = ui5Control.getCustomData()[0].getKey()
+
+      const value = this.getValueFromControl(control.type, ui5Control) as string
+      let answer
+      switch (control.type) {
+        case ControlType.ValueHelpInput:
+          {
+            answer = (ui5Control.getAggregation("_input") as Input).getValue()
           }
+          break
+        case ControlType.CheckBox:
+          {
+            if (ui5Control.getVisible()) {
+              answer = String((ui5Control as CheckBox).getSelected())
+            }
+          }
+          break
+        case ControlType.Select:
+          {
+            const selectedItem = (ui5Control as Select).getSelectedItem()
+            if (selectedItem) {
+              if (selectedItem.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedItem.getText()})`
+              }
+            }
+          }
+          break
+        case ControlType.Radio:
+          {
+            const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
+            if (selectedButton) {
+              if (selectedButton.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedButton.getText()})`
+              }
+            }
+          }
+          break
+        default: {
+          answer = this.getValueFromControl(control.type, ui5Control) as string
         }
-        data.push({
-          key,
-          value,
-          question: control.question as string,
-          answer,
-          linkedControlId: control.id,
-          linkedControlType: control.type
-        })
+      }
+      data.push({
+        key,
+        value,
+        question: control.question as string,
+        answer,
+        linkedControlId: control.id,
+        linkedControlType: control.type
       })
-      return data
-    }
+    })
+    return data
+  }
 
   /**
    * set the value state for the given control and trigger form validation afterwards
@@ -937,41 +936,40 @@ export default class BPMNForm extends Control {
   endProcess(data: WebSocketData): void {
     this.fireEvent("summary")
 
-    // layout container
-    const container = new HBox({
-      width: "100%"
-    })
-    container.addStyleClass("sapUiResponsiveMargin")
-    container.setAlignItems("Center")
+    // // layout container
+    // const container = new HBox({
+    //   width: "100%"
+    // })
+    // container.addStyleClass("sapUiResponsiveMargin")
+    // container.setAlignItems("Center")
 
-    // prep q+a container
-    const content = new VBox({
-      width: "100%"
-    })
-    content.addStyleClass("sapUiResponsiveMargin")
+    // const content = new VBox({
+    //   width: "100%"
+    // })
+    // content.addStyleClass("sapUiResponsiveMargin")
 
-    if (data.type === "final-task-success") {
-      content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
-    }
-    if (data.type === "final-task-fail") {
-      const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
-      h1.addStyleClass("sapUiSmallMarginBegin")
-      const title = new HBox({
-        items: [
-          new Icon({
-            src: "sap-icon://alert",
-            color: "red"
-          }),
-          h1
-        ]
-      })
-      content.addItem(title)
-    }
+    // if (data.type === "final-task-success") {
+    //   content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
+    // }
+    // if (data.type === "final-task-fail") {
+    //   const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
+    //   h1.addStyleClass("sapUiSmallMarginBegin")
+    //   const title = new HBox({
+    //     items: [
+    //       new Icon({
+    //         src: "sap-icon://alert",
+    //         color: "red"
+    //       }),
+    //       h1
+    //     ]
+    //   })
+    //   content.addItem(title)
+    // }
 
-    container.addItem(content)
-    container.data("controlType", ControlType.Summary)
+    // container.addItem(content)
+    // container.data("controlType", ControlType.Summary)
 
-    this.addItem(container)
+    // this.addItem(container)
 
     // clear the form model
     this._initLocalModel()
