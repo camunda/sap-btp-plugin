@@ -1,4 +1,4 @@
-  <!-- xmlns:bdaas="io.camunda.connector.sap.btp.app.control" -->
+<!-- xmlns:bdaas="io.camunda.connector.sap.btp.app.control" -->
 <mvc:View xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:core="sap.ui.core"
@@ -9,55 +9,46 @@
   core:require="{formatter: 'io/camunda/connector/sap/btp/app/model/formatter'}"
   height="100%"
   controllerName="io.camunda.connector.sap.btp.app.controller.MainStage">
-  <HBox height="100%"
-  alignItems="Center"
-  justifyContent="Center">
-    <!-- <main:Switch textOff="Log"
-      textOn="Log"
-      change="onProtocol" /> -->
-    <VBox alignItems="Center"
-      id="idContent"
-      busyIndicatorDelay="0"
-      justifyContent="Start"
-      width="100%"
-      class="sapUiResponsiveContentPadding">
-      <ScrollContainer height="100%"
+  <Page showHeader="false">
+    <HBox height="100%"
+      alignItems="Center"
+      justifyContent="Center">
+      <VBox alignItems="Center"
+        id="idContent"
+        busyIndicatorDelay="0"
+        justifyContent="Start"
         width="100%"
-        horizontal="false"
-        vertical="true">
-        <content>
-          <utf:BPMNform id="BPMNform"
-            buttonText="{i18n>BPMNForm.btn_text_submit}"
-            valid="{AppView>/currentForm/isValid}"
-            formStep="{AppView>/formStep}"
-            placeHolderText="{i18n>BPMNForm.bpmn_placeholder_text}"
-            finalResultTextSuccess="{i18n>BPMNForm.final_result_text_success}"
-            finalResultTextFail="{i18n>BPMNForm.final_result_text_fail}"
-            summary="onShowSummary"
-            finishedForm="onFinishedForm" 
-            />
-          <FlexBox justifyContent="End">
-            
-            <Button text="{i18n>Progress.btn_text_next}"
-              press="onSubmit"
-              visible="{= ${AppView>/formStep} === 1}"
-              id="btnNextStep"
-              iconFirst="false"
-              icon="sap-icon://navigation-right-arrow"
-              enabled="{AppView>/currentForm/isValid}"
-              class="sapUiMediumMarginEnd" />
-            <Button text="{i18n>Progress.btn_text_finish}"
-              press="onFinish"
-              visible="{= ${AppView>/formStep} === 2}"
-              id="btnFinish"
-              iconFirst="false"
-              icon="sap-icon://navigation-right-arrow"
-              enabled="{AppView>/currentForm/isValid}"
-              class="sapUiMediumMarginEnd" />
-            
-          </FlexBox>
-        </content>
-      </ScrollContainer>
-    </VBox>
-  </HBox>
+        class="sapUiResponsiveContentPadding">
+        <utf:BPMNform id="BPMNform"
+          buttonText="{i18n>BPMNForm.btn_text_submit}"
+          valid="{AppView>/currentForm/isValid}"
+          formStep="{AppView>/formStep}"
+          placeHolderText="{i18n>BPMNForm.bpmn_placeholder_text}"
+          finalResultTextSuccess="{i18n>BPMNForm.final_result_text_success}"
+          finalResultTextFail="{i18n>BPMNForm.final_result_text_fail}"
+          summary="onShowSummary"
+          finishedForm="onFinishedForm" />
+        <FlexBox justifyContent="End">
+
+          <Button text="{i18n>Progress.btn_text_next}"
+            press="onSubmit"
+            visible="{= ${AppView>/formStep} === 1}"
+            id="btnNextStep"
+            iconFirst="false"
+            icon="sap-icon://navigation-right-arrow"
+            enabled="{AppView>/currentForm/isValid}"
+            class="sapUiMediumMarginEnd" />
+          <Button text="{i18n>Progress.btn_text_finish}"
+            press="onFinish"
+            visible="{= ${AppView>/formStep} === 2}"
+            id="btnFinish"
+            iconFirst="false"
+            icon="sap-icon://navigation-right-arrow"
+            enabled="{AppView>/currentForm/isValid}"
+            class="sapUiMediumMarginEnd" />
+
+        </FlexBox>
+      </VBox>
+    </HBox>
+  </Page>
 </mvc:View>

@@ -31,6 +31,7 @@ import MessageStrip from "sap/m/MessageStrip"
 import SmartField from "sap/ui/comp/smartfield/SmartField"
 import Label from "sap/m/Label"
 import Icon from "sap/ui/core/Icon"
+import TextArea from "sap/m/TextArea"
 
 // name of local json model used for local bindings
 const localModelName = uid()
@@ -92,6 +93,9 @@ export default class BPMNForm extends Control {
     let value: boolean | string | string[]
 
     switch (type) {
+      case ControlType.Textarea:
+        value = (control as TextArea).getValue()
+        break
       case ControlType.Number:
       case ControlType.DatePicker:
       case ControlType.Textfield:
@@ -244,7 +248,6 @@ export default class BPMNForm extends Control {
    */
   private _validate(): boolean {
     return true
-    debugger
     const invalidControls = this.generatedControls.filter((generatedControl: GeneratedControl) => {
       let valid = true
       const control = Core.byId(generatedControl.id) as Control
@@ -327,11 +330,10 @@ export default class BPMNForm extends Control {
    *
    * @return the created and addded control
    */
-  private addTextfield(element: Component): Control {
+  private addTextfield(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
-
     const defaultValue =
       ((this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) as string) ||
       (element.defaultValue as string)
@@ -377,7 +379,7 @@ export default class BPMNForm extends Control {
    *
    * @return the created and addded control
    */
-  private addCheckbox(element: Component): Control {
+  private addCheckbox(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -455,7 +457,7 @@ export default class BPMNForm extends Control {
    *
    * @return the created and addded control
    */
-  private addSelect(element: Component): Control {
+  private addSelect(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -573,7 +575,7 @@ export default class BPMNForm extends Control {
    * @param element camunda configuration for control creation
    * @returns the created and added control
    */
-  private addRadioGroup(element: Component): Control {
+  private addRadioGroup(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -655,7 +657,7 @@ export default class BPMNForm extends Control {
    *
    * @return the created and addded control
    */
-  private addDate(element: Component): Control {
+  private addDate(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -680,7 +682,7 @@ export default class BPMNForm extends Control {
    *
    * @return the created and addded control
    */
-  private addSmartField(element: Component): Control {
+  private addSmartField(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -739,11 +741,11 @@ export default class BPMNForm extends Control {
     return missingFields.length === 0
   }
 
-  private addSuggestInput(element: Component) {
+  private addSuggestInput(element: Component, currentPath?: string) {
     element.properties.enableSuggestion = true
     element.properties.showDialog = false
 
-    this.addValueHelpInput(element)
+    // this.addValueHelpInput(element, currentPath?: string)
   }
 
   private resolveVariables(property: string): string {
@@ -819,7 +821,7 @@ export default class BPMNForm extends Control {
   //   return control
   // }
 
-  private addText(element: Component) {
+  private addText(element: Component, currentPath?: string) {
     const visible = this._getVisibleStatement(element)
     const text = new Markdown(`${uid()}-markdown`, {
       content: element.text.replace(/\{/gm, `\{${localModelName}>/BPMNform/`),
@@ -861,7 +863,7 @@ export default class BPMNForm extends Control {
     const vbox = new VBox({
       visible: visible
     })
-    vbox.addStyleClass("bdaasWordBreak")
+    vbox.addStyleClass("wordBreak")
     if (noMargin) {
       vbox.addStyleClass("sapUiNoMarginTop")
       vbox.addStyleClass("sapUiNoMarginBottom")
@@ -1013,14 +1015,64 @@ export default class BPMNForm extends Control {
     }
   }
 
+  addDynamicList(element: any) {
+    const subPathInModel = element.path.replaceAll(".", "/")
+    const arr = this.getLocalModel().getProperty(`/BPMNform/${subPathInModel}`) ?? []
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unsafe-member-access
+    arr.length === 0 &&
+      console.warn(`[${this.getMetadata().getName()}] - data path ${element.path} doesn't hold data in view model!`)
+    // fix the key to enable UI5 binding
+    arr.forEach(() => this._generateControls(element.components, subPathInModel))
+    // console.log("//> rendering:", element)
+    //throw new Error("Method not implemented.")
+  }
+
+  addTextArea(element: any, currentPath?: string) {
+    const defaultValue = this.getLocalModel().getProperty(`/BPMNform/${element.key}`) || element.defaultValue
+    const control = new TextArea(this._generateControlId(element), {
+      visible: this._getVisibleStatement(element),
+      value: defaultValue,
+      cols: 50,
+      rows: 20
+    })
+
+    // handle visibility for deep if constructions,
+    // if the control is set to invisible delete value and provide empty value
+    // to local model to hide dependent controls as well
+    const fn = control.setVisible
+    control.setVisible = (value) => {
+      fn.apply(control, [value])
+      if (control.getVisible() === false) {
+        if (element.validate?.required) {
+          control.setValueState(ValueState.Error)
+        }
+        control.setValue("")
+        this._provideValueToView(element, control)
+      }
+
+      return control
+    }
+
+    this._addControl(element, control, ControlType.Textarea)
+    this._setValueState(control, element, control.getValue())
+
+    return control
+  }
+
   /**
    * create controls from camunda configuration and add to stage
    *
    * @param components array of camunda components
    */
-  _generateControls(components: Component[]) {
+  _generateControls(components: Component[], currentPath?: string): void {
     components.forEach((element) => {
       switch (element.type) {
+        case ControlType.Textarea:
+          this.addTextArea(element, currentPath)
+          break
+        case ControlType.DynamicList:
+          this.addDynamicList(element) //> only provides the current path, never receives
+          break
         case ControlType.Textfield:
         case ControlType.Number:
           if (element.properties && element.properties.type) {
@@ -1032,11 +1084,11 @@ export default class BPMNForm extends Control {
               //     this.addDynamicSum(element)
               //   }
               //   break
-              case "DynamicSumAutomatic":
-                {
-                  this.addDynamicSumAutomatic(element)
-                }
-                break
+              // case "DynamicSumAutomatic":
+              //   {
+              //     this.addDynamicSumAutomatic(element)
+              //   }
+              //   break
               // case "DynamicSumSelect":
               //   {
               //     this.addDynamicSum(element, true)
@@ -1044,7 +1096,7 @@ export default class BPMNForm extends Control {
               //   break
               default: {
                 if (this[`add${element.properties.type}`]) {
-                  this[`add${element.properties.type}`](element)
+                  this[`add${element.properties.type}`](element, currentPath)
                 }
               }
             }
@@ -1054,20 +1106,20 @@ export default class BPMNForm extends Control {
                 `Error 1650373370: Unupported sub type of Textfield. Missing add${element.properties.type} function in BPMNform`
               )
             }
-            this.addTextfield(element)
+            this.addTextfield(element, currentPath)
           }
           break
         case ControlType.Select:
-          this.addSelect(element)
+          this.addSelect(element, currentPath)
           break
         case ControlType.CheckBox:
-          this.addCheckbox(element)
+          this.addCheckbox(element, currentPath)
           break
         case ControlType.Radio:
-          this.addRadioGroup(element)
+          this.addRadioGroup(element, currentPath)
           break
         case ControlType.Text:
-          this.addText(element)
+          this.addText(element, currentPath)
           break
         default:
           console.error(`Error 1650472412: Unsupported control type "${element.type}"`)

@@ -84,7 +84,9 @@ export enum ControlType {
   DynamicSumAutomatic = "DynamicSumAutomatic",
   Text = "text",
   CheckBox = "checkbox",
-  Summary = "summary"
+  Summary = "summary",
+  DynamicList = "dynamiclist",
+  Textarea = "textarea"
 }
 
 // for keeping track of auto-generated IDs and their type
