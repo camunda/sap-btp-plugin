@@ -1,0 +1,68 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": { "name": "Camunda Web Modeler", "version": "0c3ed06" },
+  "schemaVersion": 16,
+  "id": "fiori-user-task-result",
+  "components":
+    [
+      {
+        "text": "# Results",
+        "label": "Text view",
+        "type": "text",
+        "layout": { "row": "Row_0yuh0zs", "columns": null },
+        "id": "Field_1wiocn2"
+      },
+      {
+        "label": "no. of results:",
+        "type": "textfield",
+        "layout": { "row": "Row_0anmsei", "columns": null },
+        "id": "Field_0veff2w",
+        "key": "nrOfResults",
+        "defaultValue": "0"
+      },
+      {
+        "components":
+          [
+            {
+              "label": "Id",
+              "type": "textfield",
+              "layout": { "row": "Row_1gdfk8r", "columns": null },
+              "id": "Field_1acevos",
+              "key": "BusinessPartner"
+            },
+            {
+              "label": "Last Name",
+              "type": "textfield",
+              "layout": { "row": "Row_0g9do1w", "columns": null },
+              "id": "Field_0a7gumq",
+              "key": "LastName"
+            },
+            {
+              "label": "First Name",
+              "type": "textfield",
+              "layout": { "row": "Row_0g9do1w", "columns": null },
+              "id": "Field_1ikll3t",
+              "key": "FirstName"
+            }
+          ],
+        "showOutline": true,
+        "isRepeating": true,
+        "allowAddRemove": true,
+        "defaultRepetitions": 1,
+        "label": "Dynamic list",
+        "type": "dynamiclist",
+        "layout": { "row": "Row_1sorko7", "columns": null },
+        "id": "Field_1tv4a9y",
+        "path": "bp_query.results"
+      },
+      {
+        "label": "new query?",
+        "type": "checkbox",
+        "layout": { "row": "Row_1i2x73y", "columns": null },
+        "id": "Field_0om7cxb",
+        "key": "gv_restart"
+      }
+    ],
+  "type": "default"
+}

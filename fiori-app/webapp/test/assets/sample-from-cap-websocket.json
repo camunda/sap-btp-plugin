@@ -1,0 +1,1015 @@
+{
+  "channelId": "s6rdetov4i",
+  "type": "form",
+  "jobKey": "2251799820985318",
+  "formData": "{\n  \"executionPlatform\": \"Camunda Cloud\",\n  \"executionPlatformVersion\": \"8.5.0\",\n  \"exporter\": {\n    \"name\": \"Camunda Web Modeler\",\n    \"version\": \"0c3ed06\"\n  },\n  \"schemaVersion\": 16,\n  \"id\": \"fiori-user-task-result\",\n  \"components\": [\n    {\n      \"text\": \"# Results\",\n      \"label\": \"Text view\",\n      \"type\": \"text\",\n      \"layout\": {\n        \"row\": \"Row_0yuh0zs\",\n        \"columns\": null\n      },\n      \"id\": \"Field_1wiocn2\"\n    },\n    {\n      \"label\": \"no. of results:\",\n      \"type\": \"textfield\",\n      \"layout\": {\n        \"row\": \"Row_0anmsei\",\n        \"columns\": null\n      },\n      \"id\": \"Field_0veff2w\",\n      \"key\": \"nrOfResults\",\n      \"defaultValue\": \"0\"\n    },\n    {\n      \"components\": [\n        {\n          \"label\": \"Id\",\n          \"type\": \"textfield\",\n          \"layout\": {\n            \"row\": \"Row_1gdfk8r\",\n            \"columns\": null\n          },\n          \"id\": \"Field_1acevos\",\n          \"key\": \"BusinessPartner\"\n        },\n        {\n          \"label\": \"Last Name\",\n          \"type\": \"textfield\",\n          \"layout\": {\n            \"row\": \"Row_0g9do1w\",\n            \"columns\": null\n          },\n          \"id\": \"Field_0a7gumq\",\n          \"key\": \"LastName\"\n        },\n        {\n          \"label\": \"First Name\",\n          \"type\": \"textfield\",\n          \"layout\": {\n            \"row\": \"Row_0g9do1w\",\n            \"columns\": null\n          },\n          \"id\": \"Field_1ikll3t\",\n          \"key\": \"FirstName\"\n        }\n      ],\n      \"showOutline\": true,\n      \"isRepeating\": true,\n      \"allowAddRemove\": true,\n      \"defaultRepetitions\": 1,\n      \"label\": \"Dynamic list\",\n      \"type\": \"dynamiclist\",\n      \"layout\": {\n        \"row\": \"Row_1sorko7\",\n        \"columns\": null\n      },\n      \"id\": \"Field_1tv4a9y\",\n      \"path\": \"bp_query.results\"\n    },\n    {\n      \"label\": \"new query?\",\n      \"type\": \"checkbox\",\n      \"layout\": {\n        \"row\": \"Row_1i2x73y\",\n        \"columns\": null\n      },\n      \"id\": \"Field_0om7cxb\",\n      \"key\": \"gv_restart\"\n    }\n  ],\n  \"type\": \"default\"\n}",
+  "variables": {
+    "nrOfResults": 6,
+    "top": "10",
+    "filter": "john",
+    "bp_query": {
+      "result": [
+        {
+          "__metadata": {
+            "id": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')",
+            "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')",
+            "type": "API_BUSINESS_PARTNER.A_BusinessPartnerType"
+          },
+          "BusinessPartner": "1000141",
+          "Customer": "",
+          "Supplier": "",
+          "AcademicTitle": "",
+          "AuthorizationGroup": "",
+          "BusinessPartnerCategory": "1",
+          "BusinessPartnerFullName": "John Mayer",
+          "BusinessPartnerGrouping": "BP02",
+          "BusinessPartnerName": "John Mayer",
+          "BusinessPartnerUUID": "0ac8d7df-a3a7-1eeb-86a3-c94d7c203648",
+          "CorrespondenceLanguage": "EN",
+          "CreatedByUser": "BPINST",
+          "CreationDate": "/Date(1603843200000)/",
+          "CreationTime": "PT13H09M53S",
+          "FirstName": "John",
+          "FormOfAddress": "0002",
+          "Industry": "",
+          "InternationalLocationNumber1": "0",
+          "InternationalLocationNumber2": "0",
+          "IsFemale": false,
+          "IsMale": true,
+          "IsNaturalPerson": "X",
+          "IsSexUnknown": false,
+          "GenderCodeName": "2",
+          "Language": "",
+          "LastChangeDate": "/Date(1603843200000)/",
+          "LastChangeTime": "PT13H25M14S",
+          "LastChangedByUser": "BPINST",
+          "LastName": "Mayer",
+          "LegalForm": "",
+          "OrganizationBPName1": "",
+          "OrganizationBPName2": "",
+          "OrganizationBPName3": "",
+          "OrganizationBPName4": "",
+          "OrganizationFoundationDate": null,
+          "OrganizationLiquidationDate": null,
+          "SearchTerm1": "FSM",
+          "SearchTerm2": "",
+          "AdditionalLastName": "",
+          "BirthDate": null,
+          "BusinessPartnerBirthDateStatus": "",
+          "BusinessPartnerBirthplaceName": "",
+          "BusinessPartnerDeathDate": null,
+          "BusinessPartnerIsBlocked": false,
+          "BusinessPartnerType": "",
+          "ETag": "BPINST20201028132514",
+          "GroupBusinessPartnerName1": "",
+          "GroupBusinessPartnerName2": "",
+          "IndependentAddressID": "",
+          "InternationalLocationNumber3": "0",
+          "MiddleName": "",
+          "NameCountry": "",
+          "NameFormat": "",
+          "PersonFullName": "",
+          "PersonNumber": "25493",
+          "IsMarkedForArchiving": false,
+          "BusinessPartnerIDByExtSystem": "",
+          "BusinessPartnerPrintFormat": "",
+          "BusinessPartnerOccupation": "",
+          "BusPartMaritalStatus": "",
+          "BusPartNationality": "",
+          "BusinessPartnerBirthName": "",
+          "BusinessPartnerSupplementName": "",
+          "NaturalPersonEmployerName": "",
+          "LastNamePrefix": "",
+          "LastNameSecondPrefix": "",
+          "Initials": "",
+          "BPDataControllerIsNotRequired": false,
+          "TradingPartner": "",
+          "to_BPCreditWorthiness": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BPCreditWorthiness"
+            }
+          },
+          "to_BPDataController": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BPDataController"
+            }
+          },
+          "to_BPFinServicesReporting": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BPFinServicesReporting"
+            }
+          },
+          "to_BPFiscalYearInformation": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BPFiscalYearInformation"
+            }
+          },
+          "to_BPRelationship": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BPRelationship"
+            }
+          },
+          "to_BuPaIdentification": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BuPaIdentification"
+            }
+          },
+          "to_BuPaIndustry": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BuPaIndustry"
+            }
+          },
+          "to_BusinessPartner": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartner"
+            }
+          },
+          "to_BusinessPartnerAddress": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartnerAddress"
+            }
+          },
+          "to_BusinessPartnerBank": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartnerBank"
+            }
+          },
+          "to_BusinessPartnerContact": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartnerContact"
+            }
+          },
+          "to_BusinessPartnerRating": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartnerRating"
+            }
+          },
+          "to_BusinessPartnerRole": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartnerRole"
+            }
+          },
+          "to_BusinessPartnerTax": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusinessPartnerTax"
+            }
+          },
+          "to_BusPartAddrDepdntTaxNmbr": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_BusPartAddrDepdntTaxNmbr"
+            }
+          },
+          "to_Customer": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_Customer"
+            }
+          },
+          "to_PaymentCard": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_PaymentCard"
+            }
+          },
+          "to_Supplier": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('1000141')/to_Supplier"
+            }
+          }
+        },
+        {
+          "__metadata": {
+            "id": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')",
+            "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')",
+            "type": "API_BUSINESS_PARTNER.A_BusinessPartnerType"
+          },
+          "BusinessPartner": "9980000150",
+          "Customer": "",
+          "Supplier": "",
+          "AcademicTitle": "",
+          "AuthorizationGroup": "",
+          "BusinessPartnerCategory": "1",
+          "BusinessPartnerFullName": "John Wayne",
+          "BusinessPartnerGrouping": "BPEE",
+          "BusinessPartnerName": "John Wayne",
+          "BusinessPartnerUUID": "0ac8d7df-a3a7-1eeb-88ce-ec3dac290666",
+          "CorrespondenceLanguage": "EN",
+          "CreatedByUser": "BPINST",
+          "CreationDate": "/Date(1604880000000)/",
+          "CreationTime": "PT10H36M10S",
+          "FirstName": "John",
+          "FormOfAddress": "0002",
+          "Industry": "",
+          "InternationalLocationNumber1": "0",
+          "InternationalLocationNumber2": "0",
+          "IsFemale": false,
+          "IsMale": true,
+          "IsNaturalPerson": "X",
+          "IsSexUnknown": false,
+          "GenderCodeName": "2",
+          "Language": "EN",
+          "LastChangeDate": "/Date(1721520000000)/",
+          "LastChangeTime": "PT21H22M36S",
+          "LastChangedByUser": "STUDENT056",
+          "LastName": "Wayne",
+          "LegalForm": "",
+          "OrganizationBPName1": "",
+          "OrganizationBPName2": "",
+          "OrganizationBPName3": "",
+          "OrganizationBPName4": "",
+          "OrganizationFoundationDate": null,
+          "OrganizationLiquidationDate": null,
+          "SearchTerm1": "WAYNE",
+          "SearchTerm2": "JOHN",
+          "AdditionalLastName": "",
+          "BirthDate": "/Date(504921600000)/",
+          "BusinessPartnerBirthDateStatus": "K",
+          "BusinessPartnerBirthplaceName": "",
+          "BusinessPartnerDeathDate": null,
+          "BusinessPartnerIsBlocked": false,
+          "BusinessPartnerType": "",
+          "ETag": "STUDENT05620240721212236",
+          "GroupBusinessPartnerName1": "",
+          "GroupBusinessPartnerName2": "",
+          "IndependentAddressID": "",
+          "InternationalLocationNumber3": "0",
+          "MiddleName": "",
+          "NameCountry": "",
+          "NameFormat": "",
+          "PersonFullName": "John Wayne",
+          "PersonNumber": "25572",
+          "IsMarkedForArchiving": false,
+          "BusinessPartnerIDByExtSystem": "",
+          "BusinessPartnerPrintFormat": "",
+          "BusinessPartnerOccupation": "",
+          "BusPartMaritalStatus": "2",
+          "BusPartNationality": "US",
+          "BusinessPartnerBirthName": "",
+          "BusinessPartnerSupplementName": "",
+          "NaturalPersonEmployerName": "",
+          "LastNamePrefix": "",
+          "LastNameSecondPrefix": "",
+          "Initials": "JW",
+          "BPDataControllerIsNotRequired": false,
+          "TradingPartner": "",
+          "to_BPCreditWorthiness": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BPCreditWorthiness"
+            }
+          },
+          "to_BPDataController": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BPDataController"
+            }
+          },
+          "to_BPFinServicesReporting": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BPFinServicesReporting"
+            }
+          },
+          "to_BPFiscalYearInformation": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BPFiscalYearInformation"
+            }
+          },
+          "to_BPRelationship": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BPRelationship"
+            }
+          },
+          "to_BuPaIdentification": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BuPaIdentification"
+            }
+          },
+          "to_BuPaIndustry": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BuPaIndustry"
+            }
+          },
+          "to_BusinessPartner": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartner"
+            }
+          },
+          "to_BusinessPartnerAddress": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartnerAddress"
+            }
+          },
+          "to_BusinessPartnerBank": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartnerBank"
+            }
+          },
+          "to_BusinessPartnerContact": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartnerContact"
+            }
+          },
+          "to_BusinessPartnerRating": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartnerRating"
+            }
+          },
+          "to_BusinessPartnerRole": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartnerRole"
+            }
+          },
+          "to_BusinessPartnerTax": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusinessPartnerTax"
+            }
+          },
+          "to_BusPartAddrDepdntTaxNmbr": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_BusPartAddrDepdntTaxNmbr"
+            }
+          },
+          "to_Customer": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_Customer"
+            }
+          },
+          "to_PaymentCard": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_PaymentCard"
+            }
+          },
+          "to_Supplier": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000150')/to_Supplier"
+            }
+          }
+        },
+        {
+          "__metadata": {
+            "id": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')",
+            "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')",
+            "type": "API_BUSINESS_PARTNER.A_BusinessPartnerType"
+          },
+          "BusinessPartner": "9980000162",
+          "Customer": "",
+          "Supplier": "",
+          "AcademicTitle": "",
+          "AuthorizationGroup": "",
+          "BusinessPartnerCategory": "1",
+          "BusinessPartnerFullName": "Mark Johnson",
+          "BusinessPartnerGrouping": "BPEE",
+          "BusinessPartnerName": "Mark Johnson",
+          "BusinessPartnerUUID": "0ac8d7df-a3a7-1eeb-8a91-d2fa4c3c4ba3",
+          "CorrespondenceLanguage": "EN",
+          "CreatedByUser": "BPINST",
+          "CreationDate": "/Date(1605571200000)/",
+          "CreationTime": "PT04H37M26S",
+          "FirstName": "Mark",
+          "FormOfAddress": "0002",
+          "Industry": "",
+          "InternationalLocationNumber1": "0",
+          "InternationalLocationNumber2": "0",
+          "IsFemale": false,
+          "IsMale": true,
+          "IsNaturalPerson": "X",
+          "IsSexUnknown": false,
+          "GenderCodeName": "2",
+          "Language": "EN",
+          "LastChangeDate": "/Date(1721520000000)/",
+          "LastChangeTime": "PT21H22M38S",
+          "LastChangedByUser": "STUDENT056",
+          "LastName": "Johnson",
+          "LegalForm": "",
+          "OrganizationBPName1": "",
+          "OrganizationBPName2": "",
+          "OrganizationBPName3": "",
+          "OrganizationBPName4": "",
+          "OrganizationFoundationDate": null,
+          "OrganizationLiquidationDate": null,
+          "SearchTerm1": "JOHNSON",
+          "SearchTerm2": "MARK",
+          "AdditionalLastName": "",
+          "BirthDate": "/Date(852681600000)/",
+          "BusinessPartnerBirthDateStatus": "K",
+          "BusinessPartnerBirthplaceName": "",
+          "BusinessPartnerDeathDate": null,
+          "BusinessPartnerIsBlocked": false,
+          "BusinessPartnerType": "",
+          "ETag": "STUDENT05620240721212238",
+          "GroupBusinessPartnerName1": "",
+          "GroupBusinessPartnerName2": "",
+          "IndependentAddressID": "25721",
+          "InternationalLocationNumber3": "0",
+          "MiddleName": "",
+          "NameCountry": "",
+          "NameFormat": "",
+          "PersonFullName": "Mark Johnson",
+          "PersonNumber": "25656",
+          "IsMarkedForArchiving": false,
+          "BusinessPartnerIDByExtSystem": "",
+          "BusinessPartnerPrintFormat": "",
+          "BusinessPartnerOccupation": "",
+          "BusPartMaritalStatus": "",
+          "BusPartNationality": "DE",
+          "BusinessPartnerBirthName": "",
+          "BusinessPartnerSupplementName": "",
+          "NaturalPersonEmployerName": "",
+          "LastNamePrefix": "",
+          "LastNameSecondPrefix": "",
+          "Initials": "",
+          "BPDataControllerIsNotRequired": false,
+          "TradingPartner": "",
+          "to_BPCreditWorthiness": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BPCreditWorthiness"
+            }
+          },
+          "to_BPDataController": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BPDataController"
+            }
+          },
+          "to_BPFinServicesReporting": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BPFinServicesReporting"
+            }
+          },
+          "to_BPFiscalYearInformation": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BPFiscalYearInformation"
+            }
+          },
+          "to_BPRelationship": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BPRelationship"
+            }
+          },
+          "to_BuPaIdentification": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BuPaIdentification"
+            }
+          },
+          "to_BuPaIndustry": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BuPaIndustry"
+            }
+          },
+          "to_BusinessPartner": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartner"
+            }
+          },
+          "to_BusinessPartnerAddress": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartnerAddress"
+            }
+          },
+          "to_BusinessPartnerBank": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartnerBank"
+            }
+          },
+          "to_BusinessPartnerContact": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartnerContact"
+            }
+          },
+          "to_BusinessPartnerRating": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartnerRating"
+            }
+          },
+          "to_BusinessPartnerRole": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartnerRole"
+            }
+          },
+          "to_BusinessPartnerTax": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusinessPartnerTax"
+            }
+          },
+          "to_BusPartAddrDepdntTaxNmbr": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_BusPartAddrDepdntTaxNmbr"
+            }
+          },
+          "to_Customer": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_Customer"
+            }
+          },
+          "to_PaymentCard": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_PaymentCard"
+            }
+          },
+          "to_Supplier": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('9980000162')/to_Supplier"
+            }
+          }
+        },
+        {
+          "__metadata": {
+            "id": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')",
+            "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')",
+            "type": "API_BUSINESS_PARTNER.A_BusinessPartnerType"
+          },
+          "BusinessPartner": "BP_US_01",
+          "Customer": "BP_US_01",
+          "Supplier": "",
+          "AcademicTitle": "",
+          "AuthorizationGroup": "",
+          "BusinessPartnerCategory": "1",
+          "BusinessPartnerFullName": "John Miller",
+          "BusinessPartnerGrouping": "BPAB",
+          "BusinessPartnerName": "John Miller",
+          "BusinessPartnerUUID": "0ecf98cb-3dd7-1edc-90e7-364b99a441ba",
+          "CorrespondenceLanguage": "EN",
+          "CreatedByUser": "S4H_FIN",
+          "CreationDate": "/Date(1636588800000)/",
+          "CreationTime": "PT14H05M33S",
+          "FirstName": "John",
+          "FormOfAddress": "0002",
+          "Industry": "",
+          "InternationalLocationNumber1": "0",
+          "InternationalLocationNumber2": "0",
+          "IsFemale": false,
+          "IsMale": true,
+          "IsNaturalPerson": "X",
+          "IsSexUnknown": false,
+          "GenderCodeName": "2",
+          "Language": "",
+          "LastChangeDate": "/Date(1637280000000)/",
+          "LastChangeTime": "PT05H02M32S",
+          "LastChangedByUser": "S4H_FIN",
+          "LastName": "Miller",
+          "LegalForm": "",
+          "OrganizationBPName1": "",
+          "OrganizationBPName2": "",
+          "OrganizationBPName3": "",
+          "OrganizationBPName4": "",
+          "OrganizationFoundationDate": null,
+          "OrganizationLiquidationDate": null,
+          "SearchTerm1": "",
+          "SearchTerm2": "",
+          "AdditionalLastName": "",
+          "BirthDate": null,
+          "BusinessPartnerBirthDateStatus": "",
+          "BusinessPartnerBirthplaceName": "",
+          "BusinessPartnerDeathDate": null,
+          "BusinessPartnerIsBlocked": false,
+          "BusinessPartnerType": "",
+          "ETag": "S4H_FIN20211119050232",
+          "GroupBusinessPartnerName1": "",
+          "GroupBusinessPartnerName2": "",
+          "IndependentAddressID": "",
+          "InternationalLocationNumber3": "0",
+          "MiddleName": "",
+          "NameCountry": "",
+          "NameFormat": "",
+          "PersonFullName": "",
+          "PersonNumber": "26011",
+          "IsMarkedForArchiving": false,
+          "BusinessPartnerIDByExtSystem": "",
+          "BusinessPartnerPrintFormat": "",
+          "BusinessPartnerOccupation": "",
+          "BusPartMaritalStatus": "",
+          "BusPartNationality": "",
+          "BusinessPartnerBirthName": "",
+          "BusinessPartnerSupplementName": "",
+          "NaturalPersonEmployerName": "",
+          "LastNamePrefix": "",
+          "LastNameSecondPrefix": "",
+          "Initials": "",
+          "BPDataControllerIsNotRequired": false,
+          "TradingPartner": "",
+          "to_BPCreditWorthiness": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BPCreditWorthiness"
+            }
+          },
+          "to_BPDataController": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BPDataController"
+            }
+          },
+          "to_BPFinServicesReporting": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BPFinServicesReporting"
+            }
+          },
+          "to_BPFiscalYearInformation": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BPFiscalYearInformation"
+            }
+          },
+          "to_BPRelationship": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BPRelationship"
+            }
+          },
+          "to_BuPaIdentification": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BuPaIdentification"
+            }
+          },
+          "to_BuPaIndustry": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BuPaIndustry"
+            }
+          },
+          "to_BusinessPartner": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartner"
+            }
+          },
+          "to_BusinessPartnerAddress": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartnerAddress"
+            }
+          },
+          "to_BusinessPartnerBank": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartnerBank"
+            }
+          },
+          "to_BusinessPartnerContact": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartnerContact"
+            }
+          },
+          "to_BusinessPartnerRating": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartnerRating"
+            }
+          },
+          "to_BusinessPartnerRole": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartnerRole"
+            }
+          },
+          "to_BusinessPartnerTax": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusinessPartnerTax"
+            }
+          },
+          "to_BusPartAddrDepdntTaxNmbr": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_BusPartAddrDepdntTaxNmbr"
+            }
+          },
+          "to_Customer": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_Customer"
+            }
+          },
+          "to_PaymentCard": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_PaymentCard"
+            }
+          },
+          "to_Supplier": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_01')/to_Supplier"
+            }
+          }
+        },
+        {
+          "__metadata": {
+            "id": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')",
+            "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')",
+            "type": "API_BUSINESS_PARTNER.A_BusinessPartnerType"
+          },
+          "BusinessPartner": "BP_US_02",
+          "Customer": "",
+          "Supplier": "",
+          "AcademicTitle": "",
+          "AuthorizationGroup": "",
+          "BusinessPartnerCategory": "1",
+          "BusinessPartnerFullName": "John Miller",
+          "BusinessPartnerGrouping": "BPAB",
+          "BusinessPartnerName": "John Miller",
+          "BusinessPartnerUUID": "b799d457-4a1e-1edd-96ed-c2331b55c46d",
+          "CorrespondenceLanguage": "",
+          "CreatedByUser": "S4H_FIN",
+          "CreationDate": "/Date(1667433600000)/",
+          "CreationTime": "PT04H56M17S",
+          "FirstName": "John",
+          "FormOfAddress": "",
+          "Industry": "",
+          "InternationalLocationNumber1": "0",
+          "InternationalLocationNumber2": "0",
+          "IsFemale": false,
+          "IsMale": false,
+          "IsNaturalPerson": "X",
+          "IsSexUnknown": true,
+          "GenderCodeName": "",
+          "Language": "",
+          "LastChangeDate": null,
+          "LastChangeTime": "PT00H00M00S",
+          "LastChangedByUser": "",
+          "LastName": "Miller",
+          "LegalForm": "",
+          "OrganizationBPName1": "",
+          "OrganizationBPName2": "",
+          "OrganizationBPName3": "",
+          "OrganizationBPName4": "",
+          "OrganizationFoundationDate": null,
+          "OrganizationLiquidationDate": null,
+          "SearchTerm1": "",
+          "SearchTerm2": "",
+          "AdditionalLastName": "",
+          "BirthDate": null,
+          "BusinessPartnerBirthDateStatus": "",
+          "BusinessPartnerBirthplaceName": "",
+          "BusinessPartnerDeathDate": null,
+          "BusinessPartnerIsBlocked": false,
+          "BusinessPartnerType": "",
+          "ETag": "S4H_FIN20221103045617",
+          "GroupBusinessPartnerName1": "",
+          "GroupBusinessPartnerName2": "",
+          "IndependentAddressID": "",
+          "InternationalLocationNumber3": "0",
+          "MiddleName": "",
+          "NameCountry": "",
+          "NameFormat": "",
+          "PersonFullName": "",
+          "PersonNumber": "26297",
+          "IsMarkedForArchiving": false,
+          "BusinessPartnerIDByExtSystem": "",
+          "BusinessPartnerPrintFormat": "",
+          "BusinessPartnerOccupation": "",
+          "BusPartMaritalStatus": "",
+          "BusPartNationality": "",
+          "BusinessPartnerBirthName": "",
+          "BusinessPartnerSupplementName": "",
+          "NaturalPersonEmployerName": "",
+          "LastNamePrefix": "",
+          "LastNameSecondPrefix": "",
+          "Initials": "",
+          "BPDataControllerIsNotRequired": false,
+          "TradingPartner": "",
+          "to_BPCreditWorthiness": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BPCreditWorthiness"
+            }
+          },
+          "to_BPDataController": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BPDataController"
+            }
+          },
+          "to_BPFinServicesReporting": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BPFinServicesReporting"
+            }
+          },
+          "to_BPFiscalYearInformation": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BPFiscalYearInformation"
+            }
+          },
+          "to_BPRelationship": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BPRelationship"
+            }
+          },
+          "to_BuPaIdentification": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BuPaIdentification"
+            }
+          },
+          "to_BuPaIndustry": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BuPaIndustry"
+            }
+          },
+          "to_BusinessPartner": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartner"
+            }
+          },
+          "to_BusinessPartnerAddress": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartnerAddress"
+            }
+          },
+          "to_BusinessPartnerBank": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartnerBank"
+            }
+          },
+          "to_BusinessPartnerContact": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartnerContact"
+            }
+          },
+          "to_BusinessPartnerRating": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartnerRating"
+            }
+          },
+          "to_BusinessPartnerRole": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartnerRole"
+            }
+          },
+          "to_BusinessPartnerTax": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusinessPartnerTax"
+            }
+          },
+          "to_BusPartAddrDepdntTaxNmbr": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_BusPartAddrDepdntTaxNmbr"
+            }
+          },
+          "to_Customer": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_Customer"
+            }
+          },
+          "to_PaymentCard": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_PaymentCard"
+            }
+          },
+          "to_Supplier": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_02')/to_Supplier"
+            }
+          }
+        },
+        {
+          "__metadata": {
+            "id": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')",
+            "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')",
+            "type": "API_BUSINESS_PARTNER.A_BusinessPartnerType"
+          },
+          "BusinessPartner": "BP_US_07",
+          "Customer": "",
+          "Supplier": "",
+          "AcademicTitle": "",
+          "AuthorizationGroup": "",
+          "BusinessPartnerCategory": "1",
+          "BusinessPartnerFullName": "John Miller",
+          "BusinessPartnerGrouping": "BPAB",
+          "BusinessPartnerName": "John Miller",
+          "BusinessPartnerUUID": "892da592-8980-1eed-9998-247003695921",
+          "CorrespondenceLanguage": "",
+          "CreatedByUser": "S4H_FIN",
+          "CreationDate": "/Date(1668470400000)/",
+          "CreationTime": "PT00H47M54S",
+          "FirstName": "John",
+          "FormOfAddress": "0002",
+          "Industry": "",
+          "InternationalLocationNumber1": "0",
+          "InternationalLocationNumber2": "0",
+          "IsFemale": false,
+          "IsMale": true,
+          "IsNaturalPerson": "X",
+          "IsSexUnknown": false,
+          "GenderCodeName": "2",
+          "Language": "",
+          "LastChangeDate": null,
+          "LastChangeTime": "PT00H00M00S",
+          "LastChangedByUser": "",
+          "LastName": "Miller",
+          "LegalForm": "",
+          "OrganizationBPName1": "",
+          "OrganizationBPName2": "",
+          "OrganizationBPName3": "",
+          "OrganizationBPName4": "",
+          "OrganizationFoundationDate": null,
+          "OrganizationLiquidationDate": null,
+          "SearchTerm1": "",
+          "SearchTerm2": "",
+          "AdditionalLastName": "",
+          "BirthDate": null,
+          "BusinessPartnerBirthDateStatus": "",
+          "BusinessPartnerBirthplaceName": "",
+          "BusinessPartnerDeathDate": null,
+          "BusinessPartnerIsBlocked": false,
+          "BusinessPartnerType": "",
+          "ETag": "S4H_FIN20221115004754",
+          "GroupBusinessPartnerName1": "",
+          "GroupBusinessPartnerName2": "",
+          "IndependentAddressID": "",
+          "InternationalLocationNumber3": "0",
+          "MiddleName": "",
+          "NameCountry": "",
+          "NameFormat": "",
+          "PersonFullName": "",
+          "PersonNumber": "26337",
+          "IsMarkedForArchiving": false,
+          "BusinessPartnerIDByExtSystem": "",
+          "BusinessPartnerPrintFormat": "",
+          "BusinessPartnerOccupation": "",
+          "BusPartMaritalStatus": "",
+          "BusPartNationality": "",
+          "BusinessPartnerBirthName": "",
+          "BusinessPartnerSupplementName": "",
+          "NaturalPersonEmployerName": "",
+          "LastNamePrefix": "",
+          "LastNameSecondPrefix": "",
+          "Initials": "",
+          "BPDataControllerIsNotRequired": false,
+          "TradingPartner": "",
+          "to_BPCreditWorthiness": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BPCreditWorthiness"
+            }
+          },
+          "to_BPDataController": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BPDataController"
+            }
+          },
+          "to_BPFinServicesReporting": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BPFinServicesReporting"
+            }
+          },
+          "to_BPFiscalYearInformation": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BPFiscalYearInformation"
+            }
+          },
+          "to_BPRelationship": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BPRelationship"
+            }
+          },
+          "to_BuPaIdentification": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BuPaIdentification"
+            }
+          },
+          "to_BuPaIndustry": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BuPaIndustry"
+            }
+          },
+          "to_BusinessPartner": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartner"
+            }
+          },
+          "to_BusinessPartnerAddress": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartnerAddress"
+            }
+          },
+          "to_BusinessPartnerBank": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartnerBank"
+            }
+          },
+          "to_BusinessPartnerContact": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartnerContact"
+            }
+          },
+          "to_BusinessPartnerRating": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartnerRating"
+            }
+          },
+          "to_BusinessPartnerRole": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartnerRole"
+            }
+          },
+          "to_BusinessPartnerTax": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusinessPartnerTax"
+            }
+          },
+          "to_BusPartAddrDepdntTaxNmbr": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_BusPartAddrDepdntTaxNmbr"
+            }
+          },
+          "to_Customer": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_Customer"
+            }
+          },
+          "to_PaymentCard": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_PaymentCard"
+            }
+          },
+          "to_Supplier": {
+            "__deferred": {
+              "uri": "https://s23:44300/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('BP_US_07')/to_Supplier"
+            }
+          }
+        }
+      ],
+      "statusCode": 200,
+      "countOrInlineCount": 6
+    },
+    "channelId": "s6rdetov4i",
+    "parentProcessInstanceKey": "2251799820985256"
+  }
+}
