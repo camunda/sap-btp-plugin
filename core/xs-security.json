@@ -1,0 +1,7 @@
+{
+  "xsappname": "camunda-btp-integration",
+  "tenant-mode": "dedicated",
+  "scopes": [],
+  "attributes": [],
+  "role-templates": []
+}
