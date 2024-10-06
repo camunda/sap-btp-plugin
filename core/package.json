@@ -20,7 +20,8 @@
     "@camunda8/websocket": "file:../websocket",
     "@sap/cds": "^8",
     "@sap/xssec": "^4.2.4",
-    "express": "^4"
+    "express": "^4",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@cap-js/cds-typer": ">=0.1"
