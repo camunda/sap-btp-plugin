@@ -62,7 +62,7 @@ module.exports = Object.assign(
      * @param {object} options additional options, that extend or may override the options in zeebeeclient`s createWorker function
      */
     _createWorker(taskType, taskHandler, description = "", options = { maxJobsToActivate: 1, timeout: Duration.hours.of(2) /* give the task handler 2 hrs to complete the job... */ }) {
-      LOGGER.info(`creating worker "${taskType}" ${description ? "for" + description : description} ...`)
+      LOGGER.info(`creating worker "${taskType}" ${description ? "for " + description : description} ...`)
       const worker = /** @type {import("@camunda8/sdk").Zeebe.ZeebeGrpcClient}  */ (this.getClient()).createWorker({
         taskType,
         taskHandler,
