@@ -46,7 +46,7 @@ module.exports = async (job, worker) => {
     /**
      * @type {import("@camunda8/sdk").Tasklist.TasklistApiClient}
      */
-    const tl = require("@camunda8/btp-integration-core/lib/camunda").getClient("tl")
+    const tl = require("@camunda8/btp-integration-core").getClient("tl")
     const promise = async () => {
       return tl.getForm(
         job.customHeaders["io.camunda.zeebe:formKey"],

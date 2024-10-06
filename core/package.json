@@ -7,7 +7,7 @@
   "imports": {
     "#cds-models/*": "./@cds-models/*/index.js"
   },
-  "main": "srv/server.js",
+  "main": "lib/camunda.js",
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
     "_deploy:sqlite": "cds deploy",
