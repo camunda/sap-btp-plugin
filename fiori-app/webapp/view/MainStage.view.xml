@@ -19,7 +19,7 @@
         justifyContent="Start"
         width="100%"
         class="sapUiResponsiveContentPadding">
-        <utf:BPMNform id="BPMNform"
+        <utf:BPMNForm id="BPMNform"
           buttonText="{i18n>BPMNForm.btn_text_submit}"
           valid="{AppView>/currentForm/isValid}"
           formStep="{AppView>/formStep}"
