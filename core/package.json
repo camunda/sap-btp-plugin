@@ -11,7 +11,7 @@
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
     "_deploy:sqlite": "cds deploy",
-    "start": "cds deploy && cds-serve",
+    "start": "cds-deploy && cds-serve",
     "start:local": "cds-serve"
   },
   "dependencies": {
