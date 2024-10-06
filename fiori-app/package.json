@@ -8,10 +8,10 @@
 		"clean": "rimraf dist coverage",
 		"build": "ui5 build --clean-dest",
 		"build:opt": "ui5 build self-contained --clean-dest --all",
-		"start": "ui5 serve --port 8080 -o index.html",
-		"start-cdn": "ui5 serve --port 8080 -o index-cdn.html",
-		"start:dist": "npm start -- --config ui5-dist.yaml",
-		"start:dist-cdn": "npm run start-cdn -- --config ui5-dist.yaml",
+		"//start": "production start, serves /dist and thus need a prior build",
+		"start": "node index.js",
+		"//start:local": "intended for local dev with ui5 tooling",
+		"start:local": "ui5 serve --port 5001 -o index-local.html",
 		"ts-typecheck": "tsc --noEmit",
 		"lint": "eslint webapp",
 		"karma": "karma start",
@@ -46,6 +46,7 @@
 		"wdio-ui5-service": "^2.0.10"
 	},
 	"dependencies": {
-		"@camunda8/user-task-fiori": "file:../user-task-fiori"
+		"@camunda8/user-task-fiori": "file:../user-task-fiori",
+		"@sap/approuter": "^16.8.2"
 	}
 }

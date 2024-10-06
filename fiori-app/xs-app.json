@@ -1,0 +1,15 @@
+{
+  "authenticationMethod": "none",
+  "websockets": {
+    "enabled": true
+  },
+  "routes": [
+    {
+      "source": "^/(.*)$",
+      "target": "$1",
+      "localDir": "dist",
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "none"
+    }
+  ]
+}
