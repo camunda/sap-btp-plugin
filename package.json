@@ -15,7 +15,14 @@
     "worker/user-task"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "//_start:approuter": "intended for local dev; the INCOMING_CONNECTION_TIMEOUT env var is set at deploy-time in mta.yaml",
+    "_start:approuter": "cross-env INCOMING_CONNECTION_TIMEOUT=900000 npm start -w router",
+    "//_start:app": "intended for local dev",
+    "_start:app": "cross-env PORT=5001 npm start -w fiori-app",
+    "//_start:cap": "intended for local dev",
+    "_start:cap": "npm run -w core _deploy:sqlite && cross-env DEBUG=-camunda:worker,* npm start -w core",
+    "start": "npm-run-all --parallel _start:*"
   },
   "dependencies": {
     "@sap/cds": "^8"
@@ -24,8 +31,10 @@
     "@cap-js/cds-types": "^0.6",
     "@cap-js/sqlite": "^1",
     "@eslint/js": "^9.11.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.11.1",
     "globals": "^15.9.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.3.3"
   }
 }
