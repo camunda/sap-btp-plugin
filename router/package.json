@@ -1,0 +1,15 @@
+{
+  "name": "router",
+  "version": "1.0.0-alpha.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "PORT=5005 node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@sap/approuter": "^16.8.2"
+  }
+}

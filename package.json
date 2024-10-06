@@ -9,6 +9,7 @@
   "workspaces": [
     "core",
     "fiori-app",
+    "router",
     "user-task-fiori",
     "websocket",
     "worker/user-task"
