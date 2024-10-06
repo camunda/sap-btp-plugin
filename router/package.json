@@ -1,14 +1,14 @@
 {
   "name": "router",
   "version": "1.0.0-alpha.1",
+  "description": "central entry point routing traffic for the Camunda BTP Integration",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
   "main": "index.js",
   "scripts": {
     "start": "PORT=5005 node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@sap/approuter": "^16.8.2"
   }

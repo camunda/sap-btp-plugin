@@ -1,18 +1,18 @@
 {
   "name": "@camunda8/user-task-worker",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
+  "description": "Camunda job worker receiving user tasks",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "userTaskWorker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "main": "userTaskWorker.js",
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "peerDependencies": {
-    "@sap/cds": "^8"
-  },
   "dependencies": {
     "@camunda8/btp-integration-core": "*"
+  },
+  "peerDependencies": {
+    "@sap/cds": "^8"
   }
 }

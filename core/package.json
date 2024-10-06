@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/btp-integration-core",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "Camunda BTP Integration: core module",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
@@ -9,9 +9,9 @@
   },
   "main": "srv/server.js",
   "scripts": {
-    "start": "cds-serve",
     "//_deploy:sqlite": "intended for local dev",
-    "_deploy:sqlite": "cds deploy"
+    "_deploy:sqlite": "cds deploy",
+    "start": "cds-serve"
   },
   "dependencies": {
     "@camunda8/sdk": "^8.6.12",
