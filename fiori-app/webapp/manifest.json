@@ -16,7 +16,7 @@
     },
     "dataSources": {
       "backend": {
-        "uri": "/odata/v4/",
+        "uri": "/backend/odata/v4/bpmn",
         "type": "OData",
         "settings": {
           "odataVersion": "4.0"
