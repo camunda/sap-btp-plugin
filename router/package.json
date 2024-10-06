@@ -7,7 +7,8 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "start": "PORT=5005 node index.js"
+    "start": "node index.js",
+    "start:local": "PORT=5005 node index.js"
   },
   "dependencies": {
     "@sap/approuter": "^16.8.2"

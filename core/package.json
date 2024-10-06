@@ -11,7 +11,8 @@
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
     "_deploy:sqlite": "cds deploy",
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "start:local": "cds-serve"
   },
   "dependencies": {
     "@camunda8/sdk": "^8.6.12",

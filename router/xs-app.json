@@ -6,7 +6,7 @@
   },
   "cors": [
     {
-      "uriPattern": "^\/inbound$",
+      "uriPattern": "^\/backend\/inbound$",
       "allowedMethods": ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
       "allowedOrigin": ["*"],
       "allowedHeaders": ["X-Requested-With", "Authorization", "Content-Type"],
