@@ -38,9 +38,9 @@ module.exports = async (job, worker) => {
   }
   DEBUG && LOGGER.debug(`dedicated client channel: ${channelId}`)
 
- /**
-     * @type {import("@camunda8/sdk").Tasklist.TasklistDto.Form}
-     */
+  /**
+   * @type {import("@camunda8/sdk").Tasklist.TasklistDto.Form}
+   */
   let form = ""
   try {
     /**
@@ -48,10 +48,7 @@ module.exports = async (job, worker) => {
      */
     const tl = require("@camunda8/btp-integration-core").getClient("tl")
     const promise = async () => {
-      return tl.getForm(
-        job.customHeaders["io.camunda.zeebe:formKey"],
-        job.processDefinitionKey
-      )
+      return tl.getForm(job.customHeaders["io.camunda.zeebe:formKey"], job.processDefinitionKey)
     }
     form = await retry(promise, 30, 300) //> max 9 sec
   } catch (err) {
@@ -79,7 +76,7 @@ module.exports = async (job, worker) => {
   LOGGER.info(`retrieved form data: ${form.schema}`)
 
   let type
-  switch(job.customHeaders["final-user-task"]) {
+  switch (job.customHeaders["final-user-task"]) {
     case "success":
       type = "final-task-success"
       break
