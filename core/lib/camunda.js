@@ -50,7 +50,7 @@ module.exports = Object.assign(
     },
 
     registerWorker() {
-      this._createWorker("io.camunda.zeebe:userTask", require("@camunda8/user-task-worker"), "user task worker")
+      this._createWorker("io.camunda.zeebe:userTask", require("./userTaskWorker"), "user task worker")
     },
 
     /**

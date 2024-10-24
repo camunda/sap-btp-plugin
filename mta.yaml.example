@@ -5,20 +5,17 @@ description: "BTP Integration, part of Camunda's SAP Integration"
 parameters:
   enable-parallel-deployments: true
 
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - echo "nothing to do, things are vendored :)"
-
 modules:
   # app-router acting as primary traffic distributor
-  - name: router
+  - name: btp-integration-router
     type: approuter.nodejs
     path: router
     parameters:
       disk-quota: 512M
       memory: 256M
+      enable-ssh: true
+      routes: 
+        - route: camunda-btp-integration.${default-domain}
     properties:
       # 15 minutes
       INCOMING_CONNECTION_TIMEOUT: 900000
@@ -26,7 +23,6 @@ modules:
       - name: uaa
       - name: dest-camunda-btp-integration
       - name: conn-camunda-btp-integration
-      # - name: logs
       - name: srv-binding
         group: destinations
         properties:
@@ -45,13 +41,31 @@ modules:
         - npm install
 
   # CAP services and business logic
-  - name: srv
+  - name: btp-integration-srv
     type: nodejs
     path: core
     parameters:
       buildpack: nodejs_buildpack
       disk-quota: 1G
       memory: 512M
+      enable-ssh: true
+    properties:
+      ZEEBE_ADDRESS: xxx
+      ZEEBE_CLIENT_ID: xxx
+      ZEEBE_CLIENT_SECRET: xxx
+      ZEEBE_AUTHORIZATION_SERVER_URL: xxx
+      ZEEBE_REST_ADDRESS: xxx
+      ZEEBE_GRPC_ADDRESS: xxx
+      ZEEBE_TOKEN_AUDIENCE: xxx
+      CAMUNDA_CLUSTER_ID: xxx
+      CAMUNDA_CLIENT_ID: xxx
+      CAMUNDA_CLIENT_SECRET: xxx
+      CAMUNDA_CLUSTER_REGION: xxx
+      CAMUNDA_CREDENTIALS_SCOPES: xxx
+      CAMUNDA_TASKLIST_BASE_URL: xxx
+      CAMUNDA_OPTIMIZE_BASE_URL: xxx
+      CAMUNDA_OPERATE_BASE_URL: xxx
+      CAMUNDA_OAUTH_URL: xxx
     build-parameters:
       builder: custom
       commands:
@@ -60,22 +74,20 @@ modules:
       - name: uaa
       - name: dest-camunda-btp-integration
       - name: conn-camunda-btp-integration
-      # - name: logs
-      # - name: BDaaS-db
     provides:
-      - name: srv-binding # required by consumers of CAP services (e.g. approuter, ui)
+      - name: srv-binding 
         properties:
           srv-url: ${default-url}
 
   # UI5 freestyle UI
-  - name: ui
+  - name: btp-integration-ui
     type: html5
     path: fiori-app
     parameters:
       disk-quota: 1G
       memory: 256M
+      enable-ssh: true
     build-parameters:
-      # build-result: dist
       builder: custom
       commands:
          - echo "nothing to do, things are vendored :)"
@@ -83,7 +95,6 @@ modules:
       - name: uaa
       - name: dest-camunda-btp-integration
       - name: conn-camunda-btp-integration
-      # - name: logs
     provides:
       - name: ui-binding # required by consumers of CAP services (e.g. approuter, ui)
         properties:
@@ -91,18 +102,14 @@ modules:
 
 
 resources:
-  # services extracted from CAP configuration
-  # 'service-plan' can be configured via 'cds.requires.<name>.vcap.plan'
-  # ------------------------------------------------------------
   - name: uaa
-    # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
       service-plan: application
       path: ./core/xs-security.json
       config:
-        xsappname: camunda-btp-integration #  name + space dependency
+        xsappname: camunda-btp-integration 
         tenant-mode: dedicated
   - name: dest-camunda-btp-integration
     type: org.cloudfoundry.managed-service
@@ -114,15 +121,3 @@ resources:
     parameters:
       service-plan: lite
       service: connectivity
-  # - name: logs
-  #   type: org.cloudfoundry.managed-service
-  #   parameters:
-  #     service-plan: lite
-  #     service: application-logs
-
-## //> revisit: move to postgres
-  # - name: BDaaS-db
-  #   type: com.sap.xs.hdi-container
-  #   parameters:
-  #     service: hana
-  #     service-plan: hdi-shared
