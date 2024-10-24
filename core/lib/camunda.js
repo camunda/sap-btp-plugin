@@ -68,10 +68,10 @@ module.exports = Object.assign(
         taskHandler,
         ...options
       })
-      worker.on("ready", () => LOGGER.info(`Worker "${taskType}" connected!`))
-      worker.on("connectionError", () => LOGGER.info(`Worker "${taskType}" disconnected...`))
-      worker.on("close", () => LOGGER.info(`Worker "${taskType}" closed...`))
-      worker.on("unknown", () => LOGGER.info(`Worker "${taskType}": unknown!!!`))
+      worker.on("ready", () => LOGGER.info(`worker "${taskType}" connected!`))
+      worker.on("connectionError", () => LOGGER.info(`worker "${taskType}" disconnected...`))
+      worker.on("close", () => LOGGER.info(`worker "${taskType}" closed...`))
+      worker.on("unknown", () => LOGGER.info(`worker "${taskType}": unknown!!!`))
     },
 
     /**
