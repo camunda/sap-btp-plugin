@@ -11,6 +11,6 @@
     "start:local": "PORT=5005 node index.js"
   },
   "dependencies": {
-    "@sap/approuter": "^16.8.2"
+    "@sap/approuter": "^16.9.0"
   }
 }

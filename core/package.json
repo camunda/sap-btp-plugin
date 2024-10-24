@@ -15,15 +15,15 @@
     "start:local": "cds-serve"
   },
   "dependencies": {
-    "@camunda8/sdk": "^8.6.12",
-    "@camunda8/websocket": "file:../websocket",
+    "@camunda8/sdk": "^8.6.13",
+    "@camunda8/websocket": "*",
     "@sap/cds": "^8",
-    "@sap/xssec": "^4.2.4",
+    "@sap/xssec": "^4.2.6",
     "express": "^4",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@cap-js/cds-typer": ">=0.1"
+    "@cap-js/cds-typer": ">=0.27"
   },
   "cds": {
     "requires": {
