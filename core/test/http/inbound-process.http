@@ -1,0 +1,24 @@
+@host = localhost
+@port = 4004
+@protocol = http
+
+###
+GET {{protocol}}://{{host}}:{{port}}/odata/v4/inbound/Process
+
+###
+GET {{protocol}}://{{host}}:{{port}}/inbound/Process
+
+###
+POST {{protocol}}://{{host}}:{{port}}/inbound/Process
+Content-Type: application/json
+
+{
+  "bpmnProcessId": "minimal-process",
+  "variables": {
+        "1": "value",
+        "2": 10,
+        "3": 0.5,
+        "4": true,
+        "5": false
+    }
+}
