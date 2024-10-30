@@ -22,7 +22,7 @@
     "_start:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
     "//start": "intended for dev time only",
     "//start open": "http://localhost:5005/app/index-local.html?channelId=xxx",
-    "start": "npm-run-all --parallel _start:*"
+    "start": "cross-env NODE_ENV=localdev npm-run-all --parallel _start:*"
   },
   "dependencies": {
     "@sap/cds": "^8"
