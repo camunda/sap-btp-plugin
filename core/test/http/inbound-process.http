@@ -22,3 +22,19 @@ Content-Type: application/json
         "5": false
     }
 }
+
+###
+POST {{protocol}}://{{host}}:{{port}}/inbound/Process
+Content-Type: application/json
+
+{
+  "bpmnProcessId": "minimal-process-return",
+  "wait": true,
+  "variables": {
+        "1": "value",
+        "2": 10,
+        "3": 0.5,
+        "4": true,
+        "5": false
+    }
+}
