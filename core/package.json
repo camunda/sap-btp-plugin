@@ -10,7 +10,7 @@
   "main": "lib/camunda.js",
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
-    "_deploy:sqlite": "cds deploy",
+    "_deploy:sqlite": "cds deploy --to sqlite",
     "start": "cds-deploy && cds-serve",
     "start:local": "cds-serve",
     "test": "jest --forceExit --silent"
