@@ -37,7 +37,9 @@ describe("happy path - trigger process and wait for result", () => {
     const { data } = await POST("/inbound/Process", {
       bpmnProcessId: "myProcess",
       wait: true
-    })
+    },
+    { auth: { username: "alice", password: "" } }
+  )
     expect(data).to.contain({ bpmnProcessId: "myProcess" })
     expect(data).to.include.all.keys(
       "processDefinitionKey",
@@ -57,7 +59,9 @@ describe("happy path - trigger process and wait for result", () => {
       user: "myUser",
       variables: { myVar: "myValue" },
       wait: true
-    })
+    },
+    { auth: { username: "alice", password: "" } }
+  )
     expect(data).to.contain({ bpmnProcessId: "myProcess", user: "myUser" })
     expect(data).to.include.all.keys(
       "processDefinitionKey",

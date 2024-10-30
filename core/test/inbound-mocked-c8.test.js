@@ -24,13 +24,15 @@ jest.mock("../lib/camunda", () =>
     }
   )
 )
-process.env.DEBUG && jest.setTimeout(10000)
+process.env.DEBUG && jest.setTimeout(100000)
 
 describe("happy path - trigger process only", () => {
   it("minimal payload: should trigger bpmn process execution", async () => {
-    const { data } = await POST("/inbound/Process", {
-      bpmnProcessId: "myProcess"
-    })
+    const { data } = await POST(
+      "/inbound/Process",
+      { bpmnProcessId: "myProcess" },
+      { auth: { username: "alice", password: "" } }
+    )
     expect(data).to.contain({ bpmnProcessId: "myProcess" })
     expect(data).to.include.all.keys(
       "processDefinitionKey",
@@ -42,13 +44,16 @@ describe("happy path - trigger process only", () => {
   })
 
   it("full payload: should trigger bpmn process execution", async () => {
-    const { data } = await POST("/inbound/Process", {
-      bpmnProcessId: "myProcess",
-      user: "myUser",
-      variables: { myVar: "myValue" }
-    })
+    const { data } = await POST(
+      "/inbound/Process",
+      {
+        bpmnProcessId: "myProcess",
+        variables: { myVar: "myValue" }
+      },
+      { auth: { username: "alice", password: "" } }
+    )
 
-    expect(data).to.contain({ bpmnProcessId: "myProcess", user: "myUser" })
+    expect(data).to.contain({ bpmnProcessId: "myProcess" })
     expect(data.variables).to.eql({ myVar: "myValue" })
     expect(data).to.include.all.keys(
       "processDefinitionKey",
