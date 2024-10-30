@@ -1,0 +1,25 @@
+{
+  "welcomeFile": "/app/index.html",
+  "authenticationMethod": "none",
+  "websockets": {
+    "enabled": true
+  },
+  "cors": [
+    {
+      "uriPattern": "^\/backend\/inbound$",
+      "allowedMethods": ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
+      "allowedOrigin": ["*"],
+      "allowedHeaders": ["X-Requested-With", "Authorization", "Content-Type"],
+      "allowedCredentials": true
+    }
+  ],
+  "routes": [
+    {
+      "source": "/backend/(.*)$",
+      "target": "/$1",
+      "destination": "@camunda8/btp-integration-core",
+      "csrfProtection": false,
+      "cacheControl": "no-cache, no-store, must-revalidate"
+    }
+  ]
+}
