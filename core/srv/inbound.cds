@@ -12,7 +12,7 @@ service Inbound {
     @open
     @cds.persistence.skip
     entity Process {
-        bpmnProcessId : String;
+        key bpmnProcessId : String;
         user          : String default 'anonymous';
         wait          : Boolean default false;
     //> we expect a structure like this ...
@@ -29,3 +29,6 @@ service Inbound {
     // }
     }
 }
+
+annotate Inbound with @(requires : 'authenticated-user');
+
