@@ -1,6 +1,6 @@
 const cds = require("@sap/cds")
 const LOGGER = cds.log("inbound")
-const _zbc = require("../lib/camunda")
+const _zbc = require("./lib/camunda")
 
 const DEBUG = cds.log("inbound")._debug || process.env.DEBUG?.includes("inbound")
 
