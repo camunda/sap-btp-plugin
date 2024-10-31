@@ -13,7 +13,8 @@
     "_deploy:sqlite": "cds deploy --to sqlite",
     "start": "cds-deploy && cds-serve",
     "start:local": "cds-serve",
-    "test": "jest --forceExit --silent"
+    "test": "jest --forceExit --silent",
+    "build": "npx cds build --production --ws-pack"
   },
   "dependencies": {
     "@camunda8/sdk": "^8.6.13",
