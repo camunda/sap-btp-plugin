@@ -13,5 +13,5 @@ service BPMN {
 }
 
 // start-of-auth
-// annotate BPMN with @(requires : 'authenticated-user');
+annotate BPMN with @(requires : 'authenticated-user');
 // end-of-auth
