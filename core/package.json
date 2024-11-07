@@ -21,7 +21,7 @@
     "@camunda8/websocket": "*",
     "@camunda8/user-task-worker": "*",
     "@sap/cds": "^8",
-    "@sap/xssec": "^4.2.6",
+    "@sap/xssec": "^4",
     "express": "^4",
     "sqlite3": "^5.1.7"
   },
@@ -37,6 +37,9 @@
     "requires": {
       "auth": {
         "restrict_all_services": false
+      },
+      "[production]": {
+        "auth": "xsuaa"
       }
     }
   },
