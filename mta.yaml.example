@@ -39,12 +39,12 @@ modules:
       ignore: ["xs-dev.json", "default-env.json"]
       builder: custom
       commands:
-        - npm install
+        - npm install --production
 
   # CAP services and business logic
   - name: btp-integration-srv
     type: nodejs
-    path: core
+    path: core/gen/srv
     parameters:
       buildpack: nodejs_buildpack
       disk-quota: 1G
