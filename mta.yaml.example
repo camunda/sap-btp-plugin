@@ -36,6 +36,7 @@ modules:
           name: ui
           url: "~{ui-url}"
     build-parameters:
+      ignore: ["xs-dev.json", "default-env.json"]
       builder: custom
       commands:
         - npm install
