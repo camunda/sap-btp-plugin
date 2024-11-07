@@ -1,7 +1,7 @@
 const cds = require("@sap/cds")
 const { POST, expect } = cds.test()
 
-jest.mock("../lib/camunda", () =>
+jest.mock("../srv/lib/camunda", () =>
   Object.assign(
     {},
     {
