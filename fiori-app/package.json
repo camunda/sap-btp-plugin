@@ -24,7 +24,6 @@
     "@sap/approuter": "^16.9.0"
   },
   "devDependencies": {
-    "@camunda8/btp-integration-core": "*",
     "@camunda8/user-task-fiori": "file:../user-task-fiori",
     "@openui5/types": "^1.129.0",
     "@ui5/cli": "^4.0.9",
