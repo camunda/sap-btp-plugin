@@ -3,6 +3,7 @@ const cds = require("@sap/cds")
 const LOGGER = cds.log("camunda")
 const { Camunda8 } = require("@camunda8/sdk")
 const Duration  = require("@camunda8/sdk").Zeebe.Duration
+const userTaskWorker = require("./userTaskWorker")
 
 const DEBUG = cds.log("camunda")._debug || process.env.DEBUG?.includes("camunda")
 
@@ -50,7 +51,7 @@ module.exports = Object.assign(
     },
 
     registerWorker() {
-      this._createWorker("io.camunda.zeebe:userTask", require("@camunda8/user-task-worker"), "user task worker")
+      this._createWorker("io.camunda.zeebe:userTask", userTaskWorker, "user task worker")
     },
 
     /**

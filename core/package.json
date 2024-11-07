@@ -19,7 +19,6 @@
   "dependencies": {
     "@camunda8/sdk": "^8.6.13",
     "@camunda8/websocket": "*",
-    "@camunda8/user-task-worker": "*",
     "@sap/cds": "^8",
     "@sap/xssec": "^4",
     "express": "^4",
