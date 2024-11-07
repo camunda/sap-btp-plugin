@@ -9,10 +9,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "@camunda8/btp-integration-core": "*"
-  },
+  "dependencies": {},
   "peerDependencies": {
+    "@camunda8/btp-integration-core": "*",
     "@sap/cds": "^8"
+  },
+"peerDependenciesMeta": {
+    "@sap/cds": {
+      "optional": true
+    },
+    "@camunda8/btp-integration-core": {
+      "optional": true
+    }
   }
 }
