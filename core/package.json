@@ -17,7 +17,7 @@
     "build": "npx cds build --production --ws-pack"
   },
   "dependencies": {
-    "@camunda8/sdk": "^8.6.13",
+    "@camunda8/sdk": "^8.6.15",
     "@camunda8/websocket": "*",
     "@sap/cds": "^8",
     "@sap/xssec": "^4",
@@ -25,12 +25,12 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@cap-js/cds-typer": ">=0.27",
-    "chai": "^4.5.0",
-    "chai-as-promised": "^7.1.2",
+    "@cap-js/cds-typer": ">=0.28",
+    "chai": "^4",
+    "chai-as-promised": "^7",
     "chai-subset": "^1.6.0",
     "jest": "^29.7.0",
-    "msw": "^2.5.2"
+    "msw": "^2.6.2"
   },
   "cds": {
     "requires": {

@@ -21,30 +21,30 @@
     "wdi5": "wdio run ./webapp/test/e2e/wdio.conf.ts"
   },
   "dependencies": {
-    "@sap/approuter": "^16.9.0"
+    "@sap/approuter": "^17.0.0"
   },
   "devDependencies": {
     "@camunda8/user-task-fiori": "file:../user-task-fiori",
-    "@openui5/types": "^1.129.0",
+    "@openui5/types": "^1.130.0",
     "@ui5/cli": "^4.0.9",
-    "@wdio/cli": "^8.40.5",
-    "@wdio/local-runner": "^8.40.5",
-    "@wdio/mocha-framework": "^8.40.3",
-    "@wdio/spec-reporter": "^8.40.3",
-    "eslint": "^9.13.0",
-    "globals": "^15.11.0",
+    "@wdio/cli": "^8",
+    "@wdio/local-runner": "^8",
+    "@wdio/mocha-framework": "^8",
+    "@wdio/spec-reporter": "^8",
+    "eslint": "^9.14.0",
+    "globals": "^15.12.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
     "karma-ui5": "^4.0.1",
-    "karma-ui5-transpile": "^3.5.0",
+    "karma-ui5-transpile": "^3.5.1",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
-    "typescript-eslint": "^8.11.0",
+    "typescript-eslint": "^8.13.0",
     "ui5-middleware-livereload": "^3.1.0",
-    "ui5-tooling-modules": "^3.16.5",
-    "ui5-tooling-transpile": "^3.5.0",
+    "ui5-tooling-modules": "^3.18.4",
+    "ui5-tooling-transpile": "^3.5.1",
     "wdio-ui5-service": "^2.0.10"
   },
   "engines": {
