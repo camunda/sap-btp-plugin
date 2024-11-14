@@ -26,7 +26,7 @@ await Promise.all([
 postInstall()
 
 function buildCore() {
-  console.log("%c//> starting core build...", "color: green; background-color: gray")
+  console.log("%c//> starting core build...", "color: darkgreen; background-color: lightgray")
   const cmd = new Deno.Command("npm", {
     args: ["run", "build", "-w", "core"],
   })
@@ -40,7 +40,7 @@ function buildCore() {
 }
 
 function buildApp() {
-  console.log("%c//> starting app build...", "color: green; background-color: gray")
+  console.log("%c//> starting app build...", "color: darkgreen; background-color: lightgray")
   const cmd = new Deno.Command("npm", {
     args: ["run", "build", "-w", "fiori-app"],
   })
@@ -54,7 +54,7 @@ function buildApp() {
 }
 
 function buildMbt() {
-  console.log("%c//> starting mbt build...", "color: green; background-color: gray")
+  console.log("%c//> starting mbt build...", "color: darkgreen; background-color: lightgray")
   const cmd = new Deno.Command("npx", {
     args: ["mbt", "build"],
   })
@@ -86,7 +86,7 @@ function putPkgJsonBack(dir: string) {
 }
 
 function postInstall() {
-  console.log("%c//> starting post install...", "color: green; background-color: gray")
+  console.log("%c//> starting post install...", "color: darkgreen; background-color: lightgray")
   const cmd = new Deno.Command("npm", {
     args: ["i"],
   })
