@@ -1,0 +1,47 @@
+name: deploy-to-btp
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: cloudfoundry/cli:latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: use node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: build mtar
+        run: |
+          npm ci
+          npx mbt build
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mtar
+          path: ./mta_archives/*.mtar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: cloudfoundry/cli:latest
+
+    steps:
+      - name: download mtar
+        uses: actions/download-artifact@v4
+        with:
+          name: mtar
+
+      - name: deploy to BTP
+        # download-artifact puts the file w/o subdir here
+        run: |
+          cf install-plugin multiapps -f
+          ls -al .
+          cf login -a } -u ${{ secrets.CF_USER }} -p ${{ secrets.CF_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
+          cf deploy mta_archives/*.mtar -f
