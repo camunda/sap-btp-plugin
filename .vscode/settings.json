@@ -15,5 +15,6 @@
         "editor.defaultFormatter": "SAPSE.vscode-cds"
     },
     "search.useGlobalIgnoreFiles": true,
-    "search.useParentIgnoreFiles": true
+    "search.useParentIgnoreFiles": true,
+    "editor.tabSize": 2
 }
