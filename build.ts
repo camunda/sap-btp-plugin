@@ -1,6 +1,10 @@
 let env = Deno.args[0]
 if (env !== "demo") env = "prod"
 
+// to do:
+// - make auth optional
+// - custom route for router -> needs to go into xs-security.json as well
+
 try {
   await Deno.remove("mta_archives", { recursive: true })
 } catch (err) {
