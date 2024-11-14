@@ -59,6 +59,10 @@ console.log(`%c//> version: ${version}`, "color: darkgreen")
 const route = args.route
 console.log(`%c//> route: ${route}`, "color: darkgreen")
 
+// to do:
+// - make auth optional
+// - custom route for router -> needs to go into xs-security.json as well
+
 try {
   // don't run in CI
   !Deno.env.get("ci") && await Deno.remove("mta_archives", { recursive: true })
