@@ -1,8 +1,17 @@
-name: deploy-to-btp
+name: reusable_deploy-to-btp
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
+    inputs:
+      cf_api_endpoint:
+        required: true
+        type: string
+      cf_org:
+        required: true
+        type: string
+      cf_space:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -12,14 +21,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: use node 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: install deps
+        run: npm ci
+
+      - name: deno setup
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: deno build sources
+        run: deno -A ./build.ts
+
       - name: build mtar
-        run: |
-          npm ci
-          npx mbt build
+        run: npx mbt build
+
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -43,5 +64,5 @@ jobs:
         run: |
           cf install-plugin multiapps -f
           ls -al .
-          cf login -a } -u ${{ secrets.CF_USER }} -p ${{ secrets.CF_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
+          cf login -a ${{ inputs.cf_api_endpoint }} -u ${{ secrets.CF_USER }} -p ${{ secrets.CF_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
           cf deploy mta_archives/*.mtar -f

@@ -8,18 +8,11 @@ on:
     branches: [main]
 
 jobs:
-  test-core:
-    runs-on: ubuntu-latest
+  test:
+    uses: ./.github/workflows/reusable_test.yml
+    with:
+      node-version: ${{ matrix.node-version }}
 
     strategy:
       matrix:
         node-version: [23, 22, 21]
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: use node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: cd core && npm test
