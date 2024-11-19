@@ -3,7 +3,6 @@ if (env !== "demo") env = "prod"
 console.log(`%c//> building for env: ${env}`, "color: darkgreen; background-color: lightgray")
 
 // to do:
-// - make auth optional
 // - custom route for router -> needs to go into xs-security.json as well
 
 try {
@@ -11,6 +10,8 @@ try {
 } catch (err) {
   console.log("%c//> probably no mta_archives folder to remove", "color: yellow", err)
 }
+
+requireAuth(env === "prod" ? true : false)
 
 await Promise.all([
   buildCore(),
@@ -31,6 +32,37 @@ await Promise.all([
 // save post install step in CI to save time
 // env var is set in yaml file
 Deno.env.get("ci") !== undefined && postInstall()
+
+function requireAuth(yes = true) {
+  const authenticationMethod = yes ? "route" : "none"
+  ;["./fiori-app/xs-app.json", "./router/xs-app.json"].forEach((file) => {
+    _replace(file, /"authenticationMethod": .*/g, '"authenticationMethod": "' + authenticationMethod + '",')
+  })
+  ;["./core/srv/bpmn.cds", "./core/srv/inbound.cds"].forEach((file) => {
+    _toggleComment(file, yes)
+  })
+}
+
+function _replace(file: string, searchValue: string | RegExp, replaceValue: string) {
+  const content = Deno.readTextFileSync(file)
+  const newContent = content.replace(searchValue, replaceValue)
+  Deno.writeTextFileSync(file, newContent)
+}
+
+function _toggleComment(file: string, comment: boolean) {
+  const regex = /^(.*annotate .* with .*)$/gm
+  const content = Deno.readTextFileSync(file)
+  // either insert or leave the "append $service with ..." line
+  // depending on comment input var and whether it's already commented out
+  const newContent = content.replace(regex, (match, p1) => {
+    if (comment) {
+      return match.startsWith("//") ? match.replace(/^\/\/\s*/, "") : match
+    } else {
+      return match.startsWith("//") ? match : `// ${match}`
+    }
+  })
+  Deno.writeTextFileSync(file, newContent)
+}
 
 function buildCore() {
   console.log("%c//> starting core build...", "color: darkgreen; background-color: lightgray")
