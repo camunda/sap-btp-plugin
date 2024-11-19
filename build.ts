@@ -60,7 +60,6 @@ const route = args.route
 console.log(`%c//> route: ${route}`, "color: darkgreen")
 
 // to do:
-// - make auth optional
 // - custom route for router -> needs to go into xs-security.json as well
 
 try {
