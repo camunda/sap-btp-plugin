@@ -1,5 +1,6 @@
 let env = Deno.args[0]
 if (env !== "demo") env = "prod"
+console.log(`%c//> building for env: ${env}`, "color: darkgreen; background-color: lightgray")
 
 // to do:
 // - make auth optional
