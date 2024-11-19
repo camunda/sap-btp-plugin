@@ -27,7 +27,9 @@ await Promise.all([
   putPkgJsonBack("fiori-app"),
 ])
 
-postInstall()
+// save post install step in CI to save time
+// env var is set in yaml file
+Deno.env.get("ci") !== undefined && postInstall()
 
 function buildCore() {
   console.log("%c//> starting core build...", "color: darkgreen; background-color: lightgray")
