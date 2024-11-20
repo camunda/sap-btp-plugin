@@ -22,8 +22,7 @@
     "@cap-js/sqlite": "^1",
     "@sap/cds": "^8",
     "@sap/xssec": "^4",
-    "express": "^4",
-    "sqlite3": "^5.1.7"
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-typer": ">=0.28",
@@ -37,6 +36,13 @@
     "requires": {
       "auth": {
         "restrict_all_services": false
+      },
+      "db": {
+        "kind": "sqlite",
+        "impl": "@cap-js/sqlite",
+        "credentials": {
+          "url": "db.sqlite"
+        }
       }
     }
   },
