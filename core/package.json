@@ -19,6 +19,7 @@
   "dependencies": {
     "@camunda8/sdk": "^8.6.15",
     "@camunda8/websocket": "*",
+    "@cap-js/sqlite": "^1",
     "@sap/cds": "^8",
     "@sap/xssec": "^4",
     "express": "^4",
