@@ -2,8 +2,11 @@ let env = Deno.args[0]
 if (env !== "demo") env = "prod"
 console.log(`%c//> building for env: ${env}`, "color: darkgreen; background-color: lightgray")
 
-// to do:
-// - custom route for router -> needs to go into xs-security.json as well
+const version = Deno.args[1] || "8.7.0"
+console.log(`%c//> version: ${version}`, "color: darkgreen")
+
+const route = Deno.args[2] || "camunda-btp-integration"
+console.log(`%c//> route: ${route}`, "color: darkgreen")
 
 try {
   await Deno.remove("mta_archives", { recursive: true })
@@ -11,17 +14,26 @@ try {
   console.log("%c//> probably no mta_archives folder to remove", "color: yellow", err)
 }
 
+Deno.copyFileSync("./mta.yaml.example", "./mta.yaml")
+
+// both for mta.yaml
+injectVersion(version)
+injectRoute(route)
+
+// across all cds files and xs-app.jsons
 requireAuth(env === "prod" ? true : false)
 
 await Promise.all([
-  buildCore(),
-  buildApp(),
+  buildCore(), //> essentially cds build --for production
+  buildApp(), //> this builds the library into the app for unified deployment
 ])
+// ensure we're not vendoring too much
 await Promise.all([
   rmDevDeps("core"),
   rmDevDeps("fiori-app"),
 ])
 
+// mtar build
 buildMbt()
 
 await Promise.all([
@@ -32,6 +44,18 @@ await Promise.all([
 // save post install step in CI to save time
 // env var is set in yaml file
 Deno.env.get("ci") !== undefined && postInstall()
+
+// ######################################## //
+
+function injectRoute(route: string) {
+  _replace("./xs-security.json", "<btp-integration-route>", route)
+  _replace("./mta.yaml", "<btp-integration-route>", route)
+}
+
+function injectVersion(version: string) {
+  _replace("./xs-security.json", "<app-version>", version)
+  _replace("./mta.yaml", "<app-version>", version)
+}
 
 function requireAuth(yes = true) {
   const authenticationMethod = yes ? "route" : "none"
