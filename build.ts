@@ -1,21 +1,88 @@
-let env = Deno.args[0]
+import { parseArgs } from "jsr:@std/cli/parse-args"
+const args = parseArgs(Deno.args, {
+  alias: {
+    env: "e",
+    version: "v",
+    route: "r",
+    help: "h",
+  },
+  default: {
+    env: "prod",
+    version: "8.7.0",
+    route: "camunda-btp-integration",
+  },
+})
+
+if (args.help) {
+  console.log(`
+    usage: deno -A build.ts [options]
+    options:
+      -e, --env       environment to build for, default is "${args.env}"
+      -v, --version   app version, default is "${args.version}"
+      -r, --route     btp integration route, default is "${args.route}"
+    
+    example:
+      deno -A build.ts -e demo -v 8.7.11 -r my-entry-point
+`)
+  Deno.exit(0)
+}
+
+const allZeebeCredentials = [
+  "ZEEBE_ADDRESS",
+  "ZEEBE_CLIENT_ID",
+  "ZEEBE_CLIENT_SECRET",
+  "ZEEBE_AUTHORIZATION_SERVER_URL",
+  "ZEEBE_REST_ADDRESS",
+  "ZEEBE_GRPC_ADDRESS",
+  "ZEEBE_TOKEN_AUDIENCE",
+]
+
+const allCamundaCredentials = [
+  "CAMUNDA_CLUSTER_ID",
+  "CAMUNDA_CLIENT_ID",
+  "CAMUNDA_CLIENT_SECRET",
+  "CAMUNDA_CLUSTER_REGION",
+  "CAMUNDA_CREDENTIALS_SCOPES",
+  "CAMUNDA_TASKLIST_BASE_URL",
+  "CAMUNDA_OPTIMIZE_BASE_URL",
+  "CAMUNDA_OPERATE_BASE_URL",
+  "CAMUNDA_OAUTH_URL",
+]
+
+let env = args.env
 if (env !== "demo") env = "prod"
 console.log(`%c//> building for env: ${env}`, "color: darkgreen; background-color: lightgray")
 
-const version = Deno.args[1] || "8.7.0"
+const version = args.version
 console.log(`%c//> version: ${version}`, "color: darkgreen")
 
-const route = Deno.args[2] || "camunda-btp-integration"
+const route = args.route
 console.log(`%c//> route: ${route}`, "color: darkgreen")
 
 try {
-  await Deno.remove("mta_archives", { recursive: true })
+  // don't run in CI
+  Deno.env.get("ci") !== undefined && await Deno.remove("mta_archives", { recursive: true })
 } catch (err) {
   console.log("%c//> probably no mta_archives folder to remove", "color: yellow", err)
 }
 
 Deno.copyFileSync("./mta.yaml.example", "./mta.yaml")
 
+const creds = checkCamundaCredentials(allCamundaCredentials, allZeebeCredentials)
+if (creds.camunda) {
+  console.info("%c//> Camunda credentials found", "color: green")
+  injectCamundaCredentials(allCamundaCredentials)
+}
+if (creds.zeebe) {
+  console.info("%c//> Zeebe credentials found", "color: green")
+  injectCamundaCredentials(allZeebeCredentials)
+}
+
+if (!creds.camunda && !creds.zeebe) {
+  console.error("%c//> missing Camunda credentials!", "color:red")
+  Deno.exit(1)
+}
+Deno.exit(0)
 // both for mta.yaml
 injectVersion(version)
 injectRoute(route)
@@ -47,6 +114,22 @@ Deno.env.get("ci") !== undefined && postInstall()
 
 // ######################################## //
 
+function checkCamundaCredentials(_allCamundaCredentials = allCamundaCredentials, _allZeebeCredentials = allZeebeCredentials) {
+  return {
+    camunda: _allCamundaCredentials.every((key) => Deno.env.get(key) !== undefined),
+    zeebe: _allZeebeCredentials.every((key) => Deno.env.get(key) !== undefined),
+  }
+}
+
+function injectCamundaCredentials(credentials: typeof allCamundaCredentials | typeof allZeebeCredentials) {
+  console.log(`%c//> injecting credentials ${credentials}`, "color: darkgreen")
+  let content = Deno.readTextFileSync("./mta.yaml")
+  credentials.forEach((key) => {
+    content = content.replace(new RegExp(`${key}:.*`), `${key}: ${Deno.env.get(key)}`)
+  })
+  Deno.writeTextFileSync("./mta.yaml", content)
+}
+
 function injectRoute(route: string) {
   _replace("./xs-security.json", "<btp-integration-route>", route)
   _replace("./mta.yaml", "<btp-integration-route>", route)
@@ -69,7 +152,12 @@ function requireAuth(yes = true) {
 
 function _replace(file: string, searchValue: string | RegExp, replaceValue: string) {
   const content = Deno.readTextFileSync(file)
-  const newContent = content.replace(searchValue, replaceValue)
+  let newContent = ""
+  if (typeof searchValue === "string") {
+    newContent = content.replaceAll(searchValue, replaceValue)
+  } else {
+    newContent = content.replace(searchValue, replaceValue)
+  }
   Deno.writeTextFileSync(file, newContent)
 }
 

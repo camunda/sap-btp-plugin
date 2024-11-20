@@ -72,9 +72,9 @@ modules:
       commands:
         - echo "nothing to do, things are vendored :)"
     requires:
-      - name: uaa-camunda-btp-integration
-      - name: dest-camunda-btp-integration
-      - name: conn-camunda-btp-integration
+      - name: uaa-camunda-btp-integration-<app-version>
+      - name: dest-camunda-btp-integration-<app-version>
+      - name: conn-camunda-btp-integration-<app-version>
     provides:
       - name: srv-binding 
         properties:
@@ -93,9 +93,9 @@ modules:
       commands:
          - echo "nothing to do, things are vendored :)"
     requires:
-      - name: uaa-camunda-btp-integration
-      - name: dest-camunda-btp-integration
-      - name: conn-camunda-btp-integration
+      - name: uaa-camunda-btp-integration-<app-version>
+      - name: dest-camunda-btp-integration-<app-version>
+      - name: conn-camunda-btp-integration-<app-version>
     provides:
       - name: ui-binding # required by consumers of CAP services (e.g. approuter, ui)
         properties:
@@ -103,7 +103,7 @@ modules:
 
 
 resources:
-  - name: uaa-camunda-btp-integration
+  - name: uaa-camunda-btp-integration-<app-version>
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
@@ -112,12 +112,12 @@ resources:
       config:
         xsappname: camunda-btp-integration-<app-version>
         tenant-mode: dedicated
-  - name: dest-camunda-btp-integration
+  - name: dest-camunda-btp-integration-<app-version>
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: lite
       service: destination
-  - name: conn-camunda-btp-integration
+  - name: conn-camunda-btp-integration-<app-version>
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: lite
