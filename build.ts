@@ -151,7 +151,7 @@ function requireAuth(yes = true) {
   const authenticationType = yes ? "xsuaa" : "none"
   ;["./fiori-app/xs-app.json", "./router/xs-app.json"].forEach((file) => {
     _replace(file, /"authenticationMethod": .*/g, '"authenticationMethod": "' + authenticationMethod + '",')
-    _replace(file, /"authenticationType": .*/g, '"authenticationType": "' + authenticationType + '",')
+    _replace(file, /"authenticationType": .*/g, '"authenticationType": "' + authenticationType + '"')
   })
   ;["./core/srv/bpmn.cds", "./core/srv/inbound.cds"].forEach((file) => {
     _toggleComment(file, yes)
