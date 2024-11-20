@@ -32,6 +32,7 @@
             "npm:@camunda8/sdk@^8.6.15",
             "npm:@camunda8/websocket@*",
             "npm:@cap-js/cds-typer@>=0.28.0",
+            "npm:@cap-js/sqlite@1",
             "npm:@sap/cds@8",
             "npm:@sap/xssec@4",
             "npm:chai-as-promised@7",
