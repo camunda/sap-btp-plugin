@@ -19,18 +19,21 @@
       "target": "/$1",
       "destination": "srv_api",
       "csrfProtection": false,
-      "cacheControl": "no-cache, no-store, must-revalidate"
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
     },
     {
       "source": "/channel(.*)$",
       "target": "/channel$1",
-      "destination": "srv_api"
+      "destination": "srv_api",
+      "authenticationType": "xsuaa"
     },
     {
       "source": "^/app/(.*)$",
       "target": "$1",
       "destination": "ui",
-      "cacheControl": "no-cache, no-store, must-revalidate"
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
     }
   ]
 }

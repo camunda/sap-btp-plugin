@@ -8,7 +8,8 @@
       "source": "^/(.*)$",
       "target": "$1",
       "localDir": "dist",
-      "cacheControl": "no-cache, no-store, must-revalidate"
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
     }
   ]
 }
