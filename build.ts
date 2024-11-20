@@ -61,7 +61,7 @@ console.log(`%c//> route: ${route}`, "color: darkgreen")
 
 try {
   // don't run in CI
-  Deno.env.get("ci") !== undefined && await Deno.remove("mta_archives", { recursive: true })
+  !Deno.env.get("ci") && await Deno.remove("mta_archives", { recursive: true })
 } catch (err) {
   console.log("%c//> probably no mta_archives folder to remove", "color: yellow", err)
 }
@@ -112,7 +112,7 @@ await Promise.all([
 
 // save post install step in CI to save time
 // env var is set in yaml file
-Deno.env.get("ci") !== undefined && postInstall()
+!Deno.env.get("ci") && postInstall()
 
 // ######################################## //
 
@@ -138,8 +138,10 @@ function injectRoute(route: string) {
 }
 
 function injectVersion(version: string) {
-  _replace("./xs-security.json", "<app-version>", version)
-  _replace("./mta.yaml", "<app-version>", version)
+  const mangledVersion = version.replace(/\./g, "_").substring(0,3)
+  _replace("./xs-security.json", "<app-version>", mangledVersion)
+  _replace("./mta.yaml", "<app-version>", `${mangledVersion}`) //> we want to denote the compatible Camunda version here
+  _replace("./mta.yaml", "<unique-app-version>", version) //> this is an actual increment
 }
 
 function requireAuth(yes = true) {

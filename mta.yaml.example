@@ -1,6 +1,6 @@
 _schema-version: "3.1"
 ID: camunda-btp-integration-<app-version>
-version: <app-version>
+version: <unique-app-version>
 description: "BTP Integration, part of Camunda's SAP Integration"
 parameters:
   enable-parallel-deployments: true
