@@ -66,7 +66,9 @@ try {
   console.log("%c//> probably no mta_archives folder to remove", "color: yellow", err)
 }
 
+// deploy- and runtime specific files
 Deno.copyFileSync("./mta.yaml.example", "./mta.yaml")
+Deno.copyFileSync("./xs-security.json.example", "./xs-security.json")
 
 const creds = checkCamundaCredentials(allCamundaCredentials, allZeebeCredentials)
 if (creds.camunda) {
@@ -82,7 +84,7 @@ if (!creds.camunda && !creds.zeebe) {
   console.error("%c//> missing Camunda credentials!", "color:red")
   Deno.exit(1)
 }
-Deno.exit(0)
+
 // both for mta.yaml
 injectVersion(version)
 injectRoute(route)
