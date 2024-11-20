@@ -98,6 +98,7 @@ await Promise.all([
 ])
 // ensure we're not vendoring too much
 await Promise.all([
+  rmDevDeps("router"),
   rmDevDeps("core"),
   rmDevDeps("fiori-app"),
 ])
@@ -106,6 +107,7 @@ await Promise.all([
 buildMbt()
 
 await Promise.all([
+  putPkgJsonBack("router"),
   putPkgJsonBack("core"),
   putPkgJsonBack("fiori-app"),
 ])
