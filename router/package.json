@@ -11,7 +11,7 @@
     "start:local": "node ../node_modules/dev-approuter"
   },
   "dependencies": {
-    "@sap/approuter": "^17.0.0"
+    "@sap/approuter": "^17.1.0"
   },
   "devDependencies": {
     "dev-approuter": "^0.3.3",
