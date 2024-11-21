@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="expires" content="0" />
+	<link rel="stylesheet" href="./css/style.css" />
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<title>Camunda SAP BTP Integration</title>
+
+	<script
+					id="sap-ui-bootstrap"
+					src="https://ui5.sap.com/1.128.0/resources/sap-ui-core.js"
+					data-sap-ui-resourceroots='{
+				"io.camunda.connector.sap.btp.app": "./",
+				"io.camunda.connector.sap.btp.lib": "./resources/io/camunda/connector/sap/btp/lib"
+			}'
+					data-sap-ui-theme="sap_horizon"
+					data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+					data-sap-ui-async="true"
+					data-sap-ui-compatVersion="edge"
+					data-sap-ui-frameOptions="trusted"
+					data-sap-ui-xx-waitForTheme="true"></script>
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require(
+				[
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer",
+					"io/camunda/connector/sap/btp/app/test/webSocketMockServer"
+				],
+				function (Shell, ComponentContainer, webSocketMockServer) {
+					webSocketMockServer.init()
+
+					// initialize the UI component
+					sap.ui.getCore().attachInit(function () {
+						new Shell({
+							app: new ComponentContainer({
+								height: "100%",
+								name: "io.camunda.connector.sap.btp.app"
+							}),
+							appWidthLimited: false
+						}).placeAt("content")
+					})
+				}
+			)
+		})
+	</script>
+</head>
+
+<body class="sapUiBody">
+	<div data-sap-ui-component data-name="io.camunda.connector.sap.btp.app" id="content"></div>
+	<div id="splash" style="z-index: 18; visibility: visible">
+		<div class="loadingContainer">
+			<div class="loading">
+				<div class="sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard">
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+			</div>
+			<div id="busyText"></div>
+		</div>
+	</div>
+</body>
+
+</html>
