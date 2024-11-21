@@ -40,8 +40,7 @@
             "npm:chai@4",
             "npm:express@4",
             "npm:jest@^29.7.0",
-            "npm:msw@^2.6.2",
-            "npm:sqlite3@^5.1.7"
+            "npm:msw@^2.6.2"
           ]
         }
       },
