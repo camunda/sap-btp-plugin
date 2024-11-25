@@ -15,4 +15,4 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [23, 22, 21]
+        node-version: [23, 22]
