@@ -26,9 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: install deps
-        run: npm ci
+      - run: npm ci
 
       - name: deno setup
         uses: denoland/setup-deno@v2
