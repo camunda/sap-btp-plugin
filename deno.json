@@ -1,0 +1,10 @@
+{
+  "fmt": {
+    "semiColons": false,
+    "lineWidth": 150
+  },
+  "exclude": ["core", "fiori-app", "router", "user-task-fiori", "websocket"],
+  "imports": {
+    "@std/cli": "jsr:@std/cli@^1.0.6"
+  }
+}

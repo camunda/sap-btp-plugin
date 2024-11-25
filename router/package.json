@@ -11,10 +11,10 @@
     "start:local": "node ../node_modules/dev-approuter"
   },
   "dependencies": {
-    "@sap/approuter": "^16.9.0"
+    "@sap/approuter": "^17.1.0"
   },
   "devDependencies": {
-    "dev-approuter": "^0.3.1",
+    "dev-approuter": "^0.3.3",
     "@camunda8/btp-integration-core": "*",
     "@camunda8/fiori-app": "*"
   }

@@ -15,7 +15,7 @@ const mockedReturnObject = {
   tenantId: "<default>"
 }
 
-jest.mock("../lib/camunda", () =>
+jest.mock("../srv/lib/camunda", () =>
   Object.assign(
     {},
     {

@@ -387,10 +387,15 @@ export default class BPMNForm extends Control {
     const selected =
       (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) || element.defaultValue
 
+    const enabled = element.disabled
+    const readonly = element.readonly
+
     const visible = this._getVisibleStatement(element)
     const control = new CheckBox(this._generateControlId(element), {
-      visible: visible,
-      selected: selected,
+      visible,
+      selected,
+      enabled: !enabled,
+      editable: !readonly,
       text: element.label,
       select: () => {
         this._provideValueToView(element, control)
@@ -919,7 +924,7 @@ export default class BPMNForm extends Control {
    * create local model for variable bindings and init with default variables
    */
   _initLocalModel() {
-    console.debug(`[${this.getMetadata().getName()}] > local BPMN form model`)
+    console.debug(`[${this.getMetadata().getName()}] > local BPMN form model: ${localModelName}`)
     const data = {
       BPMNform: {}
     }

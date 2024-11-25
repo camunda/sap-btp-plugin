@@ -35,3 +35,8 @@ mta_archives/
 
 mta.yaml
 !mta.yaml.example
+
+xs-security.json
+!xs-security.json.example
+
+*.bak

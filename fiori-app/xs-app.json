@@ -1,5 +1,5 @@
 {
-  "authenticationMethod": "none",
+  "authenticationMethod": "route",
   "websockets": {
     "enabled": true
   },
@@ -9,7 +9,7 @@
       "target": "$1",
       "localDir": "dist",
       "cacheControl": "no-cache, no-store, must-revalidate",
-      "authenticationType": "none"
+      "authenticationType": "xsuaa"
     }
   ]
 }

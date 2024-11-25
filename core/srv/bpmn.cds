@@ -12,6 +12,4 @@ service BPMN {
     action completeUsertask(jobKey : String, variables : String);
 }
 
-// start-of-auth
-// annotate BPMN with @(requires : 'authenticated-user');
-// end-of-auth
+annotate BPMN with @(requires : 'authenticated-user');

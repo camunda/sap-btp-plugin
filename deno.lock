@@ -1,0 +1,115 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@std/cli@*": "1.0.6"
+  },
+  "jsr": {
+    "@std/cli@1.0.6": {
+      "integrity": "d22d8b38c66c666d7ad1f2a66c5b122da1704f985d3c47f01129f05abb6c5d3d"
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/cli@^1.0.6"
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:@cap-js/cds-types@0.7",
+        "npm:@cap-js/sqlite@1",
+        "npm:@eslint/js@^9.14.0",
+        "npm:@sap/cds@8",
+        "npm:cross-env@^7.0.3",
+        "npm:eslint@^9.14.0",
+        "npm:globals@^15.12.0",
+        "npm:npm-run-all@^4.1.5",
+        "npm:prettier@^3.3.3"
+      ]
+    },
+    "members": {
+      "core": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@camunda8/sdk@^8.6.15",
+            "npm:@camunda8/websocket@*",
+            "npm:@cap-js/cds-typer@>=0.28.0",
+            "npm:@cap-js/sqlite@1",
+            "npm:@sap/cds@8",
+            "npm:@sap/xssec@4",
+            "npm:chai-as-promised@7",
+            "npm:chai-subset@^1.6.0",
+            "npm:chai@4",
+            "npm:express@4",
+            "npm:jest@^29.7.0",
+            "npm:msw@^2.6.2"
+          ]
+        }
+      },
+      "fiori-app": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@openui5/types@^1.130.0",
+            "npm:@sap/approuter@17",
+            "npm:@ui5/cli@^4.0.9",
+            "npm:@wdio/cli@8",
+            "npm:@wdio/local-runner@8",
+            "npm:@wdio/mocha-framework@8",
+            "npm:@wdio/spec-reporter@8",
+            "npm:eslint@^9.14.0",
+            "npm:globals@^15.12.0",
+            "npm:karma-chrome-launcher@^3.2.0",
+            "npm:karma-coverage@^2.2.1",
+            "npm:karma-ui5-transpile@^3.5.1",
+            "npm:karma-ui5@^4.0.1",
+            "npm:karma@^6.4.4",
+            "npm:rimraf@^6.0.1",
+            "npm:ts-node@^10.9.2",
+            "npm:typescript-eslint@^8.13.0",
+            "npm:typescript@^5.6.3",
+            "npm:ui5-middleware-livereload@^3.1.0",
+            "npm:ui5-tooling-modules@^3.18.4",
+            "npm:ui5-tooling-transpile@^3.5.1",
+            "npm:wdio-ui5-service@^2.0.10"
+          ]
+        }
+      },
+      "router": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@camunda8/btp-integration-core@*",
+            "npm:@camunda8/fiori-app@*",
+            "npm:@sap/approuter@17",
+            "npm:dev-approuter@~0.3.3"
+          ]
+        }
+      },
+      "user-task-fiori": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@sapui5/types@1.130.0",
+            "npm:@ui5/cli@^4.0.9",
+            "npm:@ui5/ts-interface-generator@0.9",
+            "npm:eslint@^9.14.0",
+            "npm:globals@^15.12.0",
+            "npm:karma-chrome-launcher@^3.2.0",
+            "npm:karma-coverage@^2.2.1",
+            "npm:karma-ui5-transpile@^3.5.1",
+            "npm:karma-ui5@^4.0.1",
+            "npm:karma@^6.4.4",
+            "npm:rimraf@^6.0.1",
+            "npm:typescript-eslint@^8.13.0",
+            "npm:typescript@^5.6.3",
+            "npm:ui5-middleware-livereload@^3.1.0",
+            "npm:ui5-tooling-transpile@^3.5.1"
+          ]
+        }
+      },
+      "websocket": {
+        "packageJson": {
+          "dependencies": [
+            "npm:ws@^8.18.0"
+          ]
+        }
+      }
+    }
+  }
+}
