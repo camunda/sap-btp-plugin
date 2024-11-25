@@ -3,13 +3,13 @@ const ui5Service = new _ui5Service()
 
 import { ns, navTarget } from "./po/commons"
 
-describe("samples", () => {
+describe("checkbox", () => {
   before(async () => {
     await browser.goTo(navTarget("checkbox-8.6"))
     await ui5Service.injectUI5()
   })
 
-  it("should validate basic select/deselect", async () => {
+  it("basic select/deselect", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_regular$/,
@@ -28,7 +28,7 @@ describe("samples", () => {
     expect(after).toBeTruthy()
   })
 
-  it("should validate pre-checked checkbox", async () => {
+  it("pre-checked checkbox", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_default_checked$/,
@@ -42,7 +42,7 @@ describe("samples", () => {
     expect(checked).toBeTruthy()
   })
 
-  it("should validate disabled checkbox", async () => {
+  it("disabled checkbox", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_7jyrfq$/,
@@ -56,7 +56,7 @@ describe("samples", () => {
     expect(disabled).toBeFalsy()
   })
 
-  it("should validate read-only state of checkbox", async () => {
+  it("read-only state of checkbox", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_ro_static$/,
@@ -70,5 +70,5 @@ describe("samples", () => {
     expect(readOnly).toBeFalsy()
   })
 
-  it.skip("should validate read-only state of checkbox via feel", async () => {})
+  it.skip("read-only state of checkbox via feel", async () => {})
 })
