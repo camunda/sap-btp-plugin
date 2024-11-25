@@ -10,7 +10,6 @@ const MockServer = {
   init() {
     window.setTimeout(() => {
       const mockForm = UriParameters.fromURL(window.location.href).get("mock")
-      debugger
       if (mockForm) {
         this.runForm(mockForm)
       }
