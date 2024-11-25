@@ -1,7 +1,8 @@
 {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[typescript]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        // "editor.defaultFormatter": "denoland.vscode-deno"
     },
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
