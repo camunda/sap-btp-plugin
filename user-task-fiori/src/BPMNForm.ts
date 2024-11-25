@@ -32,6 +32,8 @@ import Label from "sap/m/Label"
 import Icon from "sap/ui/core/Icon"
 import TextArea from "sap/m/TextArea"
 
+import { evaluate } from "feelers"
+
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -764,15 +766,13 @@ export default class BPMNForm extends Control {
 
   private addText(element: Component, currentPath?: string) {
     const visible = this._getVisibleStatement(element)
+    let content = element.text
+    content = evaluate(content, this.getModel(localModelName).getProperty("/BPMNform/variables"))
+    // debugger
     const text = new Markdown(`${uid()}-markdown`, {
-      content: element.text.replace(/\{/gm, `\{${localModelName}>/BPMNform/`),
+      content: content.replace(/\{/gm, `\{${localModelName}>/BPMNform/`),
       visible: visible
     }) as Control
-    if (element.properties?.type === "Description") {
-      text.addStyleClass("markdown-description")
-    } else {
-      text.addStyleClass("markdown")
-    }
     this._addControl(element, text, ControlType.Text, false, false, true)
   }
 
@@ -862,7 +862,9 @@ export default class BPMNForm extends Control {
   _initLocalModel() {
     console.debug(`[${this.getMetadata().getName()}] > local BPMN form model: ${localModelName}`)
     const data = {
-      BPMNform: {}
+      BPMNform: {
+        variables: {}
+      }
     }
     if (this.getModel(localModelName)) {
       ;(this.getModel(localModelName) as JSONModel).setData(data)
@@ -952,7 +954,7 @@ export default class BPMNForm extends Control {
    */
   _updateFormVariables(variables: { [index: string]: string }): void {
     for (const key in variables) {
-      this.getLocalModel().setProperty(`/BPMNform/${key}`, variables[key])
+      this.getLocalModel().setProperty(`/BPMNform/variables/${key}`, variables[key])
     }
   }
 

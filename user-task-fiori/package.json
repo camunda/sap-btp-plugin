@@ -35,5 +35,8 @@
 		"typescript-eslint": "^8.15.0",
 		"ui5-middleware-livereload": "^3.1.0",
 		"ui5-tooling-transpile": "^3.5.1"
-	}
+	},
+	"dependencies": {
+    "feelers": "^1.4.0"
+  }
 }
