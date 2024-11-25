@@ -768,7 +768,6 @@ export default class BPMNForm extends Control {
     const visible = this._getVisibleStatement(element)
     let content = element.text
     content = evaluate(content, this.getModel(localModelName).getProperty("/BPMNform/variables"))
-    // debugger
     const text = new Markdown(`${uid()}-markdown`, {
       content: content.replace(/\{/gm, `\{${localModelName}>/BPMNform/`),
       visible: visible

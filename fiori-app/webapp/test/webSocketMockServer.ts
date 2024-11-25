@@ -29,7 +29,7 @@ const MockServer = {
         $.get(`test/assets/mockdata/camunda/${mockForm}.json`, (data) => {
           if (data.formData) {
             const regex = /\n/gm
-            data.formData = data.formData.replace(regex, "")
+            data.formData = data.formData.replace(regex, "\\n")
           }
           data.channelId = UriParameters.fromURL(window.location.href).get("channelId")
           websocket.fireMessage({ data: JSON.stringify(data) })
