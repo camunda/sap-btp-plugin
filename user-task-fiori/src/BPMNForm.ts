@@ -924,7 +924,7 @@ export default class BPMNForm extends Control {
    * create local model for variable bindings and init with default variables
    */
   _initLocalModel() {
-    console.debug(`[${this.getMetadata().getName()}] > local BPMN form model`)
+    console.debug(`[${this.getMetadata().getName()}] > local BPMN form model: ${localModelName}`)
     const data = {
       BPMNform: {}
     }
