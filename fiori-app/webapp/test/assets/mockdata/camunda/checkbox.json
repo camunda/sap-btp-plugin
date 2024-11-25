@@ -1,6 +1,0 @@
-{
-  "channelId": "testChannel",
-  "type": "form",
-  "jobKey": "2251799813989278",
-  "formData": "{\"components\":[{\"label\":\"CheckBox\",\"type\":\"checkbox\",\"id\":\"Field_1ry67zz\",\"key\":\"field_checkbox\",\"disabled\":false,\"defaultValue\":false}],\"schemaVersion\":4,\"exporter\":{\"name\":\"Camunda Web Modeler\",\"version\":\"a4443f4\"},\"type\":\"default\",\"id\":\"Form_8f984432-b404-4836-ae05-df4e3bf55a27\",\"executionPlatform\":\"Camunda Cloud\",\"executionPlatformVersion\":\"1.3\"}"
-}
