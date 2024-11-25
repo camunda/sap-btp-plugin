@@ -28,24 +28,9 @@
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require(
-				[
-					"sap/m/Shell",
-					"sap/ui/core/ComponentContainer",
-					"io/camunda/connector/sap/btp/app/test/webSocketMockServer"
-				],
-				function (Shell, ComponentContainer, webSocketMockServer) {
+				["io/camunda/connector/sap/btp/app/test/webSocketMockServer"],
+				function (webSocketMockServer) {
 					webSocketMockServer.init()
-
-					// initialize the UI component
-					sap.ui.getCore().attachInit(function () {
-						new Shell({
-							app: new ComponentContainer({
-								height: "100%",
-								name: "io.camunda.connector.sap.btp.app"
-							}),
-							appWidthLimited: false
-						}).placeAt("content")
-					})
 				}
 			)
 		})
@@ -53,7 +38,7 @@
 </head>
 
 <body class="sapUiBody">
-	<div data-sap-ui-component data-name="io.camunda.connector.sap.btp.app" id="content"></div>
+	<div data-sap-ui-component data-name="io.camunda.connector.sap.btp.app"></div>
 	<div id="splash" style="z-index: 18; visibility: visible">
 		<div class="loadingContainer">
 			<div class="loading">
