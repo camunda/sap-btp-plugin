@@ -21,6 +21,7 @@ export interface Component {
   text?: string
   disabled?: boolean
   defaultValue?: boolean | string
+  readonly?: boolean
 }
 
 interface Validate {
