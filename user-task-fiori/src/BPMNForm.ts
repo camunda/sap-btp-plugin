@@ -585,7 +585,12 @@ export default class BPMNForm extends Control {
       return
     }
 
+    const enabled = element.disabled
+    const readonly = element.readonly
+    
     const control = new RadioButtonGroup(this._generateControlId(element), {
+      enabled: !enabled,
+      editable: !readonly,
       visible: this._getVisibleStatement(element),
       select: () => {
         control.setValueState(ValueState.None)
