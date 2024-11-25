@@ -11,7 +11,7 @@ on:
         type: string
 
 jobs:
-  test-core:
+  core-and-tasklist:
     runs-on: ubuntu-latest
 
     steps:
