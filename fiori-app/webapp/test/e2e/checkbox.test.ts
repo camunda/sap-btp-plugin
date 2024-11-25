@@ -28,7 +28,7 @@ describe("checkbox", () => {
     expect(after).toBeTruthy()
   })
 
-  it("pre-checked checkbox", async () => {
+  it("pre-checked", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_default_checked$/,
@@ -42,7 +42,7 @@ describe("checkbox", () => {
     expect(checked).toBeTruthy()
   })
 
-  it("disabled checkbox", async () => {
+  it("disabled", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_7jyrfq$/,
@@ -56,7 +56,7 @@ describe("checkbox", () => {
     expect(disabled).toBeFalsy()
   })
 
-  it("read-only state of checkbox", async () => {
+  it("read-only state of", async () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_ro_static$/,
@@ -70,5 +70,5 @@ describe("checkbox", () => {
     expect(readOnly).toBeFalsy()
   })
 
-  it.skip("read-only state of checkbox via feel", async () => {})
+  it.skip("read-only state of via feel", async () => {})
 })

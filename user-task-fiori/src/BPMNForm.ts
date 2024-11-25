@@ -23,7 +23,6 @@ import Sorter from "sap/ui/model/Sorter"
 import Item from "sap/ui/core/Item"
 import Filter from "sap/ui/model/Filter"
 import FilterOperator from "sap/ui/model/FilterOperator"
-import SelectList from "sap/m/SelectList"
 import RadioButton from "sap/m/RadioButton"
 import CustomData from "sap/ui/core/CustomData"
 import DatePicker from "sap/m/DatePicker"
@@ -469,9 +468,10 @@ export default class BPMNForm extends Control {
 
     const visible = this._getVisibleStatement(element)
 
-    const control = new SelectList(this._generateControlId(element), {
+    const control = new Select(this._generateControlId(element), {
       visible: visible,
-      selectedKey: (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`),
+      selectedKey:
+        (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) || element.defaultValue,
       forceSelection: false,
       change: (event) => {
         this._provideValueToView(element, control)
@@ -479,78 +479,9 @@ export default class BPMNForm extends Control {
       }
     })
 
-    // hardcoded values or dynmic (json or odata)?
-    if (element.properties?.type === "Dynamic") {
-      let sorter
-      if (element.properties?.sorter) {
-        const sorterProperties = element.properties?.sorter.split(",")
-        const desc = sorterProperties[1] === "DESC" ? true : false
-        sorter = [new Sorter(sorterProperties[0], desc)]
-      }
-
-      if (!this.mandatoryFieldCheck(["service", "key", "display"], element)) {
-        return
-      }
-      if (element.properties?.service === "json") {
-        const displayElements = element.properties?.display.split(",")
-
-        const display = displayElements.map((element) => `{${localModelName}>${element.trim()}}`).join(" - ")
-        control.bindItems({
-          path: `${localModelName}>/BPMNform/${element.properties?.for}`,
-          length: 500,
-          sorter: sorter,
-          template: new Item({
-            key: `{${localModelName}>${element.properties?.key}}`,
-            text: display
-          })
-        })
-      } else {
-        const displayElements = element.properties?.display.split(",")
-        const prefix = element.properties.service ? element.properties.service + ">" : ""
-        let display = `{${prefix}${displayElements[0]}}`
-        if (displayElements.length > 1) {
-          display = `{${prefix}${displayElements[0]}} - {${prefix}${displayElements[1]}}`
-        }
-        const regex = /(.*){(.*)}(.*)/gm
-        element.properties.for = element.properties.for.replace(
-          regex,
-          (total: string, a: string, b: string, c: string) => {
-            const value = this.getModel(localModelName).getProperty(`/BPMNform/${b}`)
-            return `${a}${value}${c}`
-          }
-        )
-
-        // get all filter properties in camunda
-        const filters = this.getDynamicFiltersFromCamundaProperties(element)
-
-        control.bindAggregation("items", {
-          path: `${prefix}/${element.properties.for}`,
-          filters: filters ? filters : undefined,
-          sorter: sorter,
-          template: new Item({
-            key: `{${prefix}${element.properties.key}}`,
-            text: display
-          })
-        })
-      }
-    } else {
-      if (element.properties?.sorter) {
-        const sorterProperties = element.properties?.sorter.split(",")
-        const desc = sorterProperties[1] === "DESC" ? true : false
-        element.values = element.values.sort(function (a, b) {
-          if (a.label < b.label) {
-            return desc ? 1 : -1
-          }
-          if (a.label > b.label) {
-            return desc ? -1 : 1
-          }
-          return 0
-        })
-      }
-      element.values.forEach((value) => {
-        control.addItem(new Item({ key: value.value, text: value.label }))
-      })
-    }
+    element.values?.forEach((value) => {
+      control.addItem(new Item({ key: value.value, text: value.label }))
+    })
 
     // handle visibility for deep if constructions,
     // if the control is set to invisible delete value and provide empty value
@@ -587,7 +518,7 @@ export default class BPMNForm extends Control {
 
     const enabled = element.disabled
     const readonly = element.readonly
-    
+
     const control = new RadioButtonGroup(this._generateControlId(element), {
       enabled: !enabled,
       editable: !readonly,
