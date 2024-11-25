@@ -21,4 +21,11 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
       - run: npm ci
-      - run: cd core && npm test
+      
+      - name: test backend
+        run: cd core && npm test
+
+      - name: test "sap" tasklist rendering
+        run: |
+          cd fiori-app
+          npm run test:e2e          
