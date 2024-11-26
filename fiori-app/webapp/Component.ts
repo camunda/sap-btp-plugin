@@ -2,7 +2,8 @@
 import Log from "sap/base/Log"
 import UIComponent from "sap/ui/core/UIComponent"
 import JSONModel from "sap/ui/model/json/JSONModel"
-
+// import and usage only to tick off the bundler to include the lib
+import { evaluate } from "feelers"
 /**
  * @namespace io.camunda.connector.sap.btp.app
  */
@@ -17,10 +18,10 @@ export default class Component extends UIComponent {
     this.DEBUG = new URL(document.location.href).searchParams.get("debug")
     if (this.DEBUG) {
       Log.setLevel(Log.Level.DEBUG)
-	  ;(this.getModel("AppView") as JSONModel).setProperty("/debug", true)
+      ;(this.getModel("AppView") as JSONModel).setProperty("/debug", true)
       Log.debug(`[${this.getMetadata().getName()}] - Debug mode is enabled`)
     }
-
+    Log.info("//> feelers feeling ", evaluate("good")) //> usage and import mostly to tick off the bundler
     super.init()
   }
 

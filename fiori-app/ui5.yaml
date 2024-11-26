@@ -26,7 +26,9 @@ builder:
     - name: ui5-tooling-modules-task
       afterTask: replaceVersion
       configuration:
-        addToNamespace: true
+        addToNamespace: false
+        prependPathMappings: true 
+        debug: "verbose"
     - name: ui5-tooling-transpile-task
       afterTask: replaceVersion
 server:
