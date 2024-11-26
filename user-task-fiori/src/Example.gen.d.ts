@@ -1,5 +1,5 @@
 import Event from "sap/ui/base/Event";
-import { ExampleColor } from "io/camunda/connector/sap/btp/lib/library";
+import ExampleColor from "io/camunda/connector/sap/btp/lib/ExampleColor";
 import { PropertyBindingInfo } from "sap/ui/base/ManagedObject";
 import { $ControlSettings } from "sap/ui/core/Control";
 
