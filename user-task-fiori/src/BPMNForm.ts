@@ -970,7 +970,10 @@ export default class BPMNForm extends Control {
   }
 
   addTextArea(element: any, currentPath?: string) {
-    const defaultValue = this.getLocalModel().getProperty(`/BPMNform/${element.key}`) || element.defaultValue
+    const defaultValue =
+      this.getLocalModel().getProperty(`/BPMNform/${element.key}`) ||
+      this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
+      element.defaultValue
     const control = new TextArea(this._generateControlId(element), {
       visible: this._getVisibleStatement(element),
       value: defaultValue,
