@@ -337,6 +337,7 @@ export default class BPMNForm extends Control {
     }
     const defaultValue =
       ((this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) as string) ||
+      this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       (element.defaultValue as string)
 
     const control = new Input(this._generateControlId(element), {
@@ -386,7 +387,9 @@ export default class BPMNForm extends Control {
     }
 
     const selected =
-      (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) || element.defaultValue
+      (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) ||
+      this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
+      element.defaultValue
 
     const enabled = element.disabled
     const readonly = element.readonly
@@ -473,7 +476,9 @@ export default class BPMNForm extends Control {
     const control = new Select(this._generateControlId(element), {
       visible: visible,
       selectedKey:
-        (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) || element.defaultValue,
+        (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) ||
+        this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
+        element.defaultValue,
       forceSelection: false,
       change: (event) => {
         this._provideValueToView(element, control)
@@ -566,6 +571,7 @@ export default class BPMNForm extends Control {
     }
     const defaultValue =
       ((this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) as string) ||
+      this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
 
     let selectedIndex = -1
