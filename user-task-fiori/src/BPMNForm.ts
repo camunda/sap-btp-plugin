@@ -17,7 +17,7 @@ import Input from "sap/m/Input"
 import MultiComboBox from "sap/m/MultiComboBox"
 import Select from "sap/m/Select"
 import RadioButtonGroup from "sap/m/RadioButtonGroup"
-import CheckBox from "sap/m/CheckBox"
+// import CheckBox from "sap/m/CheckBox"
 import { InputType } from "sap/m/library"
 import Sorter from "sap/ui/model/Sorter"
 import Item from "sap/ui/core/Item"
@@ -31,6 +31,9 @@ import SmartField from "sap/ui/comp/smartfield/SmartField"
 import Label from "sap/m/Label"
 import Icon from "sap/ui/core/Icon"
 import TextArea from "sap/m/TextArea"
+
+import CheckBox from "@ui5/webcomponents/dist/CheckBox"
+
 
 import { evaluate } from "feelers"
 
@@ -119,7 +122,7 @@ export default class BPMNForm extends Control {
       }
       case ControlType.CheckBox:
         if (control && (control as CheckBox).getVisible()) {
-          value = (control as CheckBox).getSelected()
+          value = (control as CheckBox).getChecked()
         } else {
           value = ""
         }
@@ -314,22 +317,23 @@ export default class BPMNForm extends Control {
       return
     }
 
-    const selected =
+    const checked =
       (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
 
-    const enabled = element.disabled
+    const disabled = element.disabled
     const readonly = element.readonly
 
     const visible = this._getVisibleStatement(element)
+    debugger
     const control = new CheckBox(this._generateControlId(element), {
       visible,
-      selected,
-      enabled: !enabled,
-      editable: !readonly,
+      checked,
+      enabled: !!!disabled, // contrary to the docs
+      readonly: !!readonly,
       text: element.label,
-      select: () => {
+      change: () => {
         this._provideValueToView(element, control)
         this._validate()
       }
