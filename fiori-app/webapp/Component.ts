@@ -2,6 +2,10 @@
 import Log from "sap/base/Log"
 import UIComponent from "sap/ui/core/UIComponent"
 import JSONModel from "sap/ui/model/json/JSONModel"
+
+import "@ui5/webcomponents/dist/Assets"
+import "@ui5/webcomponents-icons/dist/AllIcons"
+
 // import and usage only to tick off the bundler to include the lib
 import { evaluate } from "feelers"
 /**
