@@ -62,8 +62,6 @@ export default class BPMNForm extends Control {
     properties: {
       buttonText: { type: "string", defaultValue: "submit me!" },
       placeHolderText: { type: "string", defaultValue: "waiting for data..." },
-      finalResultTextSuccess: { type: "string", defaultValue: "final result!" },
-      finalResultTextFail: { type: "string", defaultValue: "final result failed!" },
       submitButtonVisible: { type: "boolean", defaultValue: true },
       valid: { type: "boolean", bindable: true },
       formStep: { type: "int", bindable: true }
