@@ -10,7 +10,7 @@ export const config: wdi5Config = {
     //     screenshotsDisabled: false, // [optional] {boolean}, default: false; if set to true, screenshots won't be taken and not written to file system
          logLevel: "verbose", // [optional] error | verbose | silent, default: "error"
          skipInjectUI5OnStart: true, // [optional] {boolean}, default: false; true when UI5 is not on the start page, you need to later call <wdioUI5service>.injectUI5() manually
-        waitForUI5Timeout: 30000 // [optional] {number}, default: 15000; maximum waiting time in milliseconds while checking for UI5 availability
+        waitForUI5Timeout: 90000 // [optional] {number}, default: 15000; maximum waiting time in milliseconds while checking for UI5 availability
     //     btpWorkZoneEnablement: false // [optional] {boolean}, default: false; whether to instruct wdi5 to inject itself in both the SAP Build Workzone, standard edition, shell and app
      },
     //
