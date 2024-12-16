@@ -9,6 +9,11 @@ describe("select", () => {
   before(async () => {
     await browser.goTo(navTarget("select-8.6"))
     await ui5Service.injectUI5()
+    await browser.screenshot("before-select-group")
+  })
+
+  beforeEach(async () => {
+    await browser.screenshot("before-each-select-group")
   })
 
   it("basic select", async () => {

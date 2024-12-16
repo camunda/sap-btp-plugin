@@ -9,6 +9,11 @@ describe("radio button + -group", () => {
   before(async () => {
     await browser.goTo(navTarget("radio-8.6"))
     await ui5Service.injectUI5()
+    await browser.screenshot("before-radio-button-group")
+  })
+
+  beforeEach(async () => {
+    await browser.screenshot("before-each-radio-button-group")
   })
 
   it("basic select", async () => {
