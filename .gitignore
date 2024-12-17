@@ -39,3 +39,6 @@ mta.yaml
 xs-security.json
 !xs-security.json.example
 *.bak
+
+# dev time artifact
+.ui5-tooling-modules
