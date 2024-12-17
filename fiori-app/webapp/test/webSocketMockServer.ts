@@ -13,7 +13,7 @@ const MockServer = {
       if (mockForm) {
         await this.runForm(mockForm)
       }
-    }, 3000)
+    }, 6000)
   },
 
   runForm(mockForm: string) {
