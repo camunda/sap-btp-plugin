@@ -99,7 +99,7 @@ export const config: wdi5Config = {
       "goog:chromeOptions": {
         args:
           process.argv.indexOf("--headless") > -1
-            ? ["--headless=new"]
+            ? ["window-size=1440,800", "--headless=new"]
             : process.argv.indexOf("--debug") > -1
               ? ["window-size=1440,800", "--auto-open-devtools-for-tabs"]
               : ["window-size=1440,800"]
