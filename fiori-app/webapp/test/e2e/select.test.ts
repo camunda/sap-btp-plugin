@@ -1,14 +1,15 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, navTarget } from "./po/commons"
+import { ns, mockIndex, formTarget } from "./po/commons"
 import Select from "sap/m/Select"
 import Item from "sap/ui/core/Item"
 
 describe("select", () => {
   before(async () => {
-    await browser.goTo(navTarget("select-8.6"))
+    await browser.goTo(mockIndex())
     await ui5Service.injectUI5()
+    await formTarget("select-8.6")
     await browser.screenshot("before-select-group")
   })
 

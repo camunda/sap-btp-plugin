@@ -8,12 +8,12 @@ const websocket = SingletonWebSocket.getInstance(channelId)
 
 const MockServer = {
   init() {
-    window.setTimeout(async () => {
-      const mockForm = UriParameters.fromURL(window.location.href).get("mock")
-      if (mockForm) {
-        await this.runForm(mockForm)
-      }
-    }, 6000)
+    // window.setTimeout(async () => {
+    //   const mockForm = UriParameters.fromURL(window.location.href).get("mock")
+    //   if (mockForm) {
+    //     await this.runForm(mockForm)
+    //   }
+    // }, 3000)
   },
 
   runForm(mockForm: string) {
