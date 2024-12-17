@@ -213,7 +213,6 @@ export default class MainStageController extends BaseController {
             }
 
             case "final-task-fail":
-              debugger
               EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId
@@ -225,7 +224,6 @@ export default class MainStageController extends BaseController {
               this.getBpmnForm().endProcess(_data)
               break
             case "final-task-success":
-              debugger
               EventBus.getInstance().publish("Camunda", "request", {
                 status: CamundaRequest.stopped,
                 channelId: _data.channelId

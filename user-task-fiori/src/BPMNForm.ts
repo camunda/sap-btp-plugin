@@ -326,7 +326,6 @@ export default class BPMNForm extends Control {
     const readonly = element.readonly
 
     const visible = this._getVisibleStatement(element)
-    debugger
     const control = new CheckBox(this._generateControlId(element), {
       visible,
       checked,
