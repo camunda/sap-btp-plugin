@@ -59,4 +59,5 @@ describe("select", () => {
   it.skip("static read-only", async () => {})
   it.skip("input data", async () => {})
   it.skip("expression", async () => {})
+  it.skip("value state: mandatory", async () => {})
 })

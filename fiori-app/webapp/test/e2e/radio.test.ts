@@ -86,4 +86,5 @@ describe("radio button + -group", () => {
 
   it.skip("dynamic generation of radio button group (input data)", async () => {})
   it.skip("dynamic generation of radio button group (expression)", async () => {})
+  it.skip("value state: mandatory", async () => {})
 })

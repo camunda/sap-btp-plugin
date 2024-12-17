@@ -81,4 +81,5 @@ describe("checkbox", () => {
   })
 
   it.skip("read-only state of via feel", async () => {})
+  it.skip("value state: mandatory", async () => {})
 })
