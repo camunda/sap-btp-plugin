@@ -12,7 +12,10 @@
 
 in folder `test/docker`, all local dev resources are located
 
-- 8.6: `dc -f docker-compose-8.6+gen5.yaml -p 86gen5 up --remove-orphans`
+#### 8.6
+
+- https://github.com/camunda/camunda-platform/blob/8.6%2Bgen5/
+- `dc -f docker-compose-8.6+gen5.yaml -p 86gen5 up --remove-orphans`
 
 ## router
 
