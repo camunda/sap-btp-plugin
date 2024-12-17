@@ -67,6 +67,7 @@ module.exports = Object.assign(
       const worker = /** @type {import("@camunda8/sdk").Zeebe.ZeebeGrpcClient}  */ (this.getClient()).createWorker({
         taskType,
         taskHandler,
+        longPoll: 45000,
         ...options
       })
       worker.on("ready", () => LOGGER.info(`worker "${taskType}" connected!`))
