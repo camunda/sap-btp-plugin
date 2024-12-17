@@ -20,12 +20,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
       - run: npm ci
       
       - name: test backend
         run: cd core && npm test
 
-      - name: test "sap" tasklist rendering
+      - name: test "sap tasklist" rendering
         run: |
           cd fiori-app
           npm run test:e2e          

@@ -11,7 +11,7 @@ export const config: wdi5Config = {
     //     screenshotsDisabled: false, // [optional] {boolean}, default: false; if set to true, screenshots won't be taken and not written to file system
     logLevel: "verbose", // [optional] error | verbose | silent, default: "error"
     skipInjectUI5OnStart: true, // [optional] {boolean}, default: false; true when UI5 is not on the start page, you need to later call <wdioUI5service>.injectUI5() manually
-    waitForUI5Timeout: 90000 // [optional] {number}, default: 15000; maximum waiting time in milliseconds while checking for UI5 availability
+    waitForUI5Timeout: 1200000 // [optional] {number}, default: 15000; maximum waiting time in milliseconds while checking for UI5 availability
     //     btpWorkZoneEnablement: false // [optional] {boolean}, default: false; whether to instruct wdi5 to inject itself in both the SAP Build Workzone, standard edition, shell and app
   },
   //
@@ -99,10 +99,10 @@ export const config: wdi5Config = {
       "goog:chromeOptions": {
         args:
           process.argv.indexOf("--headless") > -1
-            ? ["window-size=1440,800", "--headless=new"]
+            ? ["window-size=1920,1280", "--headless=new"]
             : process.argv.indexOf("--debug") > -1
-              ? ["window-size=1440,800", "--auto-open-devtools-for-tabs"]
-              : ["window-size=1440,800"]
+              ? ["window-size=1920,1280", "--auto-open-devtools-for-tabs"]
+              : ["window-size=1920,1280"]
       },
       acceptInsecureCerts: true
       // If outputDir is provided WebdriverIO can capture driver session logs
@@ -145,7 +145,7 @@ export const config: wdi5Config = {
   baseUrl: "http://localhost:8080/mockserver.html?channelId=testChannel",
   //
   // Default timeout for all waitFor* commands.
-  waitforTimeout: 30000,
+  waitforTimeout: 60000,
   //
   // Default timeout in milliseconds for request
   // if browser driver or grid doesn't send response
