@@ -1,6 +1,6 @@
 {
   "welcomeFile": "/app/index.html",
-  "authenticationMethod": "none",
+  "authenticationMethod": "route",
   "websockets": {
     "enabled": true
   },
@@ -19,12 +19,21 @@
       "target": "/$1",
       "destination": "@camunda8/btp-integration-core",
       "csrfProtection": false,
-      "cacheControl": "no-cache, no-store, must-revalidate"
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
     },
     {
       "source": "/channel(.*)$",
       "target": "/channel$1",
-      "destination": "@camunda8/btp-integration-core"
+      "destination": "@camunda8/btp-integration-core",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/app/(.*)$",
+      "target": "$1",
+      "destination": "ui",
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
     }
   ]
 }
