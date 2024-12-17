@@ -466,7 +466,7 @@ export default class BPMNForm extends Control {
         this._provideValueToView(element, control)
         this._validate()
       },
-      columns: element.values.length > 2 ? 1 : 2
+      columns: element.values?.length > 2 ? 1 : 2
     })
 
     // handle visibility for deep if constructions,
@@ -506,7 +506,7 @@ export default class BPMNForm extends Control {
       element.defaultValue
 
     let selectedIndex = -1
-    element.values.forEach((value, index) => {
+    element.values?.forEach((value, index) => {
       const radioButton = new RadioButton(`${this._generateControlId(element)}-${index}`, { text: value.label })
       // attach a pseudo-"key" to the radio button for later data retrieval
       radioButton.addCustomData(new CustomData({ key: value.value, value: value.value }))
