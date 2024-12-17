@@ -37,6 +37,7 @@
 		"ui5-tooling-transpile": "^3.5.1"
 	},
 	"dependencies": {
-    "feelers": "^1.4.0"
-  }
+		"@ui5/webcomponents": "^2.5.0",
+		"feelers": "^1.4.0"
+	}
 }

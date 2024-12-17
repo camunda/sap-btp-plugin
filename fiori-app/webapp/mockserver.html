@@ -16,9 +16,11 @@
 					id="sap-ui-bootstrap"
 					src="https://ui5.sap.com/1.120/resources/sap-ui-core.js"
 					data-sap-ui-resourceroots='{
-				"io.camunda.connector.sap.btp.app": "./",
-				"io.camunda.connector.sap.btp.lib": "./resources/io/camunda/connector/sap/btp/lib",
-				"feelers": "./resources/feelers"
+						"io.camunda.connector.sap.btp.app": "./",
+						"io.camunda.connector.sap.btp.lib": "./resources/io/camunda/connector/sap/btp/lib",
+						"feelers": "./resources/feelers",
+						"@ui5/webcomponents": "./resources/@ui5/webcomponents",
+						"@ui5/webcomponents-icons": "./resources/@ui5/webcomponents-icons"
 			}'
 					data-sap-ui-theme="sap_horizon"
 					data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
@@ -27,14 +29,15 @@
 					data-sap-ui-frameOptions="trusted"
 					data-sap-ui-xx-waitForTheme="true"></script>
 	<script>
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require(
-				["io/camunda/connector/sap/btp/app/test/webSocketMockServer"],
-				function (webSocketMockServer) {
-					webSocketMockServer.init()
-				}
-			)
-		})
+		sap.ui.require(
+			[
+				"sap/ui/core/Core",
+				"io/camunda/connector/sap/btp/app/test/webSocketMockServer"
+			],
+			function (Core, webSocketMockServer) {
+				Core.ready().then(() => webSocketMockServer.init())
+			}
+		)
 	</script>
 </head>
 

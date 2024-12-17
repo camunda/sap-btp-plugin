@@ -1,8 +1,7 @@
-<!-- xmlns:bdaas="io.camunda.connector.sap.btp.app.control" -->
 <mvc:View xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:core="sap.ui.core"
-  xmlns:main="sap.ui.webc.main"
+  xmlns:webc="@ui5/webcomponents"
   xmlns:utf="io.camunda.connector.sap.btp.lib"
   displayBlock="true"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -30,19 +29,17 @@
           finishedForm="onFinishedForm" />
         <FlexBox justifyContent="End">
 
-          <Button text="{i18n>Progress.btn_text_next}"
-            press="onSubmit"
+          <webc:Button text="{i18n>Progress.btn_text_next}"
+            click="onSubmit"
             visible="{= ${AppView>/formStep} === 1}"
             id="btnNextStep"
-            iconFirst="false"
-            icon="sap-icon://navigation-right-arrow"
+            endIcon="navigation-right-arrow"
             enabled="{AppView>/currentForm/isValid}"
             class="sapUiMediumMarginEnd" />
-          <Button text="{i18n>Progress.btn_text_finish}"
-            press="onFinish"
+          <webc:Button text="{i18n>Progress.btn_text_finish}"
+            click="onFinish"
             visible="{= ${AppView>/formStep} === 2}"
             id="btnFinish"
-            iconFirst="false"
             icon="sap-icon://navigation-right-arrow"
             enabled="{AppView>/currentForm/isValid}"
             class="sapUiMediumMarginEnd" />

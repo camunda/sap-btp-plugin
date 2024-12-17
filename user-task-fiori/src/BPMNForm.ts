@@ -17,7 +17,7 @@ import Input from "sap/m/Input"
 import MultiComboBox from "sap/m/MultiComboBox"
 import Select from "sap/m/Select"
 import RadioButtonGroup from "sap/m/RadioButtonGroup"
-import CheckBox from "sap/m/CheckBox"
+// import CheckBox from "sap/m/CheckBox"
 import { InputType } from "sap/m/library"
 import Sorter from "sap/ui/model/Sorter"
 import Item from "sap/ui/core/Item"
@@ -31,6 +31,9 @@ import SmartField from "sap/ui/comp/smartfield/SmartField"
 import Label from "sap/m/Label"
 import Icon from "sap/ui/core/Icon"
 import TextArea from "sap/m/TextArea"
+
+import CheckBox from "@ui5/webcomponents/dist/CheckBox"
+
 
 import { evaluate } from "feelers"
 
@@ -62,8 +65,6 @@ export default class BPMNForm extends Control {
     properties: {
       buttonText: { type: "string", defaultValue: "submit me!" },
       placeHolderText: { type: "string", defaultValue: "waiting for data..." },
-      finalResultTextSuccess: { type: "string", defaultValue: "final result!" },
-      finalResultTextFail: { type: "string", defaultValue: "final result failed!" },
       submitButtonVisible: { type: "boolean", defaultValue: true },
       valid: { type: "boolean", bindable: true },
       formStep: { type: "int", bindable: true }
@@ -121,7 +122,7 @@ export default class BPMNForm extends Control {
       }
       case ControlType.CheckBox:
         if (control && (control as CheckBox).getVisible()) {
-          value = (control as CheckBox).getSelected()
+          value = (control as CheckBox).getChecked()
         } else {
           value = ""
         }
@@ -133,76 +134,6 @@ export default class BPMNForm extends Control {
         throw new Error(`working an unknown form control type ${type}`)
     }
     return value
-  }
-
-  /**
-   * returns questions and answers from form streak as array
-   * @returns the questions and answers as array
-   */
-  getUserData(): userFormData[] {
-    const data: userFormData[] = []
-    // for each dynamically generated cdontrol,
-    // get its' "key" data for submitting -> job worker
-    // and its' value that was supplied/chosen by the user
-    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
-      const ui5Control = Core.byId(control.id) as Control
-
-      // represents the form key as modelled in Camunda
-      const key = ui5Control.getCustomData()[0].getKey()
-
-      const value = this.getValueFromControl(control.type, ui5Control) as string
-      let answer
-      switch (control.type) {
-        case ControlType.ValueHelpInput:
-          {
-            answer = (ui5Control.getAggregation("_input") as Input).getValue()
-          }
-          break
-        case ControlType.CheckBox:
-          {
-            if (ui5Control.getVisible()) {
-              answer = String((ui5Control as CheckBox).getSelected())
-            }
-          }
-          break
-        case ControlType.Select:
-          {
-            const selectedItem = (ui5Control as Select).getSelectedItem()
-            if (selectedItem) {
-              if (selectedItem.getText() === value) {
-                answer = value
-              } else {
-                answer = `${value} (${selectedItem.getText()})`
-              }
-            }
-          }
-          break
-        case ControlType.Radio:
-          {
-            const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
-            if (selectedButton) {
-              if (selectedButton.getText() === value) {
-                answer = value
-              } else {
-                answer = `${value} (${selectedButton.getText()})`
-              }
-            }
-          }
-          break
-        default: {
-          answer = this.getValueFromControl(control.type, ui5Control) as string
-        }
-      }
-      data.push({
-        key,
-        value,
-        question: control.question as string,
-        answer,
-        linkedControlId: control.id,
-        linkedControlType: control.type
-      })
-    })
-    return data
   }
 
   /**
@@ -386,22 +317,22 @@ export default class BPMNForm extends Control {
       return
     }
 
-    const selected =
+    const checked =
       (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
 
-    const enabled = element.disabled
+    const disabled = element.disabled
     const readonly = element.readonly
 
     const visible = this._getVisibleStatement(element)
     const control = new CheckBox(this._generateControlId(element), {
       visible,
-      selected,
-      enabled: !enabled,
-      editable: !readonly,
+      checked,
+      enabled: !!!disabled, // contrary to the docs
+      readonly: !!readonly,
       text: element.label,
-      select: () => {
+      change: () => {
         this._provideValueToView(element, control)
         this._validate()
       }
@@ -535,7 +466,7 @@ export default class BPMNForm extends Control {
         this._provideValueToView(element, control)
         this._validate()
       },
-      columns: element.values.length > 2 ? 1 : 2
+      columns: element.values?.length > 2 ? 1 : 2
     })
 
     // handle visibility for deep if constructions,
@@ -575,7 +506,7 @@ export default class BPMNForm extends Control {
       element.defaultValue
 
     let selectedIndex = -1
-    element.values.forEach((value, index) => {
+    element.values?.forEach((value, index) => {
       const radioButton = new RadioButton(`${this._generateControlId(element)}-${index}`, { text: value.label })
       // attach a pseudo-"key" to the radio button for later data retrieval
       radioButton.addCustomData(new CustomData({ key: value.value, value: value.value }))

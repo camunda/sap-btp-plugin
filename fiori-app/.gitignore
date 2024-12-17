@@ -15,3 +15,7 @@ node_modules/
 
 .DS_Store
 .env
+
+# ci screenshot dir
+!webapp/test/e2e/__screenshots__/.keepMe
+webapp/test/e2e/__screenshots__

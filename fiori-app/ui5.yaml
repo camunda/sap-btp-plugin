@@ -7,7 +7,7 @@ customConfiguration:
     mountPath: /app
 framework:
   name: SAPUI5
-  version: "1.128.0"
+  version: "1.120.0"
   libraries:
     - name: sap.f
     - name: sap.m
@@ -33,11 +33,14 @@ builder:
       afterTask: replaceVersion
 server:
   customMiddleware:
+    - name: ui5-tooling-transpile-middleware
+      afterMiddleware: compression
     - name: ui5-tooling-modules-middleware
       afterMiddleware: compression
       configuration:
         debug: "verbose"
-    - name: ui5-tooling-transpile-middleware
-      afterMiddleware: compression
+        pluginOptions:
+          webcomponents:
+            force: true
     - name: ui5-middleware-livereload
       afterMiddleware: compression
