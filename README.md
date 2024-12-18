@@ -20,11 +20,26 @@ $> cds bind --exec npm start
 # -> http://localhost:5001
 ```
 
+check working binding with `cds env list requires.auth --resolve-bindings --profile **hybrid**`
+
+### only backend
+
+terminal 1: 
+
+- `cf login ...`
+- `PORT=5001 cds bind --exec -- npm start -w router`
+
+terminal 2:
+
+- `cd core`
+- `source ../test/.env-localdev`
+- `cds w --profile hybrid`
+
+### common settings
+
 - dev-approuter: 5001 (not 5000, b/c of macOS port issue)
 - fiori app: served w/ approuter on 5002
 - cap backend: auto-started via dev-approuter on 4004
-
-## dev time - common settings
 
 - `process.env.DISABLE_CAMUNDA` turns off C8 connectivity
 - `DEBUG=camunda` or `cds.debug("camunda")` will trigger debug log output
