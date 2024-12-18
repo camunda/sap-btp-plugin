@@ -3,7 +3,7 @@ import Markdown from "./Markdown"
 import Control from "sap/ui/core/Control"
 import type { MetadataOptions } from "sap/ui/core/Element"
 import BPMNFormRenderer from "./BPMNFormRenderer"
-import { BPMNformData, Component, ControlType, GeneratedControl, SelectionModes } from "./BPMNformData"
+import { BPMNformData, Component, ControlType, GeneratedControl, SelectionModes, userFormData } from "./BPMNformData"
 import Core from "sap/ui/core/Core"
 import { ValueState } from "sap/ui/core/library"
 import JSONModel from "sap/ui/model/json/JSONModel"
@@ -135,6 +135,78 @@ export default class BPMNForm extends Control {
     }
     return value
   }
+
+
+  /**
+   * returns questions and answers from form streak as array
+   * @returns the questions and answers as array
+   */
+  getUserData(): userFormData[] {
+    const data: userFormData[] = []
+    // for each dynamically generated cdontrol,
+    // get its' "key" data for submitting -> job worker
+    // and its' value that was supplied/chosen by the user
+    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+      const ui5Control = Core.byId(control.id) as Control
+
+      // represents the form key as modelled in Camunda
+      const key = ui5Control.getCustomData()[0].getKey()
+
+      const value = this.getValueFromControl(control.type, ui5Control) as string
+      let answer
+      switch (control.type) {
+        case ControlType.ValueHelpInput:
+          {
+            answer = (ui5Control.getAggregation("_input") as Input).getValue()
+          }
+          break
+        case ControlType.CheckBox:
+          {
+            if (ui5Control.getVisible()) {
+              answer = String((ui5Control as CheckBox).getSelected())
+            }
+          }
+          break
+        case ControlType.Select:
+          {
+            const selectedItem = (ui5Control as Select).getSelectedItem()
+            if (selectedItem) {
+              if (selectedItem.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedItem.getText()})`
+              }
+            }
+          }
+          break
+        case ControlType.Radio:
+          {
+            const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
+            if (selectedButton) {
+              if (selectedButton.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedButton.getText()})`
+              }
+            }
+          }
+          break
+        default: {
+          answer = this.getValueFromControl(control.type, ui5Control) as string
+        }
+      }
+      data.push({
+        key,
+        value,
+        question: control.question as string,
+        answer,
+        linkedControlId: control.id,
+        linkedControlType: control.type
+      })
+    })
+    return data
+  }
+
 
   /**
    * set the value state for the given control and trigger form validation afterwards
