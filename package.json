@@ -15,16 +15,18 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "_start:backend": "cd core; cds run --profile hybird",
     "//_start:approuter": "intended for local dev; the INCOMING_CONNECTION_TIMEOUT env var is set at deploy-time in mta.yaml",
-    "_start:approuter": "cross-env INCOMING_CONNECTION_TIMEOUT=900000 XS_APP_LOG_LEVEL=debug npm run start:local -w router",
+    "_start:approuter:noauth": "cross-env INCOMING_CONNECTION_TIMEOUT=900000 XS_APP_LOG_LEVEL=debug CDS_ENV=hybrid npm run start:local -w router",
+    "_start:approuter": "cross-env INCOMING_CONNECTION_TIMEOUT=900000 XS_APP_LOG_LEVEL=debug CDS_ENV=hybrid npm run start -w router",
     "//_start:app": "intended for local dev - this also starts the CAP layer!",
     "_start:app:noauth": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
     "_start:app": "npm run _deploy:sqlite -w core ; npm run build -w fiori-app; npm run start -w fiori-app",
     "//start": "intended for dev time only",
     "//start:noauth": "no authN and auth - make sure to also set 'authenticationMethod' to 'none' in xs-dev.json",
-    "start:noauth": "cross-env NODE_ENV=localdev npm-run-all --parallel _start:app:noauth _start:approuter",
+    "start:noauth": "cross-env NODE_ENV=localdev npm-run-all --parallel _start:app:noauth _start:approuter:noauth",
     "//start-": "authN and authZ against BTP xsuaa with the help of cds bind - this also builds the UI, so startup takes a while",
-    "start": "cross-env NODE_ENV=localdev npm-run-all --parallel _start:app _start:approuter"
+    "start": "cross-env NODE_ENV=localdev npm-run-all --parallel _start:app _start:approuter _start:backend"
   },
   "dependencies": {
     "@sap/cds": "^8"
