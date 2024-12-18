@@ -42,3 +42,4 @@ xs-security.json
 
 # dev time artifact
 .ui5-tooling-modules
+.env
