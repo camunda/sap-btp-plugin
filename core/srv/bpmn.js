@@ -41,7 +41,7 @@ module.exports = async (bpmn) => {
     })
 
     // persist websocket client that triggered the bpmn process executions
-    const { BrowserClients } = require("#cds-models/zeebe")
+    const { BrowserClients } = require("#cds-models/camunda")
     // first make sure we're cleaning previous reference for that client/"channel"
     // use case: reloading the browser
     await DELETE.from(BrowserClients).where`channelId=${channelId}`
@@ -52,7 +52,8 @@ module.exports = async (bpmn) => {
       bpmnProcessId,
       version,
       processInstanceKey,
-      tenantId
+      tenantId,
+      user: req.user.id || "anonymous"
     })
     DEBUG && LOGGER.debug(`recording client on channel ${channelId} for bpmn process instance ${processInstanceKey}`)
 
@@ -66,13 +67,16 @@ module.exports = async (bpmn) => {
 
   bpmn.on("completeUsertask", async (req) => {
     LOGGER.info(`completing user task w/ job ${req.data.jobKey} and vars ${JSON.stringify(req.data.variables)}`)
-    const variables = JSON.parse(req.data.variables)
+    const variables = JSON.parse(req.data?.variables || "{}") 
     const zbc = _zbc.getClient()
     try {
       await zbc.completeJob({
         jobKey: req.data.jobKey,
         variables
       })
+      const { UserTasks } = require("#cds-models/camunda")
+      await DELETE.from(UserTasks).where({ jobKey: req.data.jobKey })
+      LOGGER.info(`successfully completed (c8) and deleted (db) user task w/ job ${req.data.jobKey}`)
     } catch (err) {
       const message = `error completing user task w/ job ${req.data.jobKey} b/c of: ${JSON.stringify(err)}`
       LOGGER.error(message)
