@@ -84,4 +84,15 @@ module.exports = async (bpmn) => {
     }
     return {}
   })
+
+  /**
+   * a clean up operation: remove any client/UI association with a process instance
+   */
+  bpmn.on("deleteUIChannel", async (req) => {
+    const channelId = req.data.channelId
+    LOGGER.info(`deleting channel ${channelId}`)
+    const { BrowserClients } = require("#cds-models/camunda")
+    await DELETE.from(BrowserClients).where({ channelId })
+    return {}
+  })
 }
