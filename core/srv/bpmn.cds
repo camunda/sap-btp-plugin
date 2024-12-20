@@ -1,3 +1,5 @@
+using {camunda} from '../db/user-tasks';
+
 service BPMN {
     type RunTime {
         channelId            : String; //> websocket "channel" identifier
@@ -11,6 +13,8 @@ service BPMN {
     action runProcess(bpmnProcessId : String, channelId : String, variables : String) returns RunTime;
     action completeUsertask(jobKey : String, variables : String);
     action deleteUIchannel(channelId : String); //> when the process is finished
+
+    entity UserTasks as projection on camunda.UserTasks where user = $user;
 }
 
-annotate BPMN with @(requires : 'authenticated-user');
+annotate BPMN with @(requires: 'authenticated-user');
