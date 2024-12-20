@@ -1,10 +1,50 @@
 # Camunda BTP Integration
 
-## dev time - local setup
+## dev time
+
+prerequisite: create local destinations in `router/default-env.json` (not under version control!)
+
+```json
+{
+  "PORT": 5001,
+  "//destinations": "this is for dev time only!",
+  "destinations": [
+    {
+      "name": "srv_api",
+      "url": "http://localhost:4004",
+      "forwardAuthToken": true
+    },
+    {
+      "name": "ui",
+      "url": "http://localhost:8080",
+      "forwardAuthToken": true
+    }
+  ]
+}
+```
+
+- build of both UI and backend are at deploy-time only  
+  dev-time uses hot reload (UI) and `cds` tooling for serving the modules  
+  deployment uses app router for both
+  
+### local setup
 
 ...w/o authN and authZ
 
-## dev time - hybrid setup
+```shell
+# in / of the proj
+# credentials for local c8
+$> source test/.env-localdev
+$> npm run start:local
+
+# -> http://localhost:5001
+```
+
+- the dev-approuter is used in place of the approuter  
+  it in turn starts the CAP backend
+
+
+### hybrid setup
 
 ...so that most importantly `authN` and `authZ` work against the BTP `xsuaa`!
 
@@ -12,10 +52,17 @@ create necessary `xsuaa` service instance:
 
 ```shell
 # in / of the proj
+$> cf login ...
+
 $> cf cs xsuaa application uaa-hybrid-instance -c xs-security.json
 $> cds bind -2 uaa-hybrid-instance # auto-creates a service key
 # ... creates .cdsrc-private.json
-$> cds bind --exec npm start
+
+# credentials for local c8
+$> source test/.env-localdev
+
+# runtime local, auth(n,z) from BTP
+$> cds bind --exec -- npm run start:hybrid
 
 # -> http://localhost:5001
 ```
@@ -37,9 +84,10 @@ terminal 2:
 
 ### common settings
 
-- dev-approuter: 5001 (not 5000, b/c of macOS port issue)
-- fiori app: served w/ approuter on 5002
-- cap backend: auto-started via dev-approuter on 4004
+- dev-approuter: port 5001 (not 5000, b/c of macOS port issue)
+
+- UI5 frontend: port 8080
+- CAP backend: port 4004
 
 - `process.env.DISABLE_CAMUNDA` turns off C8 connectivity
 - `DEBUG=camunda` or `cds.debug("camunda")` will trigger debug log output
