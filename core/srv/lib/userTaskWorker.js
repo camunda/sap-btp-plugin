@@ -16,7 +16,7 @@ module.exports = async (job, worker) => {
 
   const channelId = job.variables.channelId
 
-  //> TODO: pass an instance of @camunda8/btp-integration-core into here for canceling the process
+  //> TODO: pass an instance of @camunda8/btp-plugin-core into here for canceling the process
   // bail out if no recipient (aka browser aka channel id) could be determined
   if (!channelId || channelId === "") {
     const msg = msg

@@ -9,7 +9,7 @@ const args = parseArgs(Deno.args, {
   default: {
     env: "prod",
     version: "8.7.0",
-    route: "camunda-btp-integration",
+    route: "camunda-btp-plugin",
   },
 })
 
@@ -138,8 +138,8 @@ function injectCamundaCredentials(credentials: typeof allCamundaCredentials | ty
 }
 
 function injectRoute(route: string) {
-  _replace("./xs-security.json", "<btp-integration-route>", route)
-  _replace("./mta.yaml", "<btp-integration-route>", route)
+  _replace("./xs-security.json", "<btp-plugin-route>", route)
+  _replace("./mta.yaml", "<btp-plugin-route>", route)
 }
 
 function injectVersion(version: string) {
