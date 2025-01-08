@@ -1,4 +1,4 @@
-# Camunda BTP Integration
+# Camunda BTP Plugin
 
 ## dev time
 
