@@ -41,3 +41,4 @@ xs-security.json
 *.bak
 
 .ui5-tooling-modules
+.env
