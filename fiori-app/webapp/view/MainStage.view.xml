@@ -10,7 +10,7 @@
   controllerName="io.camunda.connector.sap.btp.app.controller.MainStage">
   <Page showHeader="false">
     <HBox height="100%"
-      alignItems="Center"
+      alignItems="{= (${AppView>/formStep} === 0 || ${AppView>/formStep} > 1) ? 'Center' : 'Start'}"
       justifyContent="Center">
       <VBox alignItems="Center"
         id="idContent"
