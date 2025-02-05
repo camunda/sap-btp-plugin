@@ -11,5 +11,5 @@ fi
 components=("ui" "srv" "router")
 
 for component in "${components[@]}"; do
-    cf ${doWhat} "btp-integration-${component}"
+    cf ${doWhat} "btp-plugin-${component}"
 done

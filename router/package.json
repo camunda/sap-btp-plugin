@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "dev-approuter": "^0.3.3",
-    "@camunda8/btp-integration-core": "*",
+    "@camunda8/btp-plugin-core": "*",
     "@camunda8/fiori-app": "*"
   }
 }
