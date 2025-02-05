@@ -34,7 +34,6 @@ import TextArea from "sap/m/TextArea"
 
 import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 
-
 import { evaluate } from "feelers"
 
 // name of local json model used for local bindings
@@ -906,14 +905,22 @@ export default class BPMNForm extends Control {
     //throw new Error("Method not implemented.")
   }
 
-  addTextArea(element: any, currentPath?: string) {
+  addTextArea(element: Component, currentPath?: string) {
     const defaultValue =
       this.getLocalModel().getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
+
+    const enabled = element.disabled
+    const readonly = element.readonly ? !!evaluate(element.readonly.toString()) : false
+    const required = element.validate?.required || false
+
     const control = new TextArea(this._generateControlId(element), {
       visible: this._getVisibleStatement(element),
       value: defaultValue,
+      enabled: !enabled,
+      editable: !readonly,
+      required,
       cols: 50,
       rows: 20
     })
@@ -925,7 +932,7 @@ export default class BPMNForm extends Control {
     control.setVisible = (value) => {
       fn.apply(control, [value])
       if (control.getVisible() === false) {
-        if (element.validate?.required) {
+        if (required) {
           control.setValueState(ValueState.Error)
         }
         control.setValue("")
