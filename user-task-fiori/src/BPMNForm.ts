@@ -32,6 +32,7 @@ import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
+import HBox from "sap/m/HBox"
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -311,7 +312,40 @@ export default class BPMNForm extends Control {
           }
         })
       }
+      if (element.appearance?.suffixAdorner) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+        control.setDescription(evaluate(element.appearance.suffixAdorner.toString()))
+      }
+      if (element.appearance?.prefixAdorner) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const label = new Label({ text: evaluate(element.appearance.prefixAdorner.toString()) }).addStyleClass(
+          "sapUiTinyMarginEnd"
+        )
+        const hbox = new HBox({ alignItems: "Center" }).addItem(label).addItem(control)
+
+        const fn = hbox.setVisible
+        hbox.setVisible = (value) => {
+          fn.apply(control, [value])
+          if (control.getVisible() === false) {
+            if (element.validate?.required) {
+              control.setValueState(ValueState.Error)
+            }
+            control.setValue("")
+            this._provideValueToView(element, control)
+          }
+
+          return control
+        }
+        this._addControl(element, hbox, ControlType.Textfield)
+        this._setValueState(control, element, control.getValue())
+
+        return control
+      }
     }
+
+
+    // no need to cater to Camunda Forms property "serializeToString"
+    // as UI5 always gets the value from the control as string
 
     // handle visibility for deep if constructions,
     // if the control is set to invisible delete value and provide empty value

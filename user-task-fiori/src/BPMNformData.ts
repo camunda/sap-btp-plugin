@@ -23,6 +23,12 @@ export interface Component {
   defaultValue?: boolean | string
   readonly?: boolean
   decimalDigits?: number
+  appearance?: Appearance
+}
+
+interface Appearance {
+  prefixAdorner?: string
+  suffixAdorner?: string
 }
 
 interface Validate {
