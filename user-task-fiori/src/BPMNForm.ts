@@ -347,22 +347,6 @@ export default class BPMNForm extends Control {
     // no need to cater to Camunda Forms property "serializeToString"
     // as UI5 always gets the value from the control as string
 
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setValue("")
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
     this._addControl(element, control, ControlType.Textfield)
     this._setValueState(control, element, control.getValue())
 
@@ -394,23 +378,6 @@ export default class BPMNForm extends Control {
         this._validate()
       }
     })
-
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setSelected(false)
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
 
     this._provideValueToView(element, control)
     this._addControl(element, control, ControlType.CheckBox, false)
@@ -472,23 +439,6 @@ export default class BPMNForm extends Control {
       control.addItem(new Item({ key: value.value, text: value.label }))
     })
 
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setSelectedKey("")
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
-
     this._addControl(element, control, ControlType.Select)
     this._setValueState(control, element, !!control.getSelectedKey() || false)
 
@@ -520,37 +470,6 @@ export default class BPMNForm extends Control {
       columns: element.values?.length > 2 ? 1 : 2
     })
 
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        control.setSelectedIndex(-1)
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        this._provideValueToView(element, control)
-        this._validate()
-      } else {
-        let selectedIndex = -1
-        element.values.forEach((value, index) => {
-          if (value.value === defaultValue) {
-            selectedIndex = index
-          }
-        })
-        control.setSelectedIndex(selectedIndex)
-        if (element.validate?.required && selectedIndex === -1) {
-          control.setValueState(ValueState.Error)
-        } else {
-          control.setValueState(ValueState.None)
-        }
-        this._validate()
-      }
-
-      return control
-    }
     const defaultValue =
       ((this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) as string) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
@@ -907,23 +826,6 @@ export default class BPMNForm extends Control {
       cols: 50,
       rows: 20
     })
-
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setValue("")
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
 
     this._addControl(element, control, ControlType.Textarea)
     this._setValueState(control, element, control.getValue())
