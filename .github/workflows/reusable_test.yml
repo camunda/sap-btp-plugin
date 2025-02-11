@@ -37,5 +37,5 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-screenshots
+          name: e2e-screenshots-${{ inputs.node-version }}
           path: fiori-app/webapp/test/e2e/__screenshots__

@@ -22,6 +22,13 @@ export interface Component {
   disabled?: boolean
   defaultValue?: boolean | string
   readonly?: boolean
+  decimalDigits?: number
+  appearance?: Appearance
+}
+
+interface Appearance {
+  prefixAdorner?: string
+  suffixAdorner?: string
 }
 
 interface Validate {
@@ -29,6 +36,8 @@ interface Validate {
   minLength?: number
   maxLength?: number
   pattern?: string
+  min?: number
+  max?: number
 }
 
 interface Value {
