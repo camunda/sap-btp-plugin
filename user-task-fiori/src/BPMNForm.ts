@@ -317,8 +317,11 @@ export default class BPMNForm extends Control {
         control.setDescription(evaluate(element.appearance.suffixAdorner.toString()))
       }
       if (element.appearance?.prefixAdorner) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const label = new Label({ text: evaluate(element.appearance.prefixAdorner.toString()) }).addStyleClass(
+        const label = new Label({ 
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          text: evaluate(element.appearance.prefixAdorner.toString()),
+          labelFor: control.getId()
+         }).addStyleClass(
           "sapUiTinyMarginEnd"
         )
         const hbox = new HBox({ alignItems: "Center" }).addItem(label).addItem(control)
