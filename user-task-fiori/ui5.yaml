@@ -8,7 +8,6 @@ framework:
   libraries:
     - name: sap.ui.core
     - name: themelib_sap_horizon
-    - name: themelib_sap_fiori_3
 builder:
   libraryPreload:
     excludes:

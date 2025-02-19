@@ -12,8 +12,6 @@ declare module "./BPMNForm" {
     interface $BPMNFormSettings extends $ControlSettings {
         buttonText?: string | PropertyBindingInfo;
         placeHolderText?: string | PropertyBindingInfo;
-        finalResultTextSuccess?: string | PropertyBindingInfo;
-        finalResultTextFail?: string | PropertyBindingInfo;
         submitButtonVisible?: boolean | PropertyBindingInfo | `{${string}}`;
         valid?: boolean | PropertyBindingInfo | `{${string}}`;
         formStep?: number | PropertyBindingInfo | `{${string}}`;
@@ -31,14 +29,6 @@ declare module "./BPMNForm" {
         // property: placeHolderText
         getPlaceHolderText(): string;
         setPlaceHolderText(placeHolderText: string): this;
-
-        // property: finalResultTextSuccess
-        getFinalResultTextSuccess(): string;
-        setFinalResultTextSuccess(finalResultTextSuccess: string): this;
-
-        // property: finalResultTextFail
-        getFinalResultTextFail(): string;
-        setFinalResultTextFail(finalResultTextFail: string): this;
 
         // property: submitButtonVisible
         getSubmitButtonVisible(): boolean;
