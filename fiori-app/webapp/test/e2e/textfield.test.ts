@@ -81,7 +81,6 @@ describe("textfield input", () => {
     expect(await readOnlyTextfieldInput.getEditable()).toBe(false)
   })
 
-
   it("validate prefix and suffix label", async () => {
     const textfieldInputControl = await browser.asControl<Input>({
       selector: {
@@ -92,7 +91,7 @@ describe("textfield input", () => {
     })
 
     const labels = await textfieldInputControl.getLabels()
-    const labelTexts = await Promise.all(labels.map(label => label.getText()))
+    const labelTexts = await Promise.all(labels.map((label) => label.getText()))
     expect(labelTexts).toContain("before")
     const postfix = await textfieldInputControl.getDescription()
     expect(postfix).toBe("after")
@@ -140,7 +139,7 @@ describe("textfield input", () => {
       }
     })
 
-    const invalidPhones = ["invalid-phone", "phone+abc"];
+    const invalidPhones = ["invalid-phone", "phone+abc"]
     for (const phone of invalidPhones) {
       await phoneInputControl.enterText(phone)
       const valueState = await phoneInputControl.getValueState()
@@ -153,7 +152,7 @@ describe("textfield input", () => {
       "0049 8963648018",
       "0151555888",
       "0151-211-011-4786",
-      "+49-151-211-011-4786",
+      "+49-151-211-011-4786"
     ]
     for (const phone of validPhones) {
       await phoneInputControl.enterText(phone)
@@ -176,13 +175,13 @@ describe("textfield input", () => {
       { value: "abc", expected: "None" },
       { value: "abcd", expected: "None" },
       { value: "abcde", expected: "None" },
-      { value: "abcdef", expected: "Error" },
-    ];
+      { value: "abcdef", expected: "Error" }
+    ]
 
     for (const { value, expected } of testCases) {
-      await minMaxInputControl.enterText(value);
-      const valueState = await minMaxInputControl.getValueState();
-      expect(valueState).toBe(expected);
+      await minMaxInputControl.enterText(value)
+      const valueState = await minMaxInputControl.getValueState()
+      expect(valueState).toBe(expected)
     }
   })
 
@@ -195,7 +194,6 @@ describe("textfield input", () => {
       }
     })
 
-    
     // the regex is configured in the form element itself
     await customInputControl.enterText("lowercaseinput")
     let valueState = await customInputControl.getValueState()
