@@ -38,6 +38,7 @@ interface Validate {
   pattern?: string
   min?: number
   max?: number
+  validationType?: "email" | "phone"
 }
 
 interface Value {

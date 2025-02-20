@@ -264,7 +264,6 @@ export default class BPMNForm extends Control {
     if (this._checkIfNotSet(element)) {
       return
     }
-    debugger
     const defaultValue =
       ((this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) as string) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
@@ -288,7 +287,55 @@ export default class BPMNForm extends Control {
         this._setValueState(control, element, event.getParameter("value"))
       }
     })
+
+    if (element.type === ControlType.Textfield && element.validate?.pattern) {
+      try {
+        new RegExp(element.validate.pattern) //> throws on invalid regex
+        control.attachLiveChange((event) => {
+          const value = event.getParameter("value")
+          const regex = new RegExp(element.validate.pattern)
+          if (!regex.test(value)) {
+            control.setValueState(ValueState.Error)
+            control.setValueStateText(this.i18n.getText("Input.pattern_error"))
+          } else {
+            control.setValueState(ValueState.None)
+          }
+        })
+      } catch (error) {
+        console.error(
+          `[${this.getId()}] - ${JSON.stringify(error)} - invalid regular expression in pattern: ${element.validate.pattern}`
+        )
+      }
+    }
+
+    if (element.validate?.validationType === "email") {
+      makeEmailInput.call(this)
+    }
+    if (element.validate?.validationType === "phone") {
+      makePhoneInput.call(this)
+    }
+
     if (element.type === ControlType.Number) {
+      makeNumberInput.call(this)
+    }
+    if (element.appearance?.suffixAdorner) {
+      addSuffix.call(this)
+    }
+    if (element.appearance?.prefixAdorner) {
+      return addPrefix.call(this)
+    }
+    if (element.validate?.min || element.validate?.max || element.validate?.minLength || element.validate?.maxLength) {
+      addMinMaxValidation.call(this)
+    }
+    // no need to cater to Camunda Forms property "serializeToString"
+    // as UI5 always gets the value from the control as string
+
+    this._addControl(element, control, ControlType.Textfield)
+    this._setValueState(control, element, control.getValue())
+
+    return control
+
+    function makeNumberInput(this: BPMNForm) {
       control.setType(InputType.Number)
       if (element.decimalDigits) {
         control.attachLiveChange((event) => {
@@ -302,67 +349,94 @@ export default class BPMNForm extends Control {
           }
         })
       }
-      if (element.validate?.min || element.validate?.max) {
-        control.attachLiveChange((event) => {
-          const charCount = event.getParameter("value").length || 0
-          if (element.validate?.min && charCount < element.validate.min) {
-            control.setValueState(ValueState.Error)
-            control.setValueStateText(this.i18n.getText("NumberInput.min_length_error", [element.validate.min]))
-          } else if (element.validate?.max && charCount > element.validate.max) {
-            control.setValueState(ValueState.Error)
-            control.setValueStateText(this.i18n.getText("NumberInput.max_length_error", [element.validate.max]))
-          } else {
-            control.setValueState(ValueState.None)
-          }
-        })
-      }
-      if (element.appearance?.suffixAdorner) {
-        control.setDescription(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-          evaluate(
-            element.appearance.suffixAdorner.toString(),
-            this.getModel(localModelName).getProperty("/BPMNform/variables")
-          )
-        )
-      }
-      if (element.appearance?.prefixAdorner) {
-        const label = new Label({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          text: evaluate(
-            element.appearance.prefixAdorner.toString(),
-            this.getModel(localModelName).getProperty("/BPMNform/variables")
-          ),
-          labelFor: control.getId()
-        }).addStyleClass("sapUiTinyMarginEnd")
-        const hbox = new HBox({ alignItems: "Center" }).addItem(label).addItem(control)
-
-        const fn = hbox.setVisible
-        hbox.setVisible = (value) => {
-          fn.apply(control, [value])
-          if (control.getVisible() === false) {
-            if (element.validate?.required) {
-              control.setValueState(ValueState.Error)
-            }
-            control.setValue("")
-            this._provideValueToView(element, control)
-          }
-
-          return control
-        }
-        this._addControl(element, hbox, ControlType.Textfield)
-        this._setValueState(control, element, control.getValue())
-
-        return control
-      }
     }
 
-    // no need to cater to Camunda Forms property "serializeToString"
-    // as UI5 always gets the value from the control as string
+    function makePhoneInput(this: BPMNForm) {
+      control.setType(InputType.Tel)
+      control.attachLiveChange((event) => {
+        const value = event.getParameter("value")
+        const regex = new RegExp(/^(\+?\d{1,3}[-.\s]*)?(\(?\d{1,4}\)?[-.\s]*){2,3}\d{1,4}$/)
+        if (!regex.test(value)) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("PhoneInput.error"))
+        } else {
+          control.setValueState(ValueState.None)
+        }
+      })
+    }
 
-    this._addControl(element, control, ControlType.Textfield)
-    this._setValueState(control, element, control.getValue())
+    function makeEmailInput(this: BPMNForm) {
+      control.setType(InputType.Email)
+      control.attachLiveChange((event) => {
+        const value = event.getParameter("value")
+        const regex = new RegExp(
+          `^((\\.?[^<>()\\[\\]\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$`
+        )
+        if (!regex.test(value)) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("EmailInput.error"))
+        } else {
+          control.setValueState(ValueState.None)
+        }
+      })
+    }
 
-    return control
+    function addMinMaxValidation(this: BPMNForm) {
+      control.attachLiveChange((event) => {
+        const charCount = event.getParameter("value").length || 0
+        const min = element.validate.min || element.validate.minLength
+        const max = element.validate.max || element.validate.maxLength
+        if (min && charCount < min) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("Input.min_length_error", [min]))
+        } else if (max && charCount > max) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("Input.max_length_error", [max]))
+        } else {
+          control.setValueState(ValueState.None)
+        }
+      })
+    }
+
+    // for the sake of structure
+    function addPrefix(this: BPMNForm) {
+      const label = new Label({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        text: evaluate(
+          element.appearance.prefixAdorner.toString(),
+          this.getModel(localModelName).getProperty("/BPMNform/variables")
+        ),
+        labelFor: control.getId()
+      }).addStyleClass("sapUiTinyMarginEnd")
+      const hbox = new HBox({ alignItems: "Center" }).addItem(label).addItem(control)
+
+      const fn = hbox.setVisible
+      hbox.setVisible = (value) => {
+        fn.apply(control, [value])
+        if (control.getVisible() === false) {
+          if (element.validate?.required) {
+            control.setValueState(ValueState.Error)
+          }
+          control.setValue("")
+          this._provideValueToView(element, control)
+        }
+        return control
+      }
+      this._addControl(element, hbox, ControlType.Textfield)
+      this._setValueState(control, element, control.getValue())
+
+      return control
+    }
+
+    function addSuffix() {
+      control.setDescription(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+        evaluate(
+          element.appearance.suffixAdorner.toString(),
+          this.getModel(localModelName).getProperty("/BPMNform/variables")
+        )
+      )
+    }
   }
 
   private addCheckbox(element: Component): Control {
@@ -826,8 +900,8 @@ export default class BPMNForm extends Control {
 
     const enabled = element.disabled
     const readonly = element.readonly
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      ? !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
       : false
     const required = element.validate?.required || false
 
