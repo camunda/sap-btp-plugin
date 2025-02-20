@@ -28,6 +28,8 @@ import Item from "sap/ui/core/Item"
 import Filter from "sap/ui/model/Filter"
 import FilterOperator from "sap/ui/model/FilterOperator"
 
+import Lib from "sap/ui/core/Lib"
+
 import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 
 import { evaluate } from "feelers"
@@ -693,8 +695,7 @@ export default class BPMNForm extends Control {
   init(): void {
     console.debug(`[${this.getMetadata().getName()}] > init`)
 
-    debugger
-    this.i18n = sap.ui.core.Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
+    this.i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
 
     this._initLocalModel()
 
