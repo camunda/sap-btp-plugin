@@ -269,7 +269,9 @@ export default class BPMNForm extends Control {
       (element.defaultValue as string)
 
     const enabled = element.disabled
-    const readonly = element.readonly ? !!evaluate(element.readonly.toString()) : false
+    const readonly = element.readonly
+      ? !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      : false
     const required = element.validate?.required || false
 
     const control = new Input(this._generateControlId(element), {
@@ -313,17 +315,23 @@ export default class BPMNForm extends Control {
         })
       }
       if (element.appearance?.suffixAdorner) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-        control.setDescription(evaluate(element.appearance.suffixAdorner.toString()))
+        control.setDescription(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+          evaluate(
+            element.appearance.suffixAdorner.toString(),
+            this.getModel(localModelName).getProperty("/BPMNform/variables")
+          )
+        )
       }
       if (element.appearance?.prefixAdorner) {
-        const label = new Label({ 
+        const label = new Label({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          text: evaluate(element.appearance.prefixAdorner.toString()),
+          text: evaluate(
+            element.appearance.prefixAdorner.toString(),
+            this.getModel(localModelName).getProperty("/BPMNform/variables")
+          ),
           labelFor: control.getId()
-         }).addStyleClass(
-          "sapUiTinyMarginEnd"
-        )
+        }).addStyleClass("sapUiTinyMarginEnd")
         const hbox = new HBox({ alignItems: "Center" }).addItem(label).addItem(control)
 
         const fn = hbox.setVisible
@@ -345,7 +353,6 @@ export default class BPMNForm extends Control {
         return control
       }
     }
-
 
     // no need to cater to Camunda Forms property "serializeToString"
     // as UI5 always gets the value from the control as string
@@ -817,7 +824,10 @@ export default class BPMNForm extends Control {
       element.defaultValue
 
     const enabled = element.disabled
-    const readonly = element.readonly ? !!evaluate(element.readonly.toString()) : false
+    const readonly = element.readonly
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      ? !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      : false
     const required = element.validate?.required || false
 
     const control = new TextArea(this._generateControlId(element), {
