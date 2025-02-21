@@ -35,6 +35,8 @@ import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
 import HBox from "sap/m/HBox"
+import DateTimePicker from "sap/m/DateTimePicker"
+import TimePicker from "sap/m/TimePicker"
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -138,37 +140,18 @@ export default class BPMNForm extends Control {
    * set the value state for the given control and trigger form validation afterwards
    *
    * @param control control to set the value state for
-   * @param element elemente configuration from camunda, like if the control is required ...
-   * @param value the new value for the control
+   * @param element element configuration from Camunda Form JSON, like if the control is required ...
+   * @param value the new value or event value for the control or a change event
    */
   private _setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
-    let regex = element.validate?.pattern ? new RegExp(element.validate?.pattern) : undefined
+    const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
+    const state =
+      !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
 
-    if (element.validate?.required && !value) {
-      control.setValueState(ValueState.Error)
-    } else {
-      const min = element.validate?.minLength ?? 0
-      const max = element.validate?.maxLength ?? ""
-      if (!element.validate?.pattern && (min || max)) {
-        regex = new RegExp(`^.{${min},${max}}$`)
-      }
+    control.setValueState(state)
+    control.data("ValueState", state)
 
-      if (regex && !!value) {
-        if (typeof value === "string" && regex.test(value)) {
-          control.setValueState(ValueState.None)
-          control.data("ValueState", ValueState.None)
-        } else {
-          control.setValueState(ValueState.Error)
-          control.data("ValueState", ValueState.Error)
-        }
-      } else {
-        control.setValueState(ValueState.None)
-        control.data("ValueState", ValueState.None)
-      }
-    }
-    window.setTimeout(() => {
-      this._validate()
-    }, 0)
+    setTimeout(() => this._validate(), 0)
   }
 
   /**
@@ -593,19 +576,54 @@ export default class BPMNForm extends Control {
    *
    * @return the created and addded control
    */
-  private addDate(element: Component, currentPath?: string): Control {
+  private addDateTime(element: Component): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
-    const control = new DatePicker(this._generateControlId(element), {
-      visible: this._getVisibleStatement(element),
-      valueFormat: "yyyy-MM-ddT00:00:00",
-      displayFormat: "yyyy-MM-dd",
-      change: (event: Event) => {
-        this._setValueState(control, element, event.getParameter("valid") as boolean)
-        this._provideValueToView(element, control)
+
+    let control: Control
+    if (element.subtype && element.subtype === "date") {
+      control = new DatePicker(this._generateControlId(element), {
+        visible: this._getVisibleStatement(element),
+        valueFormat: "yyyy-MM-dd",
+        displayFormat: "yyyy-MM-dd"
+      })
+      if (element.disallowPassedDates) {
+        ;(control as DatePicker).setMinDate(new Date())
       }
+    } else if (element.subtype && element.subtype === "time") {
+      control = new TimePicker(this._generateControlId(element), {
+        visible: this._getVisibleStatement(element),
+        support2400: element.use24h,
+        valueFormat: element.use24h ? "HH:mm:ss" : "hh:mm:ss aa",
+        displayFormat: element.use24h ? "HH:mm:ss" : "hh:mm:ss aa",
+        showCurrentTimeButton: true
+      })
+    } else if (element.subtype && element.subtype === "datetime") {
+      control = new DateTimePicker(this._generateControlId(element), {
+        visible: this._getVisibleStatement(element),
+        valueFormat: element.use24h ? "yyyy-MM-ddTHH:mm:ss" : "yyyy-MM-ddThh:mm:ss aa",
+        displayFormat: element.use24h ? "yyyy-MM-ddTHH:mm:ss" : "yyyy-MM-ddThh:mm:ss aa",
+        showCurrentTimeButton: true
+      })
+    } else {
+      throw new Error(`Unknown datetune subtype ${element.subtype}`)
+    }
+
+    const readonly = element.readonly
+      ? !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      : false
+    const required = element.validate?.required || false
+
+    // @ts-expect-error due to Control type not being equipped with the setters
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    control.setEnabled(!element.disabled).setEditable(!readonly).setRequired(required)
+    control.attachChange((event: Event) => {
+      debugger
+      this._setValueState(control, element, event.getParameter("valid") as boolean)
+      this._provideValueToView(element, control)
     })
+
     this._addControl(element, control, ControlType.DatePicker)
     this._setValueState(control, element, !element.validate?.required)
 
@@ -929,6 +947,9 @@ export default class BPMNForm extends Control {
   _generateControls(components: Component[]): void {
     components.forEach((element) => {
       switch (element.type) {
+        case ControlType.DatePicker:
+          this.addDateTime(element)
+          break
         case ControlType.Textarea:
           this.addTextArea(element)
           break
