@@ -4,6 +4,8 @@ const ui5Service = new _ui5Service()
 import { ns, mockIndex, formTarget } from "./po/commons"
 import Input from "sap/m/Input"
 
+// test for min/max length are in textfield.test.ts
+
 describe("number input", () => {
   before(async () => {
     await browser.goTo(mockIndex())
@@ -166,6 +168,4 @@ describe("number input", () => {
     const postfix = await numberInputControl.getDescription()
     expect(postfix).toBe("one more time")
   })
-
-  
 })

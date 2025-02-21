@@ -24,6 +24,9 @@ export interface Component {
   readonly?: boolean
   decimalDigits?: number
   appearance?: Appearance
+  subtype?: "date" | "time" | "datetime"
+  use24h?: boolean
+  disallowPassedDates?: boolean
 }
 
 interface Appearance {
@@ -38,6 +41,7 @@ interface Validate {
   pattern?: string
   min?: number
   max?: number
+  validationType?: "email" | "phone"
 }
 
 interface Value {
@@ -87,7 +91,7 @@ export enum ControlType {
   Radio = "radio",
   Number = "number",
   Select = "select",
-  DatePicker = "datepicker",
+  DatePicker = "datetime",
   SmartField = "smartfield",
   ValueHelpInput = "valuehelpinput",
   DynamicSumInputAutomaic = "dynamicsuminputautomatic",
