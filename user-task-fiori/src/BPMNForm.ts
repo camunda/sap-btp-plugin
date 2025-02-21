@@ -148,6 +148,8 @@ export default class BPMNForm extends Control {
     const state =
       !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
 
+    // @ts-expect-error due to Control type not being equipped with the setters
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     control.setValueState(state)
     control.data("ValueState", state)
 
