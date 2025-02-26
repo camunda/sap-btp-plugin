@@ -19,8 +19,8 @@ module.exports = async (job, worker) => {
   //> TODO: pass an instance of @camunda8/btp-plugin-core into here for canceling the process
   // bail out if no recipient (aka browser aka channel id) could be determined
   if (!channelId || channelId === "") {
-    const msg = msg
-    LOGGER.error("No channel id provided -> can't continue!")
+    const msg = "No channel id provided -> can't continue!"
+    LOGGER.error(msg)
     // throw new Error("No channel id provided -> can't continue!")
     // const zbc = require("./camundaCloud").getClient()
     // const jobToCancel = job.variables.parentProcessInstanceKey || job.processInstanceKey
