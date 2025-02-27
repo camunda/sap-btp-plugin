@@ -576,7 +576,6 @@ export default class BPMNForm extends Control {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     control.setEnabled(!element.disabled).setEditable(!readonly).setRequired(required)
     control.attachChange((event: Event) => {
-      debugger
       this._setValueState(control, element, event.getParameter("valid") as boolean)
       this._provideValueToView(element, control)
     })
