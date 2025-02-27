@@ -930,6 +930,6 @@ export default class BPMNForm extends Control {
   }
 
   onAfterRendering(): void {
-    console.debug(`[${this.getMetadata().getName()}] > onBeforeRendering`)
+    console.debug(`[${this.getMetadata().getName()}] > onAfterRendering`)
   }
 }
