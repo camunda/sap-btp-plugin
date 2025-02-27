@@ -742,10 +742,17 @@ export default class BPMNForm extends Control {
         variables: {}
       }
     }
-    if (this.getModel(localModelName)) {
-      ;(this.getModel(localModelName) as JSONModel).setData(data)
-    } else {
+    const localModel = this.getModel(localModelName) as JSONModel
+    if (!localModel) {
       this.setModel(new JSONModel(data), localModelName)
+    } else if (Object.keys((localModel.getProperty("/BPMNform/variables") as object) || {}).length === 0) {
+      localModel.setData(data)
+    }
+    if (
+      this.getModel("AppView") &&
+      Object.keys(this.getModel("AppView").getProperty("/BPMNform") as object || {}).length > 0
+    ) {
+      localModel.setProperty("/BPMNform", this.getModel("AppView").getProperty("/BPMNform"))
     }
   }
 
