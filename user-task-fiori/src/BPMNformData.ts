@@ -27,6 +27,7 @@ export interface Component {
   disallowPassedDates?: boolean
   source?: string //> img-view
   alt?: string //> img-view
+  content?: string //> html-view
 }
 
 interface Appearance {
@@ -101,7 +102,8 @@ export enum ControlType {
   Summary = "summary",
   DynamicList = "dynamiclist",
   Textarea = "textarea",
-  Image = "image"
+  Image = "image",
+  HTML = "html"
 }
 
 // for keeping track of auto-generated IDs and their type

@@ -38,6 +38,7 @@ import HBox from "sap/m/HBox"
 import DateTimePicker from "sap/m/DateTimePicker"
 import TimePicker from "sap/m/TimePicker"
 import Image from "sap/m/Image"
+import HTML from "sap/ui/core/HTML"
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -874,6 +875,9 @@ export default class BPMNForm extends Control {
   _generateControls(components: Component[]): void {
     components.forEach((element) => {
       switch (element.type) {
+        case ControlType.HTML:
+          this.addHTML(element)
+          break
         case ControlType.Image:
           this.addImage(element)
           break
@@ -907,6 +911,21 @@ export default class BPMNForm extends Control {
           break
       }
     })
+  }
+  addHTML(element: Component) {
+    const content = evaluate(
+      element.content.toString(),
+      this.getModel(localModelName).getProperty("/BPMNform/variables")
+    )
+    const control = new HTML(this._generateControlId(element), {
+      visible: this._getVisibleStatement(element),
+      content,
+      sanitizeContent: true,
+      preferDOM: false
+    })
+    this._addControl(element, control, ControlType.HTML)
+
+    return control
   }
   addImage(element: Component) {
     const control = new Image(this._generateControlId(element), {
