@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import HTML from "sap/ui/core/HTML"
 import JSONModel from "sap/ui/model/json/JSONModel"
 import Core from "sap/ui/core/Core"
@@ -42,27 +42,11 @@ describe("HTML control", () => {
   })
 
   it("should render FEEL/dynamically assigned HTML content correctly", async () => {
-    await browser.executeAsync((done: Function) => {
-      const bpmnForm = sap.ui.getCore().byId("__xmlview0--BPMNform") //> gnarf
-      // @ts-expect-error this is dirrrty stuff - don't do it at home, kids
-      const models = bpmnForm._getPropertiesToPropagate().oModels
-
-      for (const [modelName, _] of Object.entries(models)) {
-        if (modelName.startsWith("id-")) {
-          ;(bpmnForm.getModel(modelName) as JSONModel).setProperty(
-            "/BPMNform/variables/dynamicHeader",
-            "this is a dynamic header"
-          )
-        }
-      }
-
-      // @ts-expect-error
-      bpmnForm.reset()
-      // @ts-expect-error
-      bpmnForm.processForm(window._data) //> storing the ws data on window is done in webSocketMockServer.ts
-
-      done()
-    })
+    const feelVars = [{
+      name: "dynamicHeader",
+      value: "this is a dynamic header"
+    }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
 
     const pageSelector = {
       selector: {
@@ -88,27 +72,12 @@ describe("HTML control", () => {
   })
 
   it("should handle code injection attempts properly", async () => {
-    await browser.executeAsync((done: Function) => {
-      const bpmnForm = sap.ui.getCore().byId("__xmlview0--BPMNform") //> gnarf
-      // @ts-expect-error this is dirrrty stuff - don't do it at home, kids
-      const models = bpmnForm._getPropertiesToPropagate().oModels
 
-      for (const [modelName, _] of Object.entries(models)) {
-        if (modelName.startsWith("id-")) {
-          ;(bpmnForm.getModel(modelName) as JSONModel).setProperty(
-            "/BPMNform/variables/dynamicHeader",
-            "<script>alert('XSS')</script>"
-          )
-        }
-      }
-
-      // @ts-expect-error
-      bpmnForm.reset()
-      // @ts-expect-error
-      bpmnForm.processForm(window._data) //> storing the ws data on window is done in webSocketMockServer.ts
-
-      done()
-    })
+    const feelVars = [{
+      name: "dynamicHeader",
+      value: "<script>alert('XSS')</script>"
+    }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
 
     const pageSelector = {
       selector: {

@@ -1,3 +1,5 @@
+import JSONModel from "sap/ui/model/json/JSONModel"
+
 export const ns = "io.camunda.connector.sap.btp.app"
 
 export function mockIndex(/* formElement: string */) {
@@ -17,4 +19,33 @@ export async function formTarget(formElement: string) {
       }
     }, 100)
   }, formElement)
+}
+
+export async function injectFEEL(formId: string, feelVariables: Array<{name: string, value: any}>) {
+  await browser.executeAsync((feelVariables: Array<{name: string, value: any}>, done: Function) => {
+    const bpmnForm = sap.ui.getCore().byId("__xmlview0--BPMNform") //> gnarf
+    // @ts-expect-error this is dirrrty stuff - don't do it at home, kids
+    const models = bpmnForm._getPropertiesToPropagate().oModels
+
+    for (const [modelName, _] of Object.entries(models)) {
+      if (modelName.startsWith("id-")) {
+        const model = bpmnForm.getModel(modelName) as JSONModel;
+        
+        // Set each variable from the feelVariables array
+        for (const variable of feelVariables) {
+          model.setProperty(
+            `/BPMNform/variables/${variable.name}`,
+            variable.value
+          );
+        }
+      }
+    }
+
+    // @ts-expect-error
+    bpmnForm.reset()
+    // @ts-expect-error
+    bpmnForm.processForm(window._data) //> storing the ws data on window is done in webSocketMockServer.ts
+
+    done()
+  }, feelVariables)
 }
