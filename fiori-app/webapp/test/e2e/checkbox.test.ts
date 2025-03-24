@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 
 describe("checkbox", () => {
   before(async () => {
@@ -79,6 +79,31 @@ describe("checkbox", () => {
     // @ts-expect-error
     const readOnly = await checkbox.getReadonly()
     expect(readOnly).toBeTruthy()
+  })
+
+  it("should hide checkbox when visibility set to false via FEEL", async () => {
+    const checkboxSelector = {
+      selector: {
+        id: /.*checkbox_hidden$/,
+        controlType: "@ui5/webcomponents.CheckBox",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+
+    const checkbox = await browser.asControl(checkboxSelector)
+    const visible = await checkbox.getVisible()
+    expect(visible).toBeTruthy()
+
+    await injectFEEL("__xmlview0--BPMNform", [
+      {
+        name: "invisible",
+        value: true
+      }
+    ])
+    const checkBoxInvisible = await browser.asControl(checkboxSelector)
+    const isVisible = await checkBoxInvisible.isInitialized()
+    expect(isVisible).toBeFalsy()
   })
 
   it.skip("read-only state of via feel", async () => {})
