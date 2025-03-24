@@ -19,20 +19,18 @@ describe("checkbox", () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_regular$/,
-        controlType: "@ui5/webcomponents.CheckBox",
+        controlType: "sap.m.CheckBox",
         viewName: `${ns}.view.App`
       }
     }
 
     const checkbox = await browser.asControl(checkboxSelector)
 
-    // @ts-expect-error
-    const before = await checkbox.getChecked()
+    const before = await checkbox.getProperty("selected")
     expect(before).toBeFalsy()
 
     await checkbox.press()
-    // @ts-expect-error
-    const after = await checkbox.getChecked()
+    const after = await checkbox.getProperty("selected")
     expect(after).toBeTruthy()
   })
 
@@ -40,14 +38,13 @@ describe("checkbox", () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_default_checked$/,
-        controlType: "@ui5/webcomponents.CheckBox",
+        controlType: "sap.m.CheckBox",
         viewName: `${ns}.view.App`
       }
     }
 
     const checkbox = await browser.asControl(checkboxSelector)
-    // @ts-expect-error
-    const checked = await checkbox.getChecked()
+    const checked = await checkbox.getProperty("selected")
     expect(checked).toBeTruthy()
   })
 
@@ -55,14 +52,13 @@ describe("checkbox", () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_7jyrfq$/,
-        controlType: "@ui5/webcomponents.CheckBox",
+        controlType: "sap.m.CheckBox",
         viewName: `${ns}.view.App`
       }
     }
 
     const checkbox = await browser.asControl(checkboxSelector)
-    // @ts-expect-error
-    const disabled = await checkbox.getEnabled()
+    const disabled = await checkbox.getProperty("enabled")
     expect(disabled).toBeFalsy()
   })
 
@@ -70,15 +66,14 @@ describe("checkbox", () => {
     const checkboxSelector = {
       selector: {
         id: /.*checkbox_ro_static$/,
-        controlType: "@ui5/webcomponents.CheckBox",
+        controlType: "sap.m.CheckBox",
         viewName: `${ns}.view.App`
       }
     }
 
     const checkbox = await browser.asControl(checkboxSelector)
-    // @ts-expect-error
-    const readOnly = await checkbox.getReadonly()
-    expect(readOnly).toBeTruthy()
+    const readOnly = await checkbox.getProperty("editable")
+    expect(readOnly).toBeFalsy()
   })
 
   it.skip("read-only state of via feel", async () => {})

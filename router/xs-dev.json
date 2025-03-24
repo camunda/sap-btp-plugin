@@ -17,14 +17,20 @@
     {
       "source": "/backend/(.*)$",
       "target": "/$1",
-      "destination": "@camunda8/btp-plugin-core",
+      "destination": "@camunda8/btp-integration-core",
       "csrfProtection": false,
       "cacheControl": "no-cache, no-store, must-revalidate"
     },
     {
       "source": "/channel(.*)$",
       "target": "/channel$1",
-      "destination": "@camunda8/btp-plugin-core"
+      "destination": "@camunda8/btp-integration-core"
+    },
+    {
+      "source": "^/app/(.*)$",
+      "target": "$1",
+      "destination": "ui",
+      "cacheControl": "no-cache, no-store, must-revalidate"
     }
   ]
 }

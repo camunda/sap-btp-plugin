@@ -15,7 +15,7 @@ import BPMNFormRenderer from "./BPMNFormRenderer"
 import { BPMNformData, Component, ControlType, GeneratedControl } from "./BPMNformData"
 import Markdown from "./Markdown"
 import { WebSocketData } from "./WebSocketData"
-// import CheckBox from "sap/m/CheckBox"
+import CheckBox from "sap/m/CheckBox"
 import DatePicker from "sap/m/DatePicker"
 import Label from "sap/m/Label"
 import MessageStrip from "sap/m/MessageStrip"
@@ -30,7 +30,7 @@ import FilterOperator from "sap/ui/model/FilterOperator"
 
 import Lib from "sap/ui/core/Lib"
 
-import CheckBox from "@ui5/webcomponents/dist/CheckBox"
+// import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
@@ -39,6 +39,7 @@ import DateTimePicker from "sap/m/DateTimePicker"
 import TimePicker from "sap/m/TimePicker"
 import Image from "sap/m/Image"
 import HTML from "sap/ui/core/HTML"
+
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -115,7 +116,7 @@ export default class BPMNForm extends Control {
       }
       case ControlType.CheckBox:
         if (control && (control as CheckBox).getVisible()) {
-          value = (control as CheckBox).getChecked()
+          value = (control as CheckBox).getSelected()
         } else {
           value = ""
         }
@@ -128,6 +129,78 @@ export default class BPMNForm extends Control {
     }
     return value
   }
+
+
+  /**
+   * returns questions and answers from form streak as array
+   * @returns the questions and answers as array
+   */
+  getUserData(): userFormData[] {
+    const data: userFormData[] = []
+    // for each dynamically generated cdontrol,
+    // get its' "key" data for submitting -> job worker
+    // and its' value that was supplied/chosen by the user
+    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+      const ui5Control = Core.byId(control.id) as Control
+
+      // represents the form key as modelled in Camunda
+      const key = ui5Control.getCustomData()[0].getKey()
+
+      const value = this.getValueFromControl(control.type, ui5Control) as string
+      let answer
+      switch (control.type) {
+        case ControlType.ValueHelpInput:
+          {
+            answer = (ui5Control.getAggregation("_input") as Input).getValue()
+          }
+          break
+        case ControlType.CheckBox:
+          {
+            if (ui5Control.getVisible()) {
+              answer = String((ui5Control as CheckBox).getSelected())
+            }
+          }
+          break
+        case ControlType.Select:
+          {
+            const selectedItem = (ui5Control as Select).getSelectedItem()
+            if (selectedItem) {
+              if (selectedItem.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedItem.getText()})`
+              }
+            }
+          }
+          break
+        case ControlType.Radio:
+          {
+            const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
+            if (selectedButton) {
+              if (selectedButton.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedButton.getText()})`
+              }
+            }
+          }
+          break
+        default: {
+          answer = this.getValueFromControl(control.type, ui5Control) as string
+        }
+      }
+      data.push({
+        key,
+        value,
+        question: control.question as string,
+        answer,
+        linkedControlId: control.id,
+        linkedControlType: control.type
+      })
+    })
+    return data
+  }
+
 
   /**
    * set the value state for the given control and trigger form validation afterwards
@@ -396,22 +469,22 @@ export default class BPMNForm extends Control {
       return
     }
 
-    const checked =
+    const selected =
       (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
 
-    const disabled = element.disabled
+    const enabled = element.disabled
     const readonly = element.readonly
 
     const visible = this._getVisibleStatement(element)
     const control = new CheckBox(this._generateControlId(element), {
       visible,
-      checked,
-      enabled: !!!disabled, // contrary to the docs
-      readonly: !!readonly,
+      selected,
+      enabled: !enabled, 
+      editable: !readonly,
       text: element.label,
-      change: () => {
+      select: () => {
         this._provideValueToView(element, control)
         this._validate()
       }
