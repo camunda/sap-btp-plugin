@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import RadioButtonGroup from "sap/m/RadioButtonGroup"
 import RadioButton from "sap/m/RadioButton"
 
@@ -83,6 +83,31 @@ describe("radio button + -group", () => {
     const group = await browser.asControl<RadioButtonGroup>(radioButtonGroupSelector)
     const editable = await group.getEditable()
     expect(editable).toBeFalsy()
+  })
+
+  it("should hide a radio button group when the visibility is set to false", async () => {
+    const radioButtonGroupSelector = {
+      selector: {
+        id: /.*radio_hidden$/,
+        controlType: "sap.m.RadioButtonGroup",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+
+    const visibleGroup = await browser.asControl<RadioButtonGroup>(radioButtonGroupSelector)
+    const visible = await visibleGroup.getVisible()
+    expect(visible).toBeTruthy()
+
+    await injectFEEL("__xmlview0--radio_hidden", [
+      {
+        name: "invisible",
+        value: true
+      }
+    ])
+    const inVisibleGroup = await browser.asControl<RadioButtonGroup>(radioButtonGroupSelector)
+    const inVisible = await inVisibleGroup.isInitialized()
+    expect(inVisible).toBeFalsy()
   })
 
   it.skip("dynamic generation of radio button group (input data)", async () => {})

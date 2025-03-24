@@ -179,19 +179,13 @@ export default class BPMNForm extends Control {
     )
   }
 
-  private _getVisibleStatement(element: Component): boolean | `{${string}}` {
-    let visible = false
-
-    if (!element.properties?.if) {
-      visible = true
-    } else {
-      if (element.properties?.if && element.properties?.if === "notSet") {
-        visible = true
-      } else {
-        visible = "{= " + element.properties?.if.replace(/\{/gm, `\${${localModelName}>/BPMNform/`) + "}"
-      }
+  private _getVisibleStatement(element: Component): boolean {
+    if (!element.conditional?.hide) {
+      return true
     }
-    return visible
+    // evaluate produces a stringified boolean
+    const hideResult = (evaluate(element.conditional.hide, this.getModel(localModelName).getProperty("/BPMNform/variables")) as string).toLowerCase()
+    return hideResult === "false"
   }
 
   private _generateControlId(element: Component): string {
@@ -751,7 +745,7 @@ export default class BPMNForm extends Control {
     }
     if (
       this.getModel("AppView") &&
-      Object.keys(this.getModel("AppView").getProperty("/BPMNform") as object || {}).length > 0
+      Object.keys((this.getModel("AppView").getProperty("/BPMNform") as object) || {}).length > 0
     ) {
       localModel.setProperty("/BPMNform", this.getModel("AppView").getProperty("/BPMNform"))
     }
