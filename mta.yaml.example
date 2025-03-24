@@ -1,5 +1,5 @@
 _schema-version: "3.1"
-ID: camunda-btp-integration-<app-version>
+ID: camunda-btp-plugin-<app-version>
 version: <unique-app-version>
 description: "BTP Integration, part of Camunda's SAP Integration"
 parameters:
@@ -7,7 +7,7 @@ parameters:
 
 modules:
   # app-router acting as primary traffic distributor
-  - name: btp-integration-router-<app-version>
+  - name: btp-plugin-router-<app-version>
     type: approuter.nodejs
     path: router
     parameters:
@@ -15,14 +15,14 @@ modules:
       memory: 256M
       enable-ssh: true
       routes: 
-        - route: <btp-integration-route>.${default-domain}
+        - route: <btp-plugin-route>.${default-domain}
     properties:
       # 15 minutes
       INCOMING_CONNECTION_TIMEOUT: 900000
     requires:
-      - name: uaa-camunda-btp-integration-<app-version>
-      - name: dest-camunda-btp-integration-<app-version>
-      - name: conn-camunda-btp-integration-<app-version>
+      - name: uaa-camunda-btp-plugin-<app-version>
+      - name: dest-camunda-btp-plugin-<app-version>
+      - name: conn-camunda-btp-plugin-<app-version>
       - name: srv-binding
         group: destinations
         properties:
@@ -42,7 +42,7 @@ modules:
         - npm install --production
 
   # CAP services and business logic
-  - name: btp-integration-srv-<app-version>
+  - name: btp-plugin-srv-<app-version>
     type: nodejs
     path: core/gen/srv
     parameters:
@@ -72,16 +72,16 @@ modules:
       commands:
         - echo "nothing to do, things are vendored :)"
     requires:
-      - name: uaa-camunda-btp-integration-<app-version>
-      - name: dest-camunda-btp-integration-<app-version>
-      - name: conn-camunda-btp-integration-<app-version>
+      - name: uaa-camunda-btp-plugin-<app-version>
+      - name: dest-camunda-btp-plugin-<app-version>
+      - name: conn-camunda-btp-plugin-<app-version>
     provides:
       - name: srv-binding 
         properties:
           srv-url: ${default-url}
 
   # UI5 freestyle UI
-  - name: btp-integration-ui-<app-version>
+  - name: btp-plugin-ui-<app-version>
     type: html5
     path: fiori-app
     parameters:
@@ -93,9 +93,9 @@ modules:
       commands:
          - echo "nothing to do, things are vendored :)"
     requires:
-      - name: uaa-camunda-btp-integration-<app-version>
-      - name: dest-camunda-btp-integration-<app-version>
-      - name: conn-camunda-btp-integration-<app-version>
+      - name: uaa-camunda-btp-plugin-<app-version>
+      - name: dest-camunda-btp-plugin-<app-version>
+      - name: conn-camunda-btp-plugin-<app-version>
     provides:
       - name: ui-binding # required by consumers of CAP services (e.g. approuter, ui)
         properties:
@@ -103,21 +103,21 @@ modules:
 
 
 resources:
-  - name: uaa-camunda-btp-integration-<app-version>
+  - name: uaa-camunda-btp-plugin-<app-version>
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: camunda-btp-integration-<app-version>
+        xsappname: camunda-btp-plugin-<app-version>
         tenant-mode: dedicated
-  - name: dest-camunda-btp-integration-<app-version>
+  - name: dest-camunda-btp-plugin-<app-version>
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: lite
       service: destination
-  - name: conn-camunda-btp-integration-<app-version>
+  - name: conn-camunda-btp-plugin-<app-version>
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: lite

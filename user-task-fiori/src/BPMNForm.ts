@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Markdown from "./Markdown"
+import uid from "sap/base/util/uid"
+import Input from "sap/m/Input"
+import MultiComboBox from "sap/m/MultiComboBox"
+import RadioButtonGroup from "sap/m/RadioButtonGroup"
+import Select from "sap/m/Select"
+import VBox from "sap/m/VBox"
 import Control from "sap/ui/core/Control"
 import type { MetadataOptions } from "sap/ui/core/Element"
 import BPMNFormRenderer from "./BPMNFormRenderer"
-import { BPMNformData, Component, ControlType, GeneratedControl, SelectionModes, userFormData } from "./BPMNformData"
+import { BPMNformData, Component, ControlType, GeneratedControl, SelectionModes } from "./BPMNformData"
 import Core from "sap/ui/core/Core"
+import type { MetadataOptions } from "sap/ui/core/Element"
+import EventBus from "sap/ui/core/EventBus"
 import { ValueState } from "sap/ui/core/library"
 import JSONModel from "sap/ui/model/json/JSONModel"
-import uid from "sap/base/util/uid"
-import VBox from "sap/m/VBox"
+import BPMNFormRenderer from "./BPMNFormRenderer"
+import { BPMNformData, Component, ControlType, GeneratedControl } from "./BPMNformData"
+import Markdown from "./Markdown"
 import { WebSocketData } from "./WebSocketData"
 import HBox from "sap/m/HBox"
 import Title from "sap/m/Title"
@@ -18,25 +26,20 @@ import MultiComboBox from "sap/m/MultiComboBox"
 import Select from "sap/m/Select"
 import RadioButtonGroup from "sap/m/RadioButtonGroup"
 import CheckBox from "sap/m/CheckBox"
+// import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 import { InputType } from "sap/m/library"
-import Sorter from "sap/ui/model/Sorter"
+import SmartField from "sap/ui/comp/smartfield/SmartField"
+import CustomData from "sap/ui/core/CustomData"
 import Item from "sap/ui/core/Item"
 import Filter from "sap/ui/model/Filter"
 import FilterOperator from "sap/ui/model/FilterOperator"
-import RadioButton from "sap/m/RadioButton"
-import CustomData from "sap/ui/core/CustomData"
-import DatePicker from "sap/m/DatePicker"
-import MessageStrip from "sap/m/MessageStrip"
-import SmartField from "sap/ui/comp/smartfield/SmartField"
-import Label from "sap/m/Label"
-import Icon from "sap/ui/core/Icon"
-import TextArea from "sap/m/TextArea"
-
-// import CheckBox from "@ui5/webcomponents/dist/CheckBox"
-
-
 import { evaluate } from "feelers"
-
+import ResourceBundle from "sap/base/i18n/ResourceBundle"
+import HBox from "sap/m/HBox"
+import DateTimePicker from "sap/m/DateTimePicker"
+import TimePicker from "sap/m/TimePicker"
+import Image from "sap/m/Image"
+import HTML from "sap/ui/core/HTML"
 // name of local json model used for local bindings
 const localModelName = uid()
 
@@ -45,8 +48,6 @@ const localModelName = uid()
  *
  * Some class description goes here.
  * @extends Control
- *
- * @author Volker Buzek
  *
  * @constructor
  * @public
@@ -59,6 +60,10 @@ export default class BPMNForm extends Control {
   constructor(id?: string, settings?: $BPMNFormSettings) {
     super(id, settings)
   }
+
+  i18n: ResourceBundle
+  static renderer: typeof BPMNFormRenderer = BPMNFormRenderer
+  private generatedControls: GeneratedControl[] = []
 
   static readonly metadata: MetadataOptions = {
     library: "io.camunda.connector.sap.btp.lib",
@@ -80,17 +85,6 @@ export default class BPMNForm extends Control {
     }
   }
 
-  static renderer: typeof BPMNFormRenderer = BPMNFormRenderer
-
-  private generatedControls: GeneratedControl[] = []
-
-  /**
-   * get correct value from various controls
-   * if input, get value, if select, get selectedKey,...
-   * @param type type of control to fetch value from
-   * @param control control itself
-   * @returns The extracted value from control
-   */
   getValueFromControl(type: ControlType, control: Control): boolean | string | string[] {
     let value: boolean | string | string[]
 
@@ -212,37 +206,20 @@ export default class BPMNForm extends Control {
    * set the value state for the given control and trigger form validation afterwards
    *
    * @param control control to set the value state for
-   * @param element elemente configuration from camunda, like if the control is required ...
-   * @param value the new value for the control
+   * @param element element configuration from Camunda Form JSON, like if the control is required ...
+   * @param value the new value or event value for the control or a change event
    */
   private _setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
-    let regex = element.validate?.pattern ? new RegExp(element.validate?.pattern) : undefined
+    const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
+    const state =
+      !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
 
-    if (element.validate?.required && !value) {
-      control.setValueState(ValueState.Error)
-    } else {
-      const min = element.validate?.minLength ?? 0
-      const max = element.validate?.maxLength ?? ""
-      if (!element.validate?.pattern && (min || max)) {
-        regex = new RegExp(`^.{${min},${max}}$`)
-      }
+    // @ts-expect-error due to Control type not being equipped with the setters
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    control.setValueState(state)
+    control.data("ValueState", state)
 
-      if (regex && !!value) {
-        if (typeof value === "string" && regex.test(value)) {
-          control.setValueState(ValueState.None)
-          control.data("ValueState", ValueState.None)
-        } else {
-          control.setValueState(ValueState.Error)
-          control.data("ValueState", ValueState.Error)
-        }
-      } else {
-        control.setValueState(ValueState.None)
-        control.data("ValueState", ValueState.None)
-      }
-    }
-    window.setTimeout(() => {
-      this._validate()
-    }, 0)
+    setTimeout(() => this._validate(), 0)
   }
 
   /**
@@ -268,12 +245,6 @@ export default class BPMNForm extends Control {
     return !invalidControls.length
   }
 
-  /**
-   * fetches value from control and provides it to control json model
-   *
-   * @param element camunda configuration
-   * @param control ui5 control
-   */
   private _provideValueToView(element: Component, control: Control): void {
     ;(this.getModel(localModelName) as JSONModel).setProperty(
       `/BPMNform/${element.key}`,
@@ -281,13 +252,6 @@ export default class BPMNForm extends Control {
     )
   }
 
-  /**
-   * generate visible statement of control depending of the given camunda element
-   * configuration
-   *
-   * @param element camunda configuration
-   * @returns visible statement as expression binding or a boolean
-   */
   private _getVisibleStatement(element: Component): boolean | `{${string}}` {
     let visible = false
 
@@ -303,13 +267,6 @@ export default class BPMNForm extends Control {
     return visible
   }
 
-  /**
-   * generate a unique id of control based on key in camunda and a randomly generated string prepended
-   * each controls id should be generated by this function for better usage with wdi5
-   *
-   * @param element Camunda control configuration
-   * @returns the generated id
-   */
   private _generateControlId(element: Component): string {
     return `${uid()}-${element.key}`
   }
@@ -328,13 +285,7 @@ export default class BPMNForm extends Control {
     )
   }
 
-  /**
-   * add textfield control, register it and bind validation
-   * @param element the component configuration from camunda
-   *
-   * @return the created and addded control
-   */
-  private addTextfield(element: Component, currentPath?: string): Control {
+  private addInput(element: Component): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -343,8 +294,17 @@ export default class BPMNForm extends Control {
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       (element.defaultValue as string)
 
+    const enabled = element.disabled
+    const readonly = element.readonly
+      ? !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      : false
+    const required = element.validate?.required || false
+
     const control = new Input(this._generateControlId(element), {
       visible: this._getVisibleStatement(element),
+      enabled: !enabled,
+      editable: !readonly,
+      required,
       value: defaultValue,
       valueLiveUpdate: true,
       liveChange: (event) => {
@@ -353,38 +313,158 @@ export default class BPMNForm extends Control {
       }
     })
 
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setValue("")
-        this._provideValueToView(element, control)
+    if (element.type === ControlType.Textfield && element.validate?.pattern) {
+      try {
+        new RegExp(element.validate.pattern) //> throws on invalid regex
+        control.attachLiveChange((event) => {
+          const value = event.getParameter("value")
+          const regex = new RegExp(element.validate.pattern)
+          if (!regex.test(value)) {
+            control.setValueState(ValueState.Error)
+            control.setValueStateText(this.i18n.getText("Input.pattern_error"))
+          } else {
+            control.setValueState(ValueState.None)
+          }
+        })
+      } catch (error) {
+        console.error(
+          `[${this.getId()}] - ${JSON.stringify(error)} - invalid regular expression in pattern: ${element.validate.pattern}`
+        )
       }
+    }
 
-      return control
+    if (element.validate?.validationType === "email") {
+      makeEmailInput.call(this)
     }
+    if (element.validate?.validationType === "phone") {
+      makePhoneInput.call(this)
+    }
+
     if (element.type === ControlType.Number) {
-      control.setType(InputType.Number)
+      makeNumberInput.call(this)
     }
+    if (element.appearance?.suffixAdorner) {
+      addSuffix.call(this)
+    }
+    if (element.appearance?.prefixAdorner) {
+      return addPrefix.call(this)
+    }
+    if (element.validate?.min || element.validate?.max || element.validate?.minLength || element.validate?.maxLength) {
+      addMinMaxValidation.call(this)
+    }
+    // no need to cater to Camunda Forms property "serializeToString"
+    // as UI5 always gets the value from the control as string
+
     this._addControl(element, control, ControlType.Textfield)
     this._setValueState(control, element, control.getValue())
 
     return control
+
+    function makeNumberInput(this: BPMNForm) {
+      control.setType(InputType.Number)
+      if (element.decimalDigits) {
+        control.attachLiveChange((event) => {
+          const value = event.getParameter("value")
+          const regex = new RegExp(`^-?\\d*[.,]?\\d{0,${element.decimalDigits}}$`)
+          if (!regex.test(value)) {
+            control.setValueState(ValueState.Error)
+            control.setValueStateText(this.i18n.getText("NumberInput.decimal_digits_error", [element.decimalDigits]))
+          } else {
+            control.setValueState(ValueState.None)
+          }
+        })
+      }
+    }
+
+    function makePhoneInput(this: BPMNForm) {
+      control.setType(InputType.Tel)
+      control.attachLiveChange((event) => {
+        const value = event.getParameter("value")
+        const regex = new RegExp(/^(\+?\d{1,3}[-.\s]*)?(\(?\d{1,4}\)?[-.\s]*){2,3}\d{1,4}$/)
+        if (!regex.test(value)) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("PhoneInput.error"))
+        } else {
+          control.setValueState(ValueState.None)
+        }
+      })
+    }
+
+    function makeEmailInput(this: BPMNForm) {
+      control.setType(InputType.Email)
+      control.attachLiveChange((event) => {
+        const value = event.getParameter("value")
+        const regex = new RegExp(
+          `^((\\.?[^<>()\\[\\]\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$`
+        )
+        if (!regex.test(value)) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("EmailInput.error"))
+        } else {
+          control.setValueState(ValueState.None)
+        }
+      })
+    }
+
+    function addMinMaxValidation(this: BPMNForm) {
+      control.attachLiveChange((event) => {
+        const charCount = event.getParameter("value").length || 0
+        const min = element.validate.min || element.validate.minLength
+        const max = element.validate.max || element.validate.maxLength
+        if (min && charCount < min) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("Input.min_length_error", [min]))
+        } else if (max && charCount > max) {
+          control.setValueState(ValueState.Error)
+          control.setValueStateText(this.i18n.getText("Input.max_length_error", [max]))
+        } else {
+          control.setValueState(ValueState.None)
+        }
+      })
+    }
+
+    // for the sake of structure
+    function addPrefix(this: BPMNForm) {
+      const label = new Label({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        text: evaluate(
+          element.appearance.prefixAdorner.toString(),
+          this.getModel(localModelName).getProperty("/BPMNform/variables")
+        ),
+        labelFor: control.getId()
+      }).addStyleClass("sapUiTinyMarginEnd")
+      const hbox = new HBox({ alignItems: "Center" }).addItem(label).addItem(control)
+
+      const fn = hbox.setVisible
+      hbox.setVisible = (value) => {
+        fn.apply(control, [value])
+        if (control.getVisible() === false) {
+          if (element.validate?.required) {
+            control.setValueState(ValueState.Error)
+          }
+          control.setValue("")
+          this._provideValueToView(element, control)
+        }
+        return control
+      }
+      this._addControl(element, hbox, ControlType.Textfield)
+      this._setValueState(control, element, control.getValue())
+
+      return control
+    }
+
+    function addSuffix() {
+      control.setDescription(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+        evaluate(
+          element.appearance.suffixAdorner.toString(),
+          this.getModel(localModelName).getProperty("/BPMNform/variables")
+        )
+      )
+    }
   }
 
-  /**
-   * add checkbox as control
-   * @param element component conficuation from camunda
-   *
-   * @return the created and addded control
-   */
-  private addCheckbox(element: Component, currentPath?: string): Control {
+  private addCheckbox(element: Component): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -409,23 +489,6 @@ export default class BPMNForm extends Control {
         this._validate()
       }
     })
-
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setSelected(false)
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
 
     this._provideValueToView(element, control)
     this._addControl(element, control, ControlType.CheckBox, false)
@@ -463,13 +526,7 @@ export default class BPMNForm extends Control {
     return filters
   }
 
-  /**
-   * add select control, register it and bind validation
-   * @param element the component configuration from camunda
-   *
-   * @return the created and addded control
-   */
-  private addSelect(element: Component, currentPath?: string): Control {
+  private addSelect(element: Component): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -493,35 +550,13 @@ export default class BPMNForm extends Control {
       control.addItem(new Item({ key: value.value, text: value.label }))
     })
 
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setSelectedKey("")
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
-
     this._addControl(element, control, ControlType.Select)
     this._setValueState(control, element, !!control.getSelectedKey() || false)
 
     return control
   }
 
-  /**
-   * creates a radio button group and adds it to the form
-   * @param element camunda configuration for control creation
-   * @returns the created and added control
-   */
-  private addRadioGroup(element: Component, currentPath?: string): Control {
+  private addRadioGroup(element: Component): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
@@ -541,37 +576,6 @@ export default class BPMNForm extends Control {
       columns: element.values?.length > 2 ? 1 : 2
     })
 
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        control.setSelectedIndex(-1)
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        this._provideValueToView(element, control)
-        this._validate()
-      } else {
-        let selectedIndex = -1
-        element.values.forEach((value, index) => {
-          if (value.value === defaultValue) {
-            selectedIndex = index
-          }
-        })
-        control.setSelectedIndex(selectedIndex)
-        if (element.validate?.required && selectedIndex === -1) {
-          control.setValueState(ValueState.Error)
-        } else {
-          control.setValueState(ValueState.None)
-        }
-        this._validate()
-      }
-
-      return control
-    }
     const defaultValue =
       ((this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) as string) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
@@ -603,37 +607,59 @@ export default class BPMNForm extends Control {
     return control
   }
 
-  /**
-   * add datepicker control, register it and bind validation
-   * @param element the component configuration from camunda
-   *
-   * @return the created and addded control
-   */
-  private addDate(element: Component, currentPath?: string): Control {
+  private addDateTime(element: Component): Control {
     if (this._checkIfNotSet(element)) {
       return
     }
-    const control = new DatePicker(this._generateControlId(element), {
-      visible: this._getVisibleStatement(element),
-      valueFormat: "yyyy-MM-ddT00:00:00",
-      displayFormat: "yyyy-MM-dd",
-      change: (event: Event) => {
-        this._setValueState(control, element, event.getParameter("valid") as boolean)
-        this._provideValueToView(element, control)
+
+    let control: Control
+    if (element.subtype && element.subtype === "date") {
+      control = new DatePicker(this._generateControlId(element), {
+        visible: this._getVisibleStatement(element),
+        valueFormat: "yyyy-MM-dd",
+        displayFormat: "yyyy-MM-dd"
+      })
+      if (element.disallowPassedDates) {
+        ;(control as DatePicker).setMinDate(new Date())
       }
+    } else if (element.subtype && element.subtype === "time") {
+      control = new TimePicker(this._generateControlId(element), {
+        visible: this._getVisibleStatement(element),
+        support2400: element.use24h,
+        valueFormat: element.use24h ? "HH:mm:ss" : "hh:mm:ss aa",
+        displayFormat: element.use24h ? "HH:mm:ss" : "hh:mm:ss aa",
+        showCurrentTimeButton: true
+      })
+    } else if (element.subtype && element.subtype === "datetime") {
+      control = new DateTimePicker(this._generateControlId(element), {
+        visible: this._getVisibleStatement(element),
+        valueFormat: element.use24h ? "yyyy-MM-ddTHH:mm:ss" : "yyyy-MM-ddThh:mm:ss aa",
+        displayFormat: element.use24h ? "yyyy-MM-ddTHH:mm:ss" : "yyyy-MM-ddThh:mm:ss aa",
+        showCurrentTimeButton: true
+      })
+    } else {
+      throw new Error(`Unknown datetune subtype ${element.subtype}`)
+    }
+
+    const readonly = element.readonly
+      ? !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      : false
+    const required = element.validate?.required || false
+
+    // @ts-expect-error due to Control type not being equipped with the setters
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    control.setEnabled(!element.disabled).setEditable(!readonly).setRequired(required)
+    control.attachChange((event: Event) => {
+      this._setValueState(control, element, event.getParameter("valid") as boolean)
+      this._provideValueToView(element, control)
     })
+
     this._addControl(element, control, ControlType.DatePicker)
     this._setValueState(control, element, !element.validate?.required)
 
     return control
   }
 
-  /**
-   * add smartfeld control, register it
-   * @param element the component configuration from camunda
-   *
-   * @return the created and addded control
-   */
   private addSmartField(element: Component, currentPath?: string): Control {
     if (this._checkIfNotSet(element)) {
       return
@@ -707,73 +733,7 @@ export default class BPMNForm extends Control {
     })
   }
 
-  /**
-   * create an input with OData value help and add it to the form
-   * @param element camunda configuration for control
-   * @returns created control
-   */
-  // private addValueHelpInput(element: Component): Control {
-  //   if (this._checkIfNotSet(element)) {
-  //     return
-  //   }
-
-  //   if (!this.mandatoryFieldCheck(["type", "for", "display", "suggestFields"], element)) {
-  //     return
-  //   }
-
-  //   const enableSuggestion =
-  //     element.properties.enableSuggestion === "true" || element.properties.enableSuggestion === true ? true : false
-  //   const showDialog =
-  //     element.properties.showDialog === "false" || element.properties.showDialog === false ? false : true
-
-  //   element.properties.for = this.resolveVariables(element.properties.for)
-
-  //   const valueHelpSettings = {
-  //     visible: this._getVisibleStatement(element),
-  //     valueHelpSet: element.properties.for,
-  //     suggestFields: element.properties.suggestFields,
-  //     required: element.validate?.required,
-  //     service: element.properties.service,
-  //     elementConfiguration: element.properties,
-  //     displayField: element.properties.display,
-  //     enableSuggestion,
-  //     showDialog,
-  //     title: element.label,
-  //     // prefill values with default value from camunda or preset variable as input
-  //     value: this.getModel(localModelName).getProperty(`/BPMNform/${element.key}`) || element.defaultValue,
-  //     change: (event: Event) => {
-  //       this._provideValueToView(element, control)
-  //       this._validate()
-  //     }
-  //   }
-  //   const control = new ValueHelpInput(this._generateControlId(element), valueHelpSettings)
-
-  //   // get all filter properties in camunda
-
-  //   control.setStaticFilters(this.getStaticFiltersFromCamundaProperties(element))
-
-  //   // handle visibility for deep if constructions,
-  //   // if the control is set to invisible delete value and provide empty value
-  //   // to local model to hide dependent controls as well
-  //   const fn = control.setVisible
-  //   control.setVisible = (value) => {
-  //     fn.call(control, value)
-  //     if (control.getVisible() === false) {
-  //       control.setValue("")
-  //       this._provideValueToView(element, control)
-  //       this._validate()
-  //     }
-
-  //     return control
-  //   }
-
-  //   this._addControl(element, control, ControlType.ValueHelpInput)
-  //   this._validate()
-
-  //   return control
-  // }
-
-  private addText(element: Component, currentPath?: string) {
+  private addText(element: Component) {
     const visible = this._getVisibleStatement(element)
     let content = element.text
     content = evaluate(content, this.getModel(localModelName).getProperty("/BPMNform/variables"))
@@ -784,13 +744,6 @@ export default class BPMNForm extends Control {
     this._addControl(element, text, ControlType.Text, false, false, true)
   }
 
-  /**
-   * add control to formular and keep track of it
-   *
-   * @param element Component definition of camunda
-   * @param control UI5 control to be added to form
-   * @param controlType type of control
-   */
   private _addControl(
     element: Component,
     control: Control,
@@ -840,22 +793,14 @@ export default class BPMNForm extends Control {
     this.addItem(vbox)
   }
 
-  /**
-   * generate a label string for ui from camunda configuration
-   *
-   * @param element camunda control configuration
-   * @returns the generated label from config
-   */
   private generateLabelFromElement(element: Component): string {
     return element.description ? `${element.label} (${element.description})` : element.label
   }
 
-  /**
-   * framework called init function
-   * initialises models and listeners
-   */
   init(): void {
     console.debug(`[${this.getMetadata().getName()}] > init`)
+
+    this.i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
 
     this._initLocalModel()
 
@@ -864,9 +809,6 @@ export default class BPMNForm extends Control {
     })
   }
 
-  /**
-   * create local model for variable bindings and init with default variables
-   */
   _initLocalModel() {
     console.debug(`[${this.getMetadata().getName()}] > local BPMN form model: ${localModelName}`)
     const data = {
@@ -874,18 +816,20 @@ export default class BPMNForm extends Control {
         variables: {}
       }
     }
-    if (this.getModel(localModelName)) {
-      ;(this.getModel(localModelName) as JSONModel).setData(data)
-    } else {
+    const localModel = this.getModel(localModelName) as JSONModel
+    if (!localModel) {
       this.setModel(new JSONModel(data), localModelName)
+    } else if (Object.keys((localModel.getProperty("/BPMNform/variables") as object) || {}).length === 0) {
+      localModel.setData(data)
+    }
+    if (
+      this.getModel("AppView") &&
+      Object.keys(this.getModel("AppView").getProperty("/BPMNform") as object || {}).length > 0
+    ) {
+      localModel.setProperty("/BPMNform", this.getModel("AppView").getProperty("/BPMNform"))
     }
   }
 
-  /**
-   * layout final process step screen
-   *
-   * @param data received data via websocket
-   */
   endProcess(data: WebSocketData): void {
     this.fireEvent("summary")
 
@@ -954,12 +898,6 @@ export default class BPMNForm extends Control {
     return this.getModel(localModelName) as JSONModel
   }
 
-  /**
-   * provide variables to view in local model for showing in markup or usage in conditions
-   *
-   * @param variables variables to set in local model
-   * @private
-   */
   _updateFormVariables(variables: { [index: string]: string }): void {
     for (const key in variables) {
       this.getLocalModel().setProperty(`/BPMNform/variables/${key}`, variables[key])
@@ -978,34 +916,28 @@ export default class BPMNForm extends Control {
     //throw new Error("Method not implemented.")
   }
 
-  addTextArea(element: any, currentPath?: string) {
+  addTextArea(element: Component) {
     const defaultValue =
       this.getLocalModel().getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
+
+    const enabled = element.disabled
+    const readonly = element.readonly
+      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        !!evaluate(element.readonly.toString(), this.getModel(localModelName).getProperty("/BPMNform/variables"))
+      : false
+    const required = element.validate?.required || false
+
     const control = new TextArea(this._generateControlId(element), {
       visible: this._getVisibleStatement(element),
       value: defaultValue,
+      enabled: !enabled,
+      editable: !readonly,
+      required,
       cols: 50,
       rows: 20
     })
-
-    // handle visibility for deep if constructions,
-    // if the control is set to invisible delete value and provide empty value
-    // to local model to hide dependent controls as well
-    const fn = control.setVisible
-    control.setVisible = (value) => {
-      fn.apply(control, [value])
-      if (control.getVisible() === false) {
-        if (element.validate?.required) {
-          control.setValueState(ValueState.Error)
-        }
-        control.setValue("")
-        this._provideValueToView(element, control)
-      }
-
-      return control
-    }
 
     this._addControl(element, control, ControlType.Textarea)
     this._setValueState(control, element, control.getValue())
@@ -1013,67 +945,39 @@ export default class BPMNForm extends Control {
     return control
   }
 
-  /**
-   * create controls from camunda configuration and add to stage
-   *
-   * @param components array of camunda components
-   */
-  _generateControls(components: Component[], currentPath?: string): void {
+  _generateControls(components: Component[]): void {
     components.forEach((element) => {
       switch (element.type) {
+        case ControlType.HTML:
+          this.addHTML(element)
+          break
+        case ControlType.Image:
+          this.addImage(element)
+          break
+        case ControlType.DatePicker:
+          this.addDateTime(element)
+          break
         case ControlType.Textarea:
-          this.addTextArea(element, currentPath)
+          this.addTextArea(element)
           break
         case ControlType.DynamicList:
           this.addDynamicList(element) //> only provides the current path, never receives
           break
         case ControlType.Textfield:
         case ControlType.Number:
-          if (element.properties && element.properties.type) {
-            switch (element.properties.type) {
-              // case "DynamicSumSuggestInput":
-              //   {
-              //     element.properties.enableSuggestion = true
-              //     element.properties.showDialog = false
-              //     this.addDynamicSum(element)
-              //   }
-              //   break
-              // case "DynamicSumAutomatic":
-              //   {
-              //     this.addDynamicSumAutomatic(element)
-              //   }
-              //   break
-              // case "DynamicSumSelect":
-              //   {
-              //     this.addDynamicSum(element, true)
-              //   }
-              //   break
-              default: {
-                if (this[`add${element.properties.type}`]) {
-                  this[`add${element.properties.type}`](element, currentPath)
-                }
-              }
-            }
-          } else {
-            if (element.properties && element.properties.type) {
-              console.error(
-                `Error 1650373370: Unupported sub type of Textfield. Missing add${element.properties.type} function in BPMNform`
-              )
-            }
-            this.addTextfield(element, currentPath)
-          }
+          this.addInput(element)
           break
         case ControlType.Select:
-          this.addSelect(element, currentPath)
+          this.addSelect(element)
           break
         case ControlType.CheckBox:
-          this.addCheckbox(element, currentPath)
+          this.addCheckbox(element)
           break
         case ControlType.Radio:
-          this.addRadioGroup(element, currentPath)
+          this.addRadioGroup(element)
           break
         case ControlType.Text:
-          this.addText(element, currentPath)
+          this.addText(element)
           break
         default:
           console.error(`Error 1650472412: Unsupported control type "${element.type}"`)
@@ -1081,26 +985,43 @@ export default class BPMNForm extends Control {
       }
     })
   }
+  addHTML(element: Component) {
+    const content = evaluate(
+      element.content.toString(),
+      this.getModel(localModelName).getProperty("/BPMNform/variables")
+    )
+    const control = new HTML(this._generateControlId(element), {
+      visible: this._getVisibleStatement(element),
+      content,
+      sanitizeContent: true,
+      preferDOM: false
+    })
+    this._addControl(element, control, ControlType.HTML)
 
-  /**
-   * reset form contentssf
-   */
+    return control
+  }
+  addImage(element: Component) {
+    const control = new Image(this._generateControlId(element), {
+      visible: this._getVisibleStatement(element),
+      src: element.source,
+      alt: element.alt
+    })
+
+    this._addControl(element, control, ControlType.Image)
+
+    return control
+  }
+
   reset(): void {
     this.generatedControls = []
     this.removeAllItems()
   }
 
-  /**
-   * callback, before a control has been rendered
-   */
   onBeforeRendering(): void {
     console.debug(`[${this.getMetadata().getName()}] > onBeforeRendering`)
   }
 
-  /**
-   * callback, after a control has been rendered
-   */
   onAfterRendering(): void {
-    console.debug(`[${this.getMetadata().getName()}] > onBeforeRendering`)
+    console.debug(`[${this.getMetadata().getName()}] > onAfterRendering`)
   }
 }

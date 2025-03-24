@@ -1,5 +1,5 @@
 {
-  "name": "@camunda8/sap-btp-integration",
+  "name": "@camunda8/sap-btp-plugin",
   "version": "1.0.0-alpha.1",
   "private": true,
   "description": "mono repo for the Camunda BTP Integration, part of the SAP Integration",
@@ -29,13 +29,13 @@
     "@sap/cds": "^8"
   },
   "devDependencies": {
-    "@cap-js/cds-types": "^0.7",
+    "@cap-js/cds-types": "^0.9",
     "@cap-js/sqlite": "^1",
-    "@eslint/js": "^9.15.0",
+    "@eslint/js": "^9.19.0",
     "cross-env": "^7.0.3",
-    "eslint": "^9.15.0",
-    "globals": "^15.12.0",
+    "eslint": "^9.19.0",
+    "globals": "^15.14.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.3.3"
+    "prettier": "^3.4.2"
   }
 }

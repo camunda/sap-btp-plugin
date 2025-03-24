@@ -33,6 +33,7 @@ const MockServer = {
           }
           data.channelId = UriParameters.fromURL(window.location.href).get("channelId")
           websocket.fireMessage({ data: JSON.stringify(data) })
+          window._data = data
           fnResolve()
         })
       }, timeout)

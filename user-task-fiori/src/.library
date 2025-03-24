@@ -8,7 +8,7 @@
 	<documentation>Some description about io.camunda.connector.sap.btp.lib</documentation>
 	<dependencies>
 		<dependency>
-			<libraryName>sap.ui.core</libraryName>
+			<libraryName>io.camunda.connector.sap.btp.lib</libraryName>
 		</dependency>
 	</dependencies>
 </library>

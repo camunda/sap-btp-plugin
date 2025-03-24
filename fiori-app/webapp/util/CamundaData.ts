@@ -7,6 +7,7 @@ export interface CamundaRunReturn {
   channelId: string
   processInstanceKey: string
   processDefinitionKey?: string
+  processKey?: string
   version: number
   "@odata": {
     context: string
