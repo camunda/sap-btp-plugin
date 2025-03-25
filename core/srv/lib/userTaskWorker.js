@@ -99,9 +99,45 @@ module.exports = async (job, worker) => {
     wsData.parentProcessInstanceKey = job.processInstanceKey
   }
 
-  ;(await ws.getClient()).send(JSON.stringify(wsData))
+  const { UserTasks, BrowserClients } = require("#cds-models/camunda")
+  // if persisting the user task for later resuming fails, 
+  // the error is relayed to the connected client and
+  // the job is failed (to not mingle with eventual consistency)
+  try {
+    // get associated user for the user task
+    const { user } = await SELECT.one`user`.from(BrowserClients).where({
+      processInstanceKey: job.processInstanceKey,
+      channelId
+    })
+    // persist user task for resuming (and eventually completing) later
+    await UPSERT.into(UserTasks).entries({
+      processInstanceKey: job.processInstanceKey,
+      channelId,
+      user,
+      jobKey: job.key,
+      formData: form.schema, //> we trust in CAP to serialize properly :)
+      variables: job.variables //> we trust in CAP to serialize properly :)
+    })
+    LOGGER.info(`persisted user task for PI ${job.processInstanceKey}, channel ${channelId} and user ${user}`)
+    ;(await ws.getClient()).send(JSON.stringify(wsData))
 
-  // "queue" job completion
-  // it will be completed via the UI Layer (form submit) and CAP layer (completeUsertask)
-  return job.forward()
+    // "queue" job completion
+    // it will be completed via the UI Layer (form submit) and CAP layer (completeUsertask)
+    return job.forward()
+  } catch (err) {
+    LOGGER.error(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}:`, err)
+
+    const wsPayload = {
+      type: "message",
+      channelId,
+      message: {
+        text: "Error persisting User Task",
+        description: "Camunda experienced a hiccup",
+        additionalText: JSON.stringify(err),
+        type: "Error"
+      }
+    }
+    ;(await ws.getClient()).send(JSON.stringify(wsPayload))
+    return job.fail(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}`, 0)
+  }
 }

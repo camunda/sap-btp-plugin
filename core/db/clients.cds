@@ -1,6 +1,6 @@
-using {managed} from '@sap/cds/common';
+using {managed, User} from '@sap/cds/common';
 
-namespace zeebe;
+namespace camunda;
 
 // store websocket ids associated with a started bpmn process id
 entity BrowserClients : managed {
@@ -10,4 +10,5 @@ entity BrowserClients : managed {
     version              : Integer;
     processInstanceKey   : String;
     tenantId             : String;
+    user                 : User; //> authenticated user hitting the app
 }

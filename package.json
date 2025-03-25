@@ -14,14 +14,16 @@
     "websocket"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "//_start:approuter": "intended for local dev; the INCOMING_CONNECTION_TIMEOUT env var is set at deploy-time in mta.yaml",
-    "_start:approuter": "cross-env INCOMING_CONNECTION_TIMEOUT=900000 npm run start:local -w router",
-    "//_start:app": "intended for local dev - this also starts the CAP layer!",
-    "_start:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
-    "//start": "intended for dev time only",
-    "//start open": "http://localhost:5005/app/index-local.html?channelId=xxx",
-    "start": "cross-env NODE_ENV=localdev npm-run-all --parallel _start:*"
+    "//start:*": "intended for dev time only",
+    "//start:local": "no authN and auth - dev-approuter also starts the backend - make sure to also set 'authenticationMethod' to 'none' in xs-dev.json",
+    "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
+    "local:router": "npm run start:local -w router",
+    "local:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
+    "//start:hybrid": "authN and authZ against BTP xsuaa with the help of cds bind",
+    "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
+    "hybrid:router": "npm start -w router",
+    "hybrid:app": "npm run start:local -w fiori-app",
+    "hybrid:backend": "cd core; cds run --profile hybird"
   },
   "dependencies": {
     "@sap/cds": "^8"
