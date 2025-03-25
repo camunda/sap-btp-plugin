@@ -132,77 +132,6 @@ export default class BPMNForm extends Control {
 
 
   /**
-   * returns questions and answers from form streak as array
-   * @returns the questions and answers as array
-   */
-  getUserData(): userFormData[] {
-    const data: userFormData[] = []
-    // for each dynamically generated cdontrol,
-    // get its' "key" data for submitting -> job worker
-    // and its' value that was supplied/chosen by the user
-    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
-      const ui5Control = Core.byId(control.id) as Control
-
-      // represents the form key as modelled in Camunda
-      const key = ui5Control.getCustomData()[0].getKey()
-
-      const value = this.getValueFromControl(control.type, ui5Control) as string
-      let answer
-      switch (control.type) {
-        case ControlType.ValueHelpInput:
-          {
-            answer = (ui5Control.getAggregation("_input") as Input).getValue()
-          }
-          break
-        case ControlType.CheckBox:
-          {
-            if (ui5Control.getVisible()) {
-              answer = String((ui5Control as CheckBox).getSelected())
-            }
-          }
-          break
-        case ControlType.Select:
-          {
-            const selectedItem = (ui5Control as Select).getSelectedItem()
-            if (selectedItem) {
-              if (selectedItem.getText() === value) {
-                answer = value
-              } else {
-                answer = `${value} (${selectedItem.getText()})`
-              }
-            }
-          }
-          break
-        case ControlType.Radio:
-          {
-            const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
-            if (selectedButton) {
-              if (selectedButton.getText() === value) {
-                answer = value
-              } else {
-                answer = `${value} (${selectedButton.getText()})`
-              }
-            }
-          }
-          break
-        default: {
-          answer = this.getValueFromControl(control.type, ui5Control) as string
-        }
-      }
-      data.push({
-        key,
-        value,
-        question: control.question as string,
-        answer,
-        linkedControlId: control.id,
-        linkedControlType: control.type
-      })
-    })
-    return data
-  }
-
-
-  /**
    * set the value state for the given control and trigger form validation afterwards
    *
    * @param control control to set the value state for
@@ -252,19 +181,13 @@ export default class BPMNForm extends Control {
     )
   }
 
-  private _getVisibleStatement(element: Component): boolean | `{${string}}` {
-    let visible = false
-
-    if (!element.properties?.if) {
-      visible = true
-    } else {
-      if (element.properties?.if && element.properties?.if === "notSet") {
-        visible = true
-      } else {
-        visible = "{= " + element.properties?.if.replace(/\{/gm, `\${${localModelName}>/BPMNform/`) + "}"
-      }
+  private _getVisibleStatement(element: Component): boolean {
+    if (!element.conditional?.hide) {
+      return true
     }
-    return visible
+    // evaluate produces a stringified boolean
+    const hideResult = (evaluate(element.conditional.hide, this.getModel(localModelName).getProperty("/BPMNform/variables")) as string).toLowerCase()
+    return hideResult === "false"
   }
 
   private _generateControlId(element: Component): string {
@@ -824,7 +747,7 @@ export default class BPMNForm extends Control {
     }
     if (
       this.getModel("AppView") &&
-      Object.keys(this.getModel("AppView").getProperty("/BPMNform") as object || {}).length > 0
+      Object.keys((this.getModel("AppView").getProperty("/BPMNform") as object) || {}).length > 0
     ) {
       localModel.setProperty("/BPMNform", this.getModel("AppView").getProperty("/BPMNform"))
     }

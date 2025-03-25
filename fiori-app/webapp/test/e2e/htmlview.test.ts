@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import HTML from "sap/ui/core/HTML"
 import JSONModel from "sap/ui/model/json/JSONModel"
 import Core from "sap/ui/core/Core"
@@ -42,27 +42,13 @@ describe("HTML control", () => {
   })
 
   it("should render FEEL/dynamically assigned HTML content correctly", async () => {
-    await browser.executeAsync((done: Function) => {
-      const bpmnForm = sap.ui.getCore().byId("__xmlview0--BPMNform") //> gnarf
-      // @ts-expect-error this is dirrrty stuff - don't do it at home, kids
-      const models = bpmnForm._getPropertiesToPropagate().oModels
-
-      for (const [modelName, _] of Object.entries(models)) {
-        if (modelName.startsWith("id-")) {
-          ;(bpmnForm.getModel(modelName) as JSONModel).setProperty(
-            "/BPMNform/variables/dynamicHeader",
-            "this is a dynamic header"
-          )
-        }
+    const feelVars = [
+      {
+        name: "dynamicHeader",
+        value: "this is a dynamic header"
       }
-
-      // @ts-expect-error
-      bpmnForm.reset()
-      // @ts-expect-error
-      bpmnForm.processForm(window._data) //> storing the ws data on window is done in webSocketMockServer.ts
-
-      done()
-    })
+    ]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
 
     const pageSelector = {
       selector: {
@@ -88,27 +74,13 @@ describe("HTML control", () => {
   })
 
   it("should handle code injection attempts properly", async () => {
-    await browser.executeAsync((done: Function) => {
-      const bpmnForm = sap.ui.getCore().byId("__xmlview0--BPMNform") //> gnarf
-      // @ts-expect-error this is dirrrty stuff - don't do it at home, kids
-      const models = bpmnForm._getPropertiesToPropagate().oModels
-
-      for (const [modelName, _] of Object.entries(models)) {
-        if (modelName.startsWith("id-")) {
-          ;(bpmnForm.getModel(modelName) as JSONModel).setProperty(
-            "/BPMNform/variables/dynamicHeader",
-            "<script>alert('XSS')</script>"
-          )
-        }
+    const feelVars = [
+      {
+        name: "dynamicHeader",
+        value: "<script>alert('XSS')</script>"
       }
-
-      // @ts-expect-error
-      bpmnForm.reset()
-      // @ts-expect-error
-      bpmnForm.processForm(window._data) //> storing the ws data on window is done in webSocketMockServer.ts
-
-      done()
-    })
+    ]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
 
     const pageSelector = {
       selector: {
@@ -133,5 +105,59 @@ describe("HTML control", () => {
     const containsExpected = innerHTML.some((html) => expected.test(html))
 
     expect(containsExpected).toBeTruthy()
+  })
+  
+  it("should hide HTML content when visibility set to false via FEEL", async () => {
+    const htmlSelector = {
+      selector: {
+        controlType: "sap.ui.core.HTML",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+
+    const _all = await browser.allControls<HTML>(htmlSelector)
+    const all = []
+    for (const control of _all) {
+      all.push(await control.getWebElement())
+    }
+    // the UI5 html control is represented with "just a div"
+    // const divs = await html.$$("div")
+    const divs = []
+    for (const control of all) {
+      const controlDivs = await control.$$("div")
+      for (const div of controlDivs) {
+        divs.push(div)
+      }
+    }
+    const innerHTML = []
+    for (const div of divs) {
+      innerHTML.push(await div.getHTML(false)) // false to get inner HTML only
+    }
+    const expected = /<h3[^>]*>visibility<\/h3>/i //> from the model/design time
+    const containsExpected = innerHTML.some((html) => expected.test(html))
+    expect(containsExpected).toBeTruthy()
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
+
+    const _allAfter = await browser.allControls<HTML>(htmlSelector)
+    const allAfter = []
+    for (const control of _allAfter) {
+      allAfter.push(await control.getWebElement())
+    }
+    const divsAfter = []
+    for (const control of allAfter) {
+      const controlDivs = await control.$$("div")
+      for (const div of controlDivs) {
+        divsAfter.push(div)
+      }
+    }
+    const innerHTMLAfter = []
+    for (const div of divsAfter) {
+      innerHTMLAfter.push(await div.getHTML(false))
+    }
+    const containsExpectedAfter = innerHTMLAfter.some((html) => expected.test(html))
+    expect(containsExpectedAfter).toBeFalsy()
   })
 })

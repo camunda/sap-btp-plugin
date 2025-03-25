@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 
 describe("checkbox", () => {
   before(async () => {
@@ -74,6 +74,27 @@ describe("checkbox", () => {
     const checkbox = await browser.asControl(checkboxSelector)
     const readOnly = await checkbox.getProperty("editable")
     expect(readOnly).toBeFalsy()
+  })
+
+  it("should hide checkbox when visibility set to false via FEEL", async () => {
+    const checkboxSelector = {
+      selector: {
+        id: /.*checkbox_hidden$/,
+        controlType: "sap.m.CheckBox",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+
+    const checkbox = await browser.asControl(checkboxSelector)
+    let visible = await checkbox.getVisible()
+    expect(visible).toBeTruthy()
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
+    const checkBoxInvisible = await browser.asControl(checkboxSelector)
+    visible = await checkBoxInvisible.isInitialized()
+    expect(visible).toBeFalsy()
   })
 
   it.skip("read-only state of via feel", async () => {})

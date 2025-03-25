@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import Select from "sap/m/Select"
 import Item from "sap/ui/core/Item"
 
@@ -55,6 +55,29 @@ describe("select", () => {
     const item = await select.getSelectedItem()
     expect(await item.getText()).toBe("label default second")
   })
+
+  it("should hide the select when the visibility is set to false", async () => {
+    const selectSelector = {
+      selector: {
+        id: /.*select_visibility$/,
+        controlType: "sap.m.Select",
+        viewName: `${ns}.view.App`
+      },
+      interaction: "root",
+      forceSelect: true
+    }
+
+    const select = await browser.asControl<Select>(selectSelector)
+    const visible = await select.getVisible()
+    expect(visible).toBeTruthy()
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--select_static_invisible", feelVars)
+    const selectAfter = await browser.asControl<Select>(selectSelector)
+    const visibleAfter = await selectAfter.isInitialized()
+    expect(visibleAfter).toBeFalsy()
+  })
+
 
   it.skip("static disabled", async () => {})
   it.skip("static read-only", async () => {})

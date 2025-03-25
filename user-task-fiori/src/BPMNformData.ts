@@ -28,6 +28,9 @@ export interface Component {
   source?: string //> img-view
   alt?: string //> img-view
   content?: string //> html-view
+  conditional?: {
+    hide: string //> FEEL string
+  }
 }
 
 interface Appearance {
