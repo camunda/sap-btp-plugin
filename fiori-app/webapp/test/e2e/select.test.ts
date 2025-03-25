@@ -56,7 +56,7 @@ describe("select", () => {
     expect(await item.getText()).toBe("label default second")
   })
 
-  it.only("should hide the select when the visibility is set to false", async () => {
+  it("should hide the select when the visibility is set to false", async () => {
     const selectSelector = {
       selector: {
         id: /.*select_visibility$/,
