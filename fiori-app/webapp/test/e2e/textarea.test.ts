@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import TextArea from "sap/m/TextArea"
 
 describe("textarea", () => {
@@ -58,13 +58,13 @@ describe("textarea", () => {
     const isEnabled = await textAreaControl.getEnabled()
     expect(isEnabled).toBe(false)
   })
-  
+
   it("checks static read-only text area is not editable", async () => {
     const readOnlyTextArea = await browser.asControl<TextArea>({
       selector: {
         id: /.*textarea_read_only$/,
         controlType: "sap.m.TextArea",
-       viewName: `${ns}.view.App`
+        viewName: `${ns}.view.App`
       }
     })
     expect(await readOnlyTextArea.getEditable()).toBe(false)
@@ -75,12 +75,12 @@ describe("textarea", () => {
       selector: {
         id: /.*textarea_read_only_feel$/,
         controlType: "sap.m.TextArea",
-       viewName: `${ns}.view.App`
+        viewName: `${ns}.view.App`
       }
     })
     expect(await readOnlyTextArea.getEditable()).toBe(false)
   })
-  
+
   it("checks required text area", async () => {
     const textAreaControl = await browser.asControl<TextArea>({
       selector: {
@@ -90,5 +90,26 @@ describe("textarea", () => {
       }
     })
     expect(await textAreaControl.getRequired()).toBe(true)
+  })
+
+  it("should hide a text area when the visibility is set to false", async () => {
+    const textAreaSelector = {
+      selector: {
+        id: /.*textarea_visibility$/,
+        controlType: "sap.m.TextArea",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+
+    const visibleTextArea = await browser.asControl<TextArea>(textAreaSelector)
+    const visible = await visibleTextArea.getVisible()
+    expect(visible).toBeTruthy()
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--textarea_hidden", feelVars)
+    const textAreaAfter = await browser.asControl<TextArea>(textAreaSelector)
+    const visibleAfter = await textAreaAfter.isInitialized()
+    expect(visibleAfter).toBeFalsy()
   })
 })
