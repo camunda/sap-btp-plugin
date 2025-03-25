@@ -13,8 +13,7 @@ import { ValueState } from "sap/ui/core/library"
 import JSONModel from "sap/ui/model/json/JSONModel"
 import BPMNFormRenderer from "./BPMNFormRenderer"
 import { BPMNformData, Component, ControlType, GeneratedControl } from "./BPMNformData"
-import Markdown from "./Markdown"
-import { WebSocketData } from "./WebSocketData"
+// import Markdown from "./Markdown"
 import CheckBox from "sap/m/CheckBox"
 import DatePicker from "sap/m/DatePicker"
 import Label from "sap/m/Label"
@@ -27,6 +26,8 @@ import CustomData from "sap/ui/core/CustomData"
 import Item from "sap/ui/core/Item"
 import Filter from "sap/ui/model/Filter"
 import FilterOperator from "sap/ui/model/FilterOperator"
+import Markdown from "ui5-cc-md"
+import { WebSocketData } from "./WebSocketData"
 
 import Lib from "sap/ui/core/Lib"
 
@@ -34,10 +35,10 @@ import Lib from "sap/ui/core/Lib"
 
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
-import HBox from "sap/m/HBox"
 import DateTimePicker from "sap/m/DateTimePicker"
-import TimePicker from "sap/m/TimePicker"
+import HBox from "sap/m/HBox"
 import Image from "sap/m/Image"
+import TimePicker from "sap/m/TimePicker"
 import HTML from "sap/ui/core/HTML"
 
 // name of local json model used for local bindings
@@ -130,7 +131,6 @@ export default class BPMNForm extends Control {
     return value
   }
 
-
   /**
    * set the value state for the given control and trigger form validation afterwards
    *
@@ -186,7 +186,9 @@ export default class BPMNForm extends Control {
       return true
     }
     // evaluate produces a stringified boolean
-    const hideResult = (evaluate(element.conditional.hide, this.getModel(localModelName).getProperty("/BPMNform/variables")) as string).toLowerCase()
+    const hideResult = (
+      evaluate(element.conditional.hide, this.getModel(localModelName).getProperty("/BPMNform/variables")) as string
+    ).toLowerCase()
     return hideResult === "false"
   }
 
@@ -404,7 +406,7 @@ export default class BPMNForm extends Control {
     const control = new CheckBox(this._generateControlId(element), {
       visible,
       selected,
-      enabled: !enabled, 
+      enabled: !enabled,
       editable: !readonly,
       text: element.label,
       select: () => {
@@ -661,8 +663,8 @@ export default class BPMNForm extends Control {
     let content = element.text
     content = evaluate(content, this.getModel(localModelName).getProperty("/BPMNform/variables"))
     const text = new Markdown(`${uid()}-markdown`, {
-      content: content.replace(/\{/gm, `\{${localModelName}>/BPMNform/`),
-      visible: visible
+      content,
+      visible
     }) as Control
     this._addControl(element, text, ControlType.Text, false, false, true)
   }
