@@ -43,13 +43,11 @@ import HTML from "sap/ui/core/HTML"
 import {
   addCheckbox,
   addDateTime,
-  addDynamicList,
   addHTML,
   addImage,
   addInput,
   addRadioGroup,
   addSelect,
-  addSmartField,
   addText,
   addTextArea
 } from "./creations/index"
@@ -152,7 +150,7 @@ export default class BPMNForm extends Control {
    * @param element element configuration from Camunda Form JSON, like if the control is required ...
    * @param value the new value or event value for the control or a change event
    */
-  private _setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
+   setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
     const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
     const state =
       !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
@@ -162,7 +160,7 @@ export default class BPMNForm extends Control {
     control.setValueState(state)
     control.data("ValueState", state)
 
-    setTimeout(() => this._validate(), 0)
+    setTimeout(() => this.validate(), 0)
   }
 
   /**
@@ -170,7 +168,7 @@ export default class BPMNForm extends Control {
    *
    * @returns true, if form is validated
    */
-  private _validate(): boolean {
+   validate(): boolean {
     return true
     const invalidControls = this.generatedControls.filter((generatedControl: GeneratedControl) => {
       let valid = true
@@ -188,14 +186,14 @@ export default class BPMNForm extends Control {
     return !invalidControls.length
   }
 
-  private _provideValueToView(element: Component, control: Control): void {
+   provideValueToView(element: Component, control: Control): void {
     ;(this.getModel(localModelName) as JSONModel).setProperty(
       `/BPMNform/${element.key}`,
       this.getValueFromControl(element.type || element.properties?.type, control) || ""
     )
   }
 
-  public getVisibleStatement(element: Component): boolean {
+  getVisibleStatement(element: Component): boolean {
     if (!element.conditional?.hide) {
       return true
     }
@@ -206,22 +204,8 @@ export default class BPMNForm extends Control {
     return hideResult === "false"
   }
 
-  private _generateControlId(element: Component): string {
+  generateControlId(element: Component): string {
     return `${uid()}-${element.key}`
-  }
-
-  /**
-   * additional if check, whether the control is visible or not
-   *
-   * @param element Camunda configuration
-   * @returns whether the control is visible by another controls status or not
-   */
-  private _checkIfNotSet(element: Component): boolean {
-    return (
-      element.properties?.if &&
-      element.properties?.if === "notSet" &&
-      this.getModel(localModelName).getProperty(`/BPMNform/${element.key}`)
-    )
   }
 
   init(): void {
@@ -396,7 +380,7 @@ export default class BPMNForm extends Control {
 
     this.addItem(vbox)
   }
-  
+
   _generateControls(components: Component[]): void {
     components.forEach((element) => {
       switch (element.type) {
@@ -411,9 +395,6 @@ export default class BPMNForm extends Control {
           break
         case ControlType.Textarea:
           addTextArea.call(this, element)
-          break
-        case ControlType.DynamicList:
-          addDynamicList.call(this, element)
           break
         case ControlType.Textfield:
         case ControlType.Number:
