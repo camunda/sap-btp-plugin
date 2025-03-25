@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import Image from "sap/m/Image"
 
 describe("sap.m.Image", () => {
@@ -29,5 +29,28 @@ describe("sap.m.Image", () => {
     expect(src).toContain("https://picsum.photos/id/13/300/200")
     const alt = await image.getAlt()
     expect(alt).toEqual("a pebble beach")
+  })
+
+  it("should hide the image when the visibility is set to false", async () => {
+    const imageSelector = {
+      selector: {
+        controlType: "sap.m.Image",
+        viewName: `${ns}.view.MainStage`
+      },
+      forceSelect: true
+    }
+    const images = await browser.allControls<Image>(imageSelector)
+    const visibles = []
+    for (const image of images) {
+      visibles.push(await image.getVisible())
+    }
+    expect(visibles.every((visible) => visible)).toBeTruthy()
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
+
+    const imagesAfter = await browser.allControls<Image>(imageSelector)
+    // we're after the 2nd image only -> it is not present
+    expect(imagesAfter.length).toBe(1)
   })
 })

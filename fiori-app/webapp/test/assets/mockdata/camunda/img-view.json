@@ -2,5 +2,5 @@
   "channelId": "testChannel",
   "type": "form",
   "jobKey": "2252764813989278",
-  "formData": "{ \"executionPlatform\": \"Camunda Cloud\", \"executionPlatformVersion\": \"8.6.0\", \"exporter\": {  \"name\": \"Camunda Web Modeler\",  \"version\": \"7d69e3b\" }, \"schemaVersion\": 18, \"id\": \"Form_1kroak6\", \"components\": [  {   \"type\": \"image\",   \"layout\": {    \"row\": \"Row_17jm8zd\",    \"columns\": null   },   \"id\": \"Field_06itngd\",   \"source\": \"https://picsum.photos/id/13/300/200\",   \"alt\": \"a pebble beach\"  } ], \"type\": \"default\"}"
+  "formData": "{ \"executionPlatform\": \"Camunda Cloud\", \"executionPlatformVersion\": \"8.6.0\", \"exporter\": {  \"name\": \"Camunda Web Modeler\",  \"version\": \"41ec04e\" }, \"schemaVersion\": 18, \"id\": \"Form_1kroak6\", \"components\": [  {   \"type\": \"image\",   \"layout\": {    \"row\": \"Row_17jm8zd\",    \"columns\": null   },   \"id\": \"Field_06itngd\",   \"source\": \"https://picsum.photos/id/13/300/200\",   \"alt\": \"a pebble beach\"  },  {   \"type\": \"image\",   \"layout\": {    \"row\": \"Row_0qo5vj0\",    \"columns\": null   },   \"id\": \"Field_1b3nsyr\",   \"source\": \"https://picsum.photos/id/13/50/20\",   \"alt\": \"invisible beach\",   \"conditional\": {    \"hide\": \"=invisible = true\"   }  } ], \"type\": \"default\"}"
 }
