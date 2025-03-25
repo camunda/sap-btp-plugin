@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import Input from "sap/m/Input"
 
 describe("textfield input", () => {
@@ -202,5 +202,26 @@ describe("textfield input", () => {
     await customInputControl.enterText("InvalidInput")
     valueState = await customInputControl.getValueState()
     expect(valueState).toBe("Error")
+  })
+
+  it("should hide a textfield input when the visibility is set to false", async () => {
+    const textField = {
+      selector: {
+        id: /.*textfield_visibility$/,
+        controlType: "sap.m.Input",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+
+    const textfieldInputControl = await browser.asControl<Input>(textField)
+    let visible = await textfieldInputControl.getVisible()
+    expect(visible).toBeTruthy()
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
+    const textFieldAfter = await browser.asControl<Input>(textField)
+    visible = await textFieldAfter.isInitialized()
+    expect(visible).toBeFalsy()
   })
 })
