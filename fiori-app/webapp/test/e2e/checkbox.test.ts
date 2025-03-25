@@ -92,7 +92,7 @@ describe("checkbox", () => {
     }
 
     const checkbox = await browser.asControl(checkboxSelector)
-    const visible = await checkbox.getVisible()
+    let visible = await checkbox.getVisible()
     expect(visible).toBeTruthy()
 
     await injectFEEL("__xmlview0--BPMNform", [
@@ -102,8 +102,8 @@ describe("checkbox", () => {
       }
     ])
     const checkBoxInvisible = await browser.asControl(checkboxSelector)
-    const isVisible = await checkBoxInvisible.isInitialized()
-    expect(isVisible).toBeFalsy()
+    visible = await checkBoxInvisible.isInitialized()
+    expect(visible).toBeFalsy()
   })
 
   it.skip("read-only state of via feel", async () => {})

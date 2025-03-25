@@ -96,18 +96,13 @@ describe("radio button + -group", () => {
     }
 
     const visibleGroup = await browser.asControl<RadioButtonGroup>(radioButtonGroupSelector)
-    const visible = await visibleGroup.getVisible()
+    let visible = await visibleGroup.getVisible()
     expect(visible).toBeTruthy()
 
-    await injectFEEL("__xmlview0--radio_hidden", [
-      {
-        name: "invisible",
-        value: true
-      }
-    ])
+    await injectFEEL("__xmlview0--radio_hidden", [{ name: "invisible", value: true }])
     const inVisibleGroup = await browser.asControl<RadioButtonGroup>(radioButtonGroupSelector)
-    const inVisible = await inVisibleGroup.isInitialized()
-    expect(inVisible).toBeFalsy()
+    visible = await inVisibleGroup.isInitialized()
+    expect(visible).toBeFalsy()
   })
 
   it.skip("dynamic generation of radio button group (input data)", async () => {})

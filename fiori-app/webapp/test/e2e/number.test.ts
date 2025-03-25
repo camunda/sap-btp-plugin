@@ -178,16 +178,16 @@ describe("number input", () => {
       },
       forceSelect: true
     }
-    const numberInputControl = await browser.asControl<Input>(numberInputSelector)  
-    const isVisible = await numberInputControl.getVisible()
-    expect(isVisible).toBe(true)
+    const numberInputControl = await browser.asControl<Input>(numberInputSelector)
+
+    let visible = await numberInputControl.getVisible()
+    expect(visible).toBe(true)
 
     const feelVars = [{ name: "invisible", value: true }]
     await injectFEEL("__xmlview0--BPMNform", feelVars)
 
     const numberInputControlAfter = await browser.asControl<Input>(numberInputSelector)
-    const isVisibleAfter = await numberInputControlAfter.isInitialized()
-    expect(isVisibleAfter).toBe(false)
-
+    visible = await numberInputControlAfter.isInitialized()
+    expect(visible).toBeFalsy()
   })
 })

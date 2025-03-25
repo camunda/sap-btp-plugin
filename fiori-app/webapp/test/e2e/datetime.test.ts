@@ -239,7 +239,7 @@ describe("datetime input", () => {
       forceSelect: true
     }
     const visibleDP = await browser.asControl<DatePicker>(hiddenSelector)
-    const visible = await visibleDP.getVisible()
+    let visible = await visibleDP.getVisible()
     expect(visible).toBe(true)
 
     await injectFEEL("__xmlview0--datetime_hidden", [
@@ -249,7 +249,7 @@ describe("datetime input", () => {
       }
     ])
     const inVisibleDP = await browser.asControl<DatePicker>(hiddenSelector)
-    const inVisible = await inVisibleDP.isInitialized()
-    expect(inVisible).toBe(false)
+    visible = await inVisibleDP.isInitialized()
+    expect(visible).toBe(false)
   })
 })
