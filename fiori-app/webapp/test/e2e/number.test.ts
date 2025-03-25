@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import Input from "sap/m/Input"
 
 // test for min/max length are in textfield.test.ts
@@ -133,7 +133,7 @@ describe("number input", () => {
     })
 
     const labels = await numberInputControl.getLabels()
-    const labelTexts = await Promise.all(labels.map(label => label.getText()))
+    const labelTexts = await Promise.all(labels.map((label) => label.getText()))
     expect(labelTexts).toContain("aloha")
   })
 
@@ -162,10 +162,32 @@ describe("number input", () => {
     await numberInputControl.enterText("42")
 
     const labels = await numberInputControl.getLabels()
-    const labelTexts = await Promise.all(labels.map(label => label.getText()))
+    const labelTexts = await Promise.all(labels.map((label) => label.getText()))
     expect(labelTexts).toContain("say")
 
     const postfix = await numberInputControl.getDescription()
     expect(postfix).toBe("one more time")
+  })
+
+  it("should hide the number input when the visibility is set to false", async () => {
+    const numberInputSelector = {
+      selector: {
+        id: /.*number_visibility$/,
+        controlType: "sap.m.Input",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+    const numberInputControl = await browser.asControl<Input>(numberInputSelector)  
+    const isVisible = await numberInputControl.getVisible()
+    expect(isVisible).toBe(true)
+
+    const feelVars = [{ name: "invisible", value: true }]
+    await injectFEEL("__xmlview0--BPMNform", feelVars)
+
+    const numberInputControlAfter = await browser.asControl<Input>(numberInputSelector)
+    const isVisibleAfter = await numberInputControlAfter.isInitialized()
+    expect(isVisibleAfter).toBe(false)
+
   })
 })
