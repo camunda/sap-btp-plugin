@@ -15,7 +15,7 @@ import BPMNFormRenderer from "./BPMNFormRenderer"
 import { BPMNformData, Component, ControlType, GeneratedControl } from "./BPMNformData"
 import Markdown from "./Markdown"
 import { WebSocketData } from "./WebSocketData"
-// import CheckBox from "sap/m/CheckBox"
+import CheckBox from "sap/m/CheckBox"
 import DatePicker from "sap/m/DatePicker"
 import Label from "sap/m/Label"
 import MessageStrip from "sap/m/MessageStrip"
@@ -30,7 +30,7 @@ import FilterOperator from "sap/ui/model/FilterOperator"
 
 import Lib from "sap/ui/core/Lib"
 
-import CheckBox from "@ui5/webcomponents/dist/CheckBox"
+// import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
@@ -115,7 +115,7 @@ export default class BPMNForm extends Control {
       }
       case ControlType.CheckBox:
         if (control && (control as CheckBox).getVisible()) {
-          value = (control as CheckBox).getChecked()
+          value = (control as CheckBox).getSelected()
         } else {
           value = ""
         }
@@ -390,22 +390,22 @@ export default class BPMNForm extends Control {
       return
     }
 
-    const checked =
+    const selected =
       (this.getModel(localModelName) as JSONModel).getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||
       element.defaultValue
 
-    const disabled = element.disabled
+    const enabled = element.disabled
     const readonly = element.readonly
 
     const visible = this._getVisibleStatement(element)
     const control = new CheckBox(this._generateControlId(element), {
       visible,
-      checked,
-      enabled: !!!disabled, // contrary to the docs
-      readonly: !!readonly,
+      selected,
+      enabled: !enabled, 
+      editable: !readonly,
       text: element.label,
-      change: () => {
+      select: () => {
         this._provideValueToView(element, control)
         this._validate()
       }
