@@ -1,7 +1,7 @@
 import _ui5Service from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
-import { ns, mockIndex, formTarget } from "./po/commons"
+import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import DatePicker from "sap/m/DatePicker"
 import TimePicker from "sap/m/TimePicker"
 import DateTimePicker from "sap/m/DateTimePicker"
@@ -53,7 +53,6 @@ function getRandom(type: "date" | "time12h" | "time24h" | "datetime12h" | "datet
       throw new Error("Invalid type")
     }
   }
-  throw new Error("Invalid type")
 }
 
 describe("datetime input", () => {
@@ -228,5 +227,29 @@ describe("datetime input", () => {
     const dp = await browser.asControl<DatePicker>(reqSelector)
     const required = await dp.getRequired()
     expect(required).toBe(true)
+  })
+
+  it("should hide datetime input when visibility set to false via FEEL", async () => {
+    const hiddenSelector = {
+      selector: {
+        id: /.*datetime_visible$/,
+        controlType: "sap.m.DatePicker",
+        viewName: `${ns}.view.App`
+      },
+      forceSelect: true
+    }
+    const visibleDP = await browser.asControl<DatePicker>(hiddenSelector)
+    const visible = await visibleDP.getVisible()
+    expect(visible).toBe(true)
+
+    await injectFEEL("__xmlview0--datetime_hidden", [
+      {
+        name: "invisible",
+        value: true
+      }
+    ])
+    const inVisibleDP = await browser.asControl<DatePicker>(hiddenSelector)
+    const inVisible = await inVisibleDP.isInitialized()
+    expect(inVisible).toBe(false)
   })
 })
