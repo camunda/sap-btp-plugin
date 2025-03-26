@@ -5,14 +5,9 @@ import CheckBox from "sap/m/CheckBox"
 import Input from "sap/m/Input"
 import Button from "sap/ui/webc/main/Button"
 import { formTarget, mockIndex } from "./po/commons"
-import {
-  buttonSelector,
-  checkboxSelector,
-  numberSelector,
-  textFieldSelector
-} from "./po/validation-selectors"
+import { buttonSelector, checkboxSelector, numberSelector, textFieldSelector } from "./po/validation-selectors"
 
-describe("validation", () => {
+describe("validation - some fields required", () => {
   before(async () => {
     await browser.goTo(mockIndex())
     await ui5Service.injectUI5()
