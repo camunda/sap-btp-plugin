@@ -8,8 +8,9 @@ export function mockIndex(/* formElement: string */) {
   return `/mockserver.html?channelId=${(Math.random() + 1).toString(36).substring(2)}`
 }
 
-export async function formTarget(formElement: string, initialCall: boolean = false) {
-  const pause = process.env.CI && initialCall ? 3000 : 500
+export async function formTarget(formElement: string) {
+  // const pause = process.env.CI && initialCall ? 1000 : 500
+  const pause = process.env.CI ? 1500 : 500
   await wdi5.getLogger().info(`>>>>>>>>>> pausing for ${pause} ms`)
   await browser.pause(pause) //> ugh, yes
   return await browser.executeAsync((formElement: String, done: Function) => {
