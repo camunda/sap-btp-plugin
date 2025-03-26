@@ -62,30 +62,30 @@ export const config: wdi5Config = {
   // then the current working directory is where your `package.json` resides, so `wdio`
   // will be called from there.
   //
-  specs: ["./**/*.test.ts"],
-  // specs: [
-  //   [
-  //     "./**/1_dummy.test.ts",
-  //     "./**/form-c*.test.ts",
-  //     "./**/form-d*.test.ts",
-  //     "./**/form-h*.test.ts",
-  //     "./**/form-i*.test.ts",
-  //   ],
-  //   [
-  //     "./**/1_dummy.test.ts",
-  //     "./**/form-n*.test.ts",
-  //     "./**/form-r*.test.ts",
-  //     "./**/form-s*.test.ts",
-  //   ],
-  //   [
-  //     "./**/1_dummy.test.ts",
-  //     "./**/form-text*.test.ts"
-  //   ],
-  //   [
-  //     "./**/1_dummy.test.ts",
-  //     "./**/validation*.test.ts"
-  //   ]
-  // ],
+  // specs: ["./**/*.test.ts"],
+  specs: [
+    [
+      "./**/1_dummy.test.ts",
+      "./**/form-c*.test.ts",
+      "./**/form-d*.test.ts",
+      "./**/form-h*.test.ts",
+      "./**/form-i*.test.ts",
+    ],
+    [
+      "./**/1_dummy.test.ts",
+      "./**/form-n*.test.ts",
+      "./**/form-r*.test.ts",
+      "./**/form-s*.test.ts",
+    ],
+    [
+      "./**/1_dummy.test.ts",
+      "./**/form-text*.test.ts"
+    ],
+    [
+      "./**/1_dummy.test.ts",
+      "./**/validation*.test.ts"
+    ]
+  ],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -106,7 +106,7 @@ export const config: wdi5Config = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: 1,
+  maxInstances: 4,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
