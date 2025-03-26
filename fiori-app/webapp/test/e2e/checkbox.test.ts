@@ -8,12 +8,12 @@ describe("checkbox", () => {
     await browser.goTo(mockIndex())
     await ui5Service.injectUI5()
     await formTarget("checkbox-8.6")
-    // await browser.screenshot("before-checkbox-group")
+    await browser.screenshot("before-checkbox-group")
   })
 
-  // beforeEach(async () => {
-  //   await browser.screenshot("before-each-checkbox-group")
-  // })
+  beforeEach(async () => {
+    await browser.screenshot("before-each-checkbox-group")
+  })
 
   it("basic select/deselect", async () => {
     const checkboxSelector = {
