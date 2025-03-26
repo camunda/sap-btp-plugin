@@ -38,6 +38,7 @@ server:
       afterMiddleware: compression
       configuration:
         debug: "verbose"
+        watch: false
         pluginOptions:
           webcomponents:
             force: true
