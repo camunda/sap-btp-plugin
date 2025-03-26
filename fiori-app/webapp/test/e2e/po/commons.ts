@@ -1,4 +1,5 @@
 import JSONModel from "sap/ui/model/json/JSONModel"
+import { wdi5 } from "wdio-ui5-service"
 
 export const ns = "io.camunda.connector.sap.btp.app"
 
@@ -8,7 +9,8 @@ export function mockIndex(/* formElement: string */) {
 }
 
 export async function formTarget(formElement: string) {
-  const pause = process.env.CI ? 3000 : 500
+  const pause = process.env.CI ? 500 : 500
+  await wdi5.getLogger().info(`>>>>>>>>>> pausing for ${pause} ms`)
   await browser.pause(pause) //> ugh, yes
   return await browser.executeAsync((formElement: String, done: Function) => {
     const interval = window.setInterval(() => {
