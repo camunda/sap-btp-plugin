@@ -7,7 +7,7 @@ customConfiguration:
     mountPath: /app
 framework:
   name: SAPUI5
-  version: 1.120.26
+  version: 1.120.28
   libraries:
     - name: sap.f
     - name: sap.m
