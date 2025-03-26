@@ -17,10 +17,10 @@ export function addCheckbox(this: BPMNForm, element: Component): Control {
   const control = new CheckBox(this.generateControlId(element), {
     visible,
     selected,
-    // required, // prop only available from >1.124
+    required, // prop only available from >1.124
     enabled: !enabled,
     editable: !readonly,
-    text: required ? element.label + " *" : element.label,
+    text: element.label,
     select: () => {
       this.provideValueToView(element, control)
       this.validate()

@@ -24,7 +24,11 @@ export function addTextArea(this: BPMNForm, element: Component): Control {
     editable: !readonly,
     required,
     cols: 50,
-    rows: 20
+    rows: 20,
+    liveChange: (event) => {
+      this.provideValueToView(element, control);
+      this.setValueState(control, element, event.getParameter("value"));
+    }
   });
 
   this.addControl(element, control, ControlType.Textarea);
