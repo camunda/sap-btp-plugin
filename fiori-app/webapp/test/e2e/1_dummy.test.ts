@@ -7,7 +7,7 @@ describe("dummy", () => {
   before(async () => {
     await browser.goTo(mockIndex())
     await ui5Service.injectUI5()
-    await formTarget("checkbox-8.6")
+    await formTarget("checkbox-8.6", true)
     // const pause = process.env.CI ? 5000 : 1000
     // wdi5.getLogger().info(`>>>>>>>>>> pausing for ${pause} ms to let ui5-tooling-modules do its work...`)
     // await browser.pause(pause)

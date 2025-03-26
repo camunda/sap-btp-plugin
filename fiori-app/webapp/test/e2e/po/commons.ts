@@ -8,8 +8,8 @@ export function mockIndex(/* formElement: string */) {
   return `/mockserver.html?channelId=${(Math.random() + 1).toString(36).substring(2)}`
 }
 
-export async function formTarget(formElement: string) {
-  const pause = process.env.CI ? 500 : 500
+export async function formTarget(formElement: string, initialCall: boolean = false) {
+  const pause = process.env.CI && initialCall ? 3000 : 500
   await wdi5.getLogger().info(`>>>>>>>>>> pausing for ${pause} ms`)
   await browser.pause(pause) //> ugh, yes
   return await browser.executeAsync((formElement: String, done: Function) => {
@@ -24,22 +24,19 @@ export async function formTarget(formElement: string) {
   }, formElement)
 }
 
-export async function injectFEEL(formId: string, feelVariables: Array<{name: string, value: any}>) {
-  await browser.executeAsync((feelVariables: Array<{name: string, value: any}>, done: Function) => {
+export async function injectFEEL(formId: string, feelVariables: Array<{ name: string; value: any }>) {
+  await browser.executeAsync((feelVariables: Array<{ name: string; value: any }>, done: Function) => {
     const bpmnForm = sap.ui.getCore().byId("__xmlview0--BPMNform") //> gnarf
     // @ts-expect-error this is dirrrty stuff - don't do it at home, kids
     const models = bpmnForm._getPropertiesToPropagate().oModels
 
     for (const [modelName, _] of Object.entries(models)) {
       if (modelName.startsWith("id-")) {
-        const model = bpmnForm.getModel(modelName) as JSONModel;
-        
+        const model = bpmnForm.getModel(modelName) as JSONModel
+
         // Set each variable from the feelVariables array
         for (const variable of feelVariables) {
-          model.setProperty(
-            `/BPMNform/variables/${variable.name}`,
-            variable.value
-          );
+          model.setProperty(`/BPMNform/variables/${variable.name}`, variable.value)
         }
       }
     }
