@@ -15,4 +15,3 @@ export function addText(this: BPMNForm, element: Component): void {
   }) as Control
   this.addControl(element, text, ControlType.Text, false, false, true)
 }
-

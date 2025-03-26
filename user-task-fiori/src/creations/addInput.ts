@@ -25,7 +25,7 @@ export function addInput(this: BPMNForm, element: Component): Control {
     enabled: !enabled,
     editable: !readonly,
     required,
-    value: defaultValue,
+    value: defaultValue as string,
     valueLiveUpdate: true,
     liveChange: (event) => {
       this.provideValueToView(element, control);

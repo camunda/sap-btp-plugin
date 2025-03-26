@@ -13,33 +13,19 @@ import { ValueState } from "sap/ui/core/library"
 import JSONModel from "sap/ui/model/json/JSONModel"
 import BPMNFormRenderer from "./BPMNFormRenderer"
 import { BPMNformData, Component, ControlType, GeneratedControl } from "./BPMNformData"
-// import Markdown from "./Markdown"
 import CheckBox from "sap/m/CheckBox"
-import DatePicker from "sap/m/DatePicker"
+// postpone webc usage
+// import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 import Label from "sap/m/Label"
-import MessageStrip from "sap/m/MessageStrip"
-import RadioButton from "sap/m/RadioButton"
 import TextArea from "sap/m/TextArea"
-import { InputType } from "sap/m/library"
-import SmartField from "sap/ui/comp/smartfield/SmartField"
 import CustomData from "sap/ui/core/CustomData"
-import Item from "sap/ui/core/Item"
-import Filter from "sap/ui/model/Filter"
-import FilterOperator from "sap/ui/model/FilterOperator"
-import Markdown from "ui5-cc-md"
 import { WebSocketData } from "./WebSocketData"
 
 import Lib from "sap/ui/core/Lib"
 
-// import CheckBox from "@ui5/webcomponents/dist/CheckBox"
 
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
-import DateTimePicker from "sap/m/DateTimePicker"
-import HBox from "sap/m/HBox"
-import Image from "sap/m/Image"
-import TimePicker from "sap/m/TimePicker"
-import HTML from "sap/ui/core/HTML"
 import {
   addCheckbox,
   addDateTime,
@@ -138,7 +124,7 @@ export default class BPMNForm extends Control {
         break
       default:
         console.error(`[${this.getId()}] - working an unknown form control type ${type}`)
-        throw new Error(`working an unknown form control type ${type}`)
+        throw new Error(`${this.getId()}: working an unknown form control type ${type}`)
     }
     return value
   }
@@ -346,7 +332,6 @@ export default class BPMNForm extends Control {
 
     if (keepTrack) {
       // keep track of generated control for later value retrieval
-
       this.generatedControls.push({ id, type: controlType, componentConfiguration: element, question: title })
     }
 
@@ -413,7 +398,7 @@ export default class BPMNForm extends Control {
           addText.call(this, element)
           break
         default:
-          console.error(`Error 1650472412: Unsupported control type "${element.type}"`)
+          console.error(`Error ${this.getId()}: Unsupported control type "${element.type}"`)
           break
       }
     })
