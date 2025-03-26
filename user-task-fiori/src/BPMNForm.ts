@@ -366,7 +366,7 @@ export default class BPMNForm extends Control {
     this.addItem(vbox)
   }
 
-  _generateControls(components: Component[]): void {
+  private _generateControls(components: Component[]): void {
     components.forEach((element) => {
       switch (element.type) {
         case ControlType.HTML:
