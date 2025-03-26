@@ -1,4 +1,4 @@
-import _ui5Service from "wdio-ui5-service"
+import _ui5Service, { wdi5 } from "wdio-ui5-service"
 const ui5Service = new _ui5Service()
 
 import { ns, mockIndex, formTarget } from "./po/commons"
@@ -13,6 +13,14 @@ describe("dummy", () => {
 
   beforeEach(async () => {
     await browser.screenshot("before-each-dummy")
+  })
+
+  afterEach(async () => {
+    const pause = 3000
+    wdi5.getLogger().info(`>>>>>>>>>> pausing for ${pause} ms to let ui5-tooling-modules do its work...`)
+    await browser.pause(pause)
+    wdi5.getLogger().info(">>>>>>>>>> ...done pausing - let's do this!")
+    await browser.screenshot("after-each-dummy")
   })
 
   it("basic select/deselect", async () => {
