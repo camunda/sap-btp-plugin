@@ -10,7 +10,7 @@ export function mockIndex(/* formElement: string */) {
 
 export async function formTarget(formElement: string) {
   // const pause = process.env.CI && initialCall ? 1000 : 500
-  const pause = process.env.CI ? 1500 : 500
+  const pause = process.env.CI ? 1000 : 500
   await wdi5.getLogger().info(`>>>>>>>>>> pausing for ${pause} ms`)
   await browser.pause(pause) //> ugh, yes
   return await browser.executeAsync((formElement: String, done: Function) => {
