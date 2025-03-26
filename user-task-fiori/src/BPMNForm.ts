@@ -403,4 +403,8 @@ export default class BPMNForm extends Control {
       }
     })
   }
+
+  getUserData(): userFormData[] {
+    return [] as userFormData[]
+  }
 }
