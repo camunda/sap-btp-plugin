@@ -8,7 +8,8 @@ export function mockIndex(/* formElement: string */) {
 }
 
 export async function formTarget(formElement: string) {
-  await browser.pause(500) //> ugh, yes
+  const pause = process.env.CI ? 3000 : 500
+  await browser.pause(pause) //> ugh, yes
   return await browser.executeAsync((formElement: String, done: Function) => {
     const interval = window.setInterval(() => {
       // @ts-expect-error
