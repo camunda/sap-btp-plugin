@@ -142,20 +142,20 @@ export default class MainStageController extends BaseController {
   }
 
   /**
-   * trigger a deletion of the association btw PI and UI channel - 
+   * trigger a deletion of the association btw PI and UI channel -
    * note this is explicitly not awaited as not relevant for the UI's business logic
    * @param jobKey correlation to zeebe's job
    */
   _cleanupUIchannel(jobKey: string): void {
-      void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          jobKey
-        })
-      })  
+    void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        jobKey
+      })
+    })
   }
 
   _attachWebSocketMessageHandler(): void {
