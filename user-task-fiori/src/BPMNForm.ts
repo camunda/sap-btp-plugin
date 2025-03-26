@@ -136,9 +136,11 @@ export default class BPMNForm extends Control {
    * @param value the new value or event value for the control or a change event
    */
   setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
-    const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
-    const state =
-      !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
+    let state = ValueState.None
+    if (element.validate?.required || element.validate?.pattern) {
+      const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
+      state = !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
+    }
 
     // @ts-expect-error due to Control type not being equipped with the setters
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -148,7 +150,6 @@ export default class BPMNForm extends Control {
     setTimeout(() => this.validate(), 0)
   }
 
-  
   validate(): boolean {
     const invalidControls = this.generatedControls.filter((generatedControl: GeneratedControl) => {
       let valid = true
