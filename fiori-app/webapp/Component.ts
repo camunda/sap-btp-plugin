@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import Log from "sap/base/Log"
 import UIComponent from "sap/ui/core/UIComponent"
 import JSONModel from "sap/ui/model/json/JSONModel"
