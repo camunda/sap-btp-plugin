@@ -23,7 +23,7 @@ export default {
    * @param control The control instance to be rendered
    */
   render: function (rm: RenderManager, control: BPMNForm) {
-    const i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
+    // const i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
 
     console.debug(`[${control.getMetadata().getName()}] > rendering`)
     
@@ -35,7 +35,7 @@ export default {
         rm.renderControl(control)
       })
     } else {
-      rm.text(i18n.getText("BPMNForm.bpmn_placeholder_text"))
+      rm.text(control.getPlaceHolderText())
     }
 
 		rm.close("div");
