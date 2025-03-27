@@ -38,8 +38,7 @@ server:
       afterMiddleware: compression
       configuration:
         debug: "verbose"
+        watch: false
         pluginOptions:
           webcomponents:
             force: true
-    - name: ui5-middleware-livereload
-      afterMiddleware: compression

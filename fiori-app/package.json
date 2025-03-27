@@ -13,8 +13,9 @@
     "start": "node index.js",
     "//start:local": "dev-time only",
     "start:local": "ui5 serve --port 8080",
+    "start:local:ci": "ui5 serve --config ui5-ci.yaml --port 8080",
     "test": "npm run lint && npm run karma-ci-cov",
-    "test:e2e": "run-p -r start:local \"wdi5 -- --headless\"",
+    "test:e2e": "run-p -r start:local:ci \"wdi5 -- --headless \"",
     "ts-typecheck": "tsc --noEmit",
     "wdi5": "wait-on tcp:8080 && wdio run ./webapp/test/e2e/wdio.conf.ts"
   },

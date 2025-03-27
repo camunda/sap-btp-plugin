@@ -1,5 +1,5 @@
 import BPMNForm from "io/camunda/connector/sap/btp/lib/BPMNForm"
-import { BPMNform, userFormData } from "io/camunda/connector/sap/btp/lib/BPMNformData"
+import { userFormData } from "io/camunda/connector/sap/btp/lib/BPMNformData"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
 import Log from "sap/base/Log"
 import Event from "sap/ui/base/Event"
@@ -49,7 +49,8 @@ export default class MainStageController extends BaseController {
   }
 
   getBpmnForm(): BPMNForm {
-    return this.getView().byId("BPMNform") as unknown as BPMNForm
+    const form = this.getView().byId("BPMNform")
+    return form as BPMNForm
   }
 
   async onSubmit(/* sChannel: string, sEvent: string, oEvent: Event */) {
@@ -63,8 +64,9 @@ export default class MainStageController extends BaseController {
     const rawData = this.getView().getModel("AppView").getProperty("/userFormData") as string
     const _json: WebSocketData = JSON.parse(rawData) as WebSocketData
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const form: BPMNform = this.getBpmnForm()
-    const userSuppliedData: userFormData[] = form.getUserData()
+    const form = this.getBpmnForm()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const userSuppliedData: userFormData[] = form.getUserData() as userFormData[]
     // if a user (form) task has supplied a process id for
     // re-use in user (form) tasks located in subprocess
     if (_json.parentProcessInstanceKey) {
@@ -142,20 +144,20 @@ export default class MainStageController extends BaseController {
   }
 
   /**
-   * trigger a deletion of the association btw PI and UI channel - 
+   * trigger a deletion of the association btw PI and UI channel -
    * note this is explicitly not awaited as not relevant for the UI's business logic
    * @param jobKey correlation to zeebe's job
    */
   _cleanupUIchannel(jobKey: string): void {
-      void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          jobKey
-        })
-      })  
+    void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        jobKey
+      })
+    })
   }
 
   _attachWebSocketMessageHandler(): void {

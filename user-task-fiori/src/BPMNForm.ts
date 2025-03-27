@@ -12,7 +12,7 @@ import EventBus from "sap/ui/core/EventBus"
 import { ValueState } from "sap/ui/core/library"
 import JSONModel from "sap/ui/model/json/JSONModel"
 import BPMNFormRenderer from "./BPMNFormRenderer"
-import { BPMNformData, Component, ControlType, GeneratedControl } from "./BPMNformData"
+import { BPMNformData, Component, ControlType, GeneratedControl, userFormData } from "./BPMNformData"
 import CheckBox from "sap/m/CheckBox"
 // postpone webc usage
 // import CheckBox from "@ui5/webcomponents/dist/CheckBox"
@@ -22,7 +22,6 @@ import CustomData from "sap/ui/core/CustomData"
 import { WebSocketData } from "./WebSocketData"
 
 import Lib from "sap/ui/core/Lib"
-
 
 import { evaluate } from "feelers"
 import ResourceBundle from "sap/base/i18n/ResourceBundle"
@@ -136,10 +135,12 @@ export default class BPMNForm extends Control {
    * @param element element configuration from Camunda Form JSON, like if the control is required ...
    * @param value the new value or event value for the control or a change event
    */
-   setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
-    const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
-    const state =
-      !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
+  setValueState(control: Control, element: Component, value: string | boolean | string[] | number): void {
+    let state = ValueState.None
+    if (element.validate?.required || element.validate?.pattern) {
+      const regex = element.validate?.pattern ? new RegExp(element.validate.pattern) : null
+      state = !value || (regex && typeof value === "string" && !regex.test(value)) ? ValueState.Error : ValueState.None
+    }
 
     // @ts-expect-error due to Control type not being equipped with the setters
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -149,13 +150,7 @@ export default class BPMNForm extends Control {
     setTimeout(() => this.validate(), 0)
   }
 
-  /**
-   * validate the form and set valid state in model, furthermore the valid state is returned
-   *
-   * @returns true, if form is validated
-   */
-   validate(): boolean {
-    return true
+  validate(): boolean {
     const invalidControls = this.generatedControls.filter((generatedControl: GeneratedControl) => {
       let valid = true
       const control = Core.byId(generatedControl.id) as Control
@@ -172,7 +167,7 @@ export default class BPMNForm extends Control {
     return !invalidControls.length
   }
 
-   provideValueToView(element: Component, control: Control): void {
+  provideValueToView(element: Component, control: Control): void {
     ;(this.getModel(localModelName) as JSONModel).setProperty(
       `/BPMNform/${element.key}`,
       this.getValueFromControl(element.type || element.properties?.type, control) || ""
@@ -366,7 +361,7 @@ export default class BPMNForm extends Control {
     this.addItem(vbox)
   }
 
-  _generateControls(components: Component[]): void {
+  private _generateControls(components: Component[]): void {
     components.forEach((element) => {
       switch (element.type) {
         case ControlType.HTML:
@@ -402,5 +397,9 @@ export default class BPMNForm extends Control {
           break
       }
     })
+  }
+
+  getUserData(): userFormData[] {
+    return [] as userFormData[]
   }
 }

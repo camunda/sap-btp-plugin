@@ -11,11 +11,13 @@ export function addCheckbox(this: BPMNForm, element: Component): Control {
 
   const enabled = element.disabled
   const readonly = element.readonly
-
+  const required = element.validate?.required || false
   const visible = this.getVisibleStatement(element)
+  // const requiredStyle = '<span data-colon=":" aria-hidden="true" class="sapMLabelColonAndRequired"></span>'
   const control = new CheckBox(this.generateControlId(element), {
     visible,
     selected,
+    required, // prop only available from >1.124
     enabled: !enabled,
     editable: !readonly,
     text: element.label,
