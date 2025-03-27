@@ -129,20 +129,6 @@ export interface RadioButtonOption {
   value: string
 }
 
-/**
- * unique identifier of a PACS run in DB,
- * as relayed by the "final task" worker
- */
-export interface BasketInWebsocket {
-  id: string
-  subId: string
-}
-
-// only for TS UI5 scope to "know" about auto-generated
-// add* method for aggregation
-// export interface BPMNform {
-//   addItem(control: Control): BPMNform
-// }
 
 // delivers the user-chosen values of a form element
 // along with their key
