@@ -18,29 +18,21 @@ export default class App extends BaseController {
   private runThisProcessDialog: Dialog
 
   public onInit() {
-
     EventBus.getInstance().subscribe("all-messages", "message", this.onMessageReceived.bind(this), this)
   }
 
   private onMessageReceived(channel: string, event: string, eventData: Message) {
-    let buttons = [Action.OK]
+    let buttons = [MessageBox.Action.OK]
     if (eventData.getType() === "Error")
       if (eventData.getTechnicalDetails()) {
-        buttons = ["Support", Action.OK]
+        buttons = [MessageBox.Action.OK]
       }
 
-    // TODO: json parse auf Descrption
-    // show message additionally
     MessageBox.alert(eventData.getDescription(), {
       title: eventData.getMessage(),
       details: eventData.getAdditionalText(),
       actions: buttons,
-      emphasizedAction: Action.OK,
-      onClose: (data: string) => {
-        if (data === "Support") {
-          window.open(this.getModel("AppView").getProperty("/supportChannel"), "_blank")
-        }
-      }
+      emphasizedAction: MessageBox.Action.OK
     })
   }
 
@@ -53,7 +45,6 @@ export default class App extends BaseController {
   private async getGeneralMenu() {
     const oView = this.getView()
 
-    // create popover lazily (singleton)
     if (!this.generalMenu) {
       this.generalMenu = (await Fragment.load({
         id: oView.getId(),
@@ -66,7 +57,7 @@ export default class App extends BaseController {
   }
 
   run(processId: string) {
-    console.log(`[${this.getMetadata().getName()}] - runnning process:`, processId)
+    console.log(`[${this.getMetadata().getName()}] > runnning process:`, processId)
     const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
     const ws = SingletonWebSocket.getInstance(channelId)
     ws.runProcess(processId, channelId)
@@ -86,7 +77,6 @@ export default class App extends BaseController {
   private async getRunThisProcessDialog() {
     const oView = this.getView()
 
-    // create popover lazily (singleton)
     if (!this.runThisProcessDialog) {
       this.runThisProcessDialog = (await Fragment.load({
         id: oView.getId(),
