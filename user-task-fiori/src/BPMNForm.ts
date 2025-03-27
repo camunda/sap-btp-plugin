@@ -36,6 +36,9 @@ import {
   addText,
   addTextArea
 } from "./creations/index"
+import HBox from "sap/m/HBox"
+import Title from "sap/m/Title"
+import Icon from "sap/ui/core/Icon"
 
 // name of local json model used for local bindings
 const localModelName = uid()
@@ -67,7 +70,9 @@ export default class BPMNForm extends Control {
     library: "io.camunda.connector.sap.btp.lib",
     properties: {
       buttonText: { type: "string", defaultValue: "submit me!" },
-      placeHolderText: { type: "string", defaultValue: "waiting for data..." },
+      placeHolderText: { type: "string", defaultValue: "waiting..." },
+      finalResultTextSuccess: { type: "string", defaultValue: "final result!" },
+      finalResultTextFail: { type: "string", defaultValue: "final result failed!" },
       submitButtonVisible: { type: "boolean", defaultValue: true },
       valid: { type: "boolean", bindable: true },
       formStep: { type: "int", bindable: true }
@@ -225,40 +230,25 @@ export default class BPMNForm extends Control {
   endProcess(data: WebSocketData): void {
     this.fireEvent("summary")
 
-    // // layout container
-    // const container = new HBox({
-    //   width: "100%"
-    // })
-    // container.addStyleClass("sapUiResponsiveMargin")
-    // container.setAlignItems("Center")
+    const container = new HBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin").setAlignItems("Center")
+    const content = new VBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin")
 
-    // const content = new VBox({
-    //   width: "100%"
-    // })
-    // content.addStyleClass("sapUiResponsiveMargin")
+    if (data.type === "final-task-success") {
+      content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
+    }
+    if (data.type === "final-task-fail") {
+      const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
+      h1.addStyleClass("sapUiSmallMarginBegin")
+      const title = new HBox({
+        items: [new Icon({ src: "sap-icon://alert", color: "red" }), h1]
+      })
+      content.addItem(title)
+    }
 
-    // if (data.type === "final-task-success") {
-    //   content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
-    // }
-    // if (data.type === "final-task-fail") {
-    //   const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
-    //   h1.addStyleClass("sapUiSmallMarginBegin")
-    //   const title = new HBox({
-    //     items: [
-    //       new Icon({
-    //         src: "sap-icon://alert",
-    //         color: "red"
-    //       }),
-    //       h1
-    //     ]
-    //   })
-    //   content.addItem(title)
-    // }
+    container.addItem(content)
+    container.data("controlType", ControlType.Summary)
 
-    // container.addItem(content)
-    // container.data("controlType", ControlType.Summary)
-
-    // this.addItem(container)
+    this.addItem(container)
 
     // clear the form model
     this._initLocalModel()
