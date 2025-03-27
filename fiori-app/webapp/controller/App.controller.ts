@@ -1,12 +1,14 @@
+import Log from "sap/base/Log"
 import Dialog from "sap/m/Dialog"
 import Input from "sap/m/Input"
 import Menu from "sap/m/Menu"
-import MessageBox, { Action } from "sap/m/MessageBox"
+import MessageBox from "sap/m/MessageBox"
 import Event from "sap/ui/base/Event"
 import Control from "sap/ui/core/Control"
 import EventBus from "sap/ui/core/EventBus"
 import Fragment from "sap/ui/core/Fragment"
 import Message from "sap/ui/core/message/Message"
+import JSONModel from "sap/ui/model/json/JSONModel"
 import SingletonWebSocket from "../util/WebSocket"
 import BaseController from "./BaseController"
 
@@ -90,5 +92,66 @@ export default class App extends BaseController {
 
   closeRunThisProcessDialog(): void {
     this.runThisProcessDialog.close()
+  }
+
+  onAfterRendering(): void {
+    window.setTimeout(() => {
+      const urlParams = new URL(window.location.href).searchParams
+      const processId = urlParams.get("run")
+      const debug = urlParams.get("debug")
+      const pid = urlParams.get("pid")
+      const channelId = this.getView().getModel("AppView").getProperty("/channelId") as string
+
+      ;(this.getModel("AppView") as JSONModel).setProperty("/debug", !!debug)
+
+      // run or resume are mutually exclusive
+      if (processId) {
+        this.run(processId)
+      } else if (pid) {
+        this.resumeProcess(pid, channelId)
+      }
+    }, 1000)
+  }
+
+  private resumeProcess(pid: string | null, channelId: string): void {
+    if (!pid) return
+
+    fetch(`/backend/odata/v4/bpmn/UserTasks('${pid}')`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        return response.json()
+      })
+      .then((data) => {
+        Log.info(`PID resume: data received: ${JSON.stringify(data)}`)
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const {
+          jobKey,
+          formData,
+          variables
+        }: {
+          jobKey: string
+          formData: string
+          variables: string
+        } = data
+
+        SingletonWebSocket.getInstance(channelId).fireMessage({
+          data: JSON.stringify({
+            channelId,
+            type: "form",
+            jobKey,
+            formData,
+            variables
+          })
+        })
+      })
+      .catch((error) => {
+        Log.error(`PID resume: error: ${typeof error === "object" ? JSON.stringify(error) : error}`)
+      })
   }
 }
