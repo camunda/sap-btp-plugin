@@ -19,6 +19,7 @@
 				"io.camunda.connector.sap.btp.lib": "./resources/io/camunda/connector/sap/btp/lib",
 				"feelers": "./resources/feelers",
 				"marked": "./resources/cc/md/marked",
+				"ui5-cc-md": "./resources/cc/md/Markdown",
 				"@ui5/webcomponents": "./resources/@ui5/webcomponents",
 				"@ui5/webcomponents-icons": "./resources/@ui5/webcomponents-icons"
 			}'
@@ -27,13 +28,12 @@
 			data-sap-ui-async="true"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-frameOptions="trusted"
-			data-sap-ui-xx-waitForTheme="true"
 		></script>
 	</head>
 
 	<body class="sapUiBody">
 		<div data-sap-ui-component data-name="io.camunda.connector.sap.btp.app"></div>
-		<div id="splash" style="z-index: 18; visibility: visible">
+		<div id="splash" style="z-index: 18; display:none;">
 			<div class="loadingContainer">
 			  <div class="loading">
 				<div class="sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard">

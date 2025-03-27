@@ -1,10 +1,8 @@
-import { BasketInWebsocket, BPMNformData } from "./../control/BPMNformData"
 import { MessageType } from "sap/ui/core/library"
 
 export interface WebSocketData {
   jobKey?: string
   formData?: string
-  basket?: BasketInWebsocket // this contains the keys to identify the BDaaS run in the DB with the QAs
 
   channelId: string
   type: "form" | "message" | "final-task-success" | "final-task-fail" | "errorObserver" | "variables"

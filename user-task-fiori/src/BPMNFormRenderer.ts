@@ -1,18 +1,7 @@
-/*!
- * ${copyright}
- */
-
-// import Lib from "sap/ui/core/Lib"
 import Control from "sap/ui/core/Control"
 import RenderManager from "sap/ui/core/RenderManager"
 import BPMNForm from "./BPMNForm"
-import Lib from "sap/ui/core/Lib"
-// import { ExampleColor } from "./library";
 
-/**
- * Example renderer.
- * @namespace
- */
 export default {
   apiVersion: 4, // usage of DOM Patcher
 
@@ -23,8 +12,7 @@ export default {
    * @param control The control instance to be rendered
    */
   render: function (rm: RenderManager, control: BPMNForm) {
-    const i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
-
+    // const i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
     console.debug(`[${control.getMetadata().getName()}] > rendering`)
     
     rm.openStart("div", control)
@@ -35,10 +23,9 @@ export default {
         rm.renderControl(control)
       })
     } else {
-      rm.text(i18n.getText("BPMNForm.bpmn_placeholder_text"))
+      rm.text(control.getPlaceHolderText())
     }
-
+  
 		rm.close("div");
-
   }
 }
