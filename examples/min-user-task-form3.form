@@ -1,18 +1,17 @@
 {
   "components": [
     {
-      "label": "Text field in user task 1",
-      "type": "textfield",
+      "text": "thanks for all the fish!",
+      "type": "text",
       "layout": {
-        "row": "Row_1vxzzlp",
+        "row": "Row_1xx6znx",
         "columns": null
       },
-      "id": "Field_0ui7ooo",
-      "key": "textfield1"
+      "id": "Field_1f8m25f"
     }
   ],
   "type": "default",
-  "id": "form1",
+  "id": "form3",
   "executionPlatform": "Camunda Cloud",
   "executionPlatformVersion": "8.7.0",
   "exporter": {
