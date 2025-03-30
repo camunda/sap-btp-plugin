@@ -233,20 +233,29 @@ export default class BPMNForm extends Control {
     const container = new HBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin").setAlignItems("Center")
     const content = new VBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin")
 
-    if (data.type === "final-task-success") {
-      content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
-    }
+    // REVISIT: is there a reason to display a generic "success" message
+    // in addition to the linked form in the user task?
+    // if (data.type === "final-task-success") {
+      // content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
+    // }
+
     if (data.type === "final-task-fail") {
-      const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
-      h1.addStyleClass("sapUiSmallMarginBegin")
+      // REVISIT: is there a reason to display a generic "fail" message
+      // in addition to the linked form in the user task?
+      // const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
+      // h1.addStyleClass("sapUiSmallMarginBegin")
       const title = new HBox({
-        items: [new Icon({ src: "sap-icon://alert", color: "red" }), h1]
+        items: [
+          new Icon({ src: "sap-icon://alert", color: "red" })
+          // h1
+        ]
       })
       content.addItem(title)
     }
 
     container.addItem(content)
-    container.data("controlType", ControlType.Summary)
+    // REVISIT: is there a use case for a "summary"?
+    // container.data("controlType", ControlType.Summary)
 
     this.addItem(container)
 
