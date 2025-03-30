@@ -148,14 +148,15 @@ export default class MainStageController extends BaseController {
    * note this is explicitly not awaited as not relevant for the UI's business logic
    * @param jobKey correlation to zeebe's job
    */
-  _cleanupUIchannel(jobKey: string): void {
+  _cleanupUIchannel(channelId: string): void {
+    debugger
     void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        jobKey
+        channelId
       })
     })
   }
@@ -228,7 +229,7 @@ export default class MainStageController extends BaseController {
               viewModel.setProperty("/formStep", FormStep.SUMMARY)
               this.getBpmnForm().processForm(_data)
               this.getBpmnForm().endProcess(_data)
-              this._cleanupUIchannel(_data.jobKey)
+              this._cleanupUIchannel(_data.channelId)
               break
             case "final-task-success":
               EventBus.getInstance().publish("Camunda", "request", {
@@ -240,7 +241,7 @@ export default class MainStageController extends BaseController {
               viewModel.setProperty("/formStep", FormStep.SUMMARY)
               this.getBpmnForm().processForm(_data)
               this.getBpmnForm().endProcess(_data)
-              this._cleanupUIchannel(_data.jobKey)
+              this._cleanupUIchannel(_data.channelId)
               break
 
             default:
