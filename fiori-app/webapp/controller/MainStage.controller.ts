@@ -62,7 +62,7 @@ export default class MainStageController extends BaseController {
     EventBus.getInstance().publish("Camunda", "request", {
       status: CamundaRequest.started
     })
-    const rawData = this.getView().getModel("AppView").getProperty("/userFormData") as string
+    const rawData = viewModel.getProperty("/userFormData") as string
     const _json: WebSocketData = JSON.parse(rawData) as WebSocketData
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const form = this.getBpmnForm()
@@ -123,6 +123,11 @@ export default class MainStageController extends BaseController {
           additionalText: JSON.stringify(error)
         })
       )
+    }
+    if (viewModel.getProperty("/formStep") === FormStep.FINISHED) {
+      EventBus.getInstance().publish("Camunda", "request", {
+        status: CamundaRequest.finished
+      })
     }
   }
 

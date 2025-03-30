@@ -1,6 +1,7 @@
 export enum CamundaRequest {
   started = "started",
-  stopped = "stopped"
+  stopped = "stopped",
+  finished = "finished"
 }
 
 export interface CamundaRunReturn {
