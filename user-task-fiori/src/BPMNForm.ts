@@ -75,7 +75,7 @@ export default class BPMNForm extends Control {
       finalResultTextFail: { type: "string", defaultValue: "final result failed!" },
       submitButtonVisible: { type: "boolean", defaultValue: true },
       valid: { type: "boolean", bindable: true },
-      formStep: { type: "int", bindable: true }
+      formStep: { type: "int", bindable: true, defaultValue: -1 } //> -1 = INITIAL
     },
     aggregations: {
       items: { type: "sap.ui.core.Control", multiple: true }

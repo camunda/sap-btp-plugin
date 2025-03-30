@@ -18,7 +18,8 @@ enum FormStep {
   STARTED = 1,
   SUMMARY = 2,
   FINISHED = 3,
-  FAILED = 4
+  FAILED = 4,
+  INITIAL = -1
 }
 
 /**
@@ -84,7 +85,6 @@ export default class MainStageController extends BaseController {
         .join(",") +
       "}"
 
-    // provide data to protocoll
     this.getBpmnForm().reset()
     try {
       const res = await fetch("/backend/odata/v4/bpmn/completeUsertask", {
@@ -149,7 +149,6 @@ export default class MainStageController extends BaseController {
    * @param jobKey correlation to zeebe's job
    */
   _cleanupUIchannel(channelId: string): void {
-    debugger
     void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
       method: "POST",
       headers: {

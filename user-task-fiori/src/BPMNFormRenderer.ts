@@ -14,18 +14,20 @@ export default {
   render: function (rm: RenderManager, control: BPMNForm) {
     // const i18n = Lib.getResourceBundleFor("io.camunda.connector.sap.btp.lib")
     console.debug(`[${control.getMetadata().getName()}] > rendering`)
-    
+
     rm.openStart("div", control)
     rm.openEnd()
-    
+
     if (control.getAggregation("items")) {
       ;(control.getAggregation("items") as Control[]).forEach((control: Control) => {
         rm.renderControl(control)
       })
     } else {
-      rm.text(control.getPlaceHolderText())
+      if (control.getFormStep() <= 0 || control.getFormStep() === 3) {
+        rm.text(control.getPlaceHolderText())
+      }
     }
-  
-		rm.close("div");
+
+    rm.close("div")
   }
 }
