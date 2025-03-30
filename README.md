@@ -35,6 +35,11 @@ prerequisite: create local destinations in `router/default-env.json` (not under 
 # in / of the proj
 # credentials for local c8
 $> source test/.env-localdev
+
+# boot up a c8 version locally from /test/docker
+$> cd test/docker/...; docker-compose up
+
+# start the btp plugin
 $> npm run start:local
 
 # -> http://localhost:5001
@@ -61,13 +66,16 @@ $> cds bind -2 uaa-hybrid-instance # auto-creates a service key
 # credentials for local c8
 $> source test/.env-localdev
 
+# boot up a c8 version locally from /test/docker
+$> cd test/docker/...; docker-compose up
+
 # runtime local, auth(n,z) from BTP
 $> cds bind --exec -- npm run start:hybrid
 
 # -> http://localhost:5001
 ```
 
-check working binding with `cds env list requires.auth --resolve-bindings --profile **hybrid**`
+check working binding with `cds env list requires.auth --resolve-bindings --profile hybrid`
 
 ### only backend
 
