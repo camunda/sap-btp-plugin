@@ -27,10 +27,20 @@ module.exports = async (bpmn) => {
       processVariables = JSON.parse(req.data.variables)
     }
     processVariables["channelId"] = channelId
-    const result = await zbc.createProcessInstance({
-      bpmnProcessId: req.data.bpmnProcessId,
-      variables: processVariables
-    })
+    
+    let result
+    try {
+      result = await zbc.createProcessInstance({
+        bpmnProcessId: req.data.bpmnProcessId,
+        variables: processVariables
+      })
+    } catch (err) {
+      const msg = `error starting process instance ${req.data.bpmnProcessId} b/c of: ${
+        typeof err === "object" ? JSON.stringify(err, Object.getOwnPropertyNames(err)) : err
+      }`
+      LOGGER.error(msg)
+      return req.error(500, msg)
+    }
     const { processDefinitionKey, bpmnProcessId, version, processInstanceKey, tenantId } = result
 
     await zbc.setVariables({
@@ -67,7 +77,7 @@ module.exports = async (bpmn) => {
 
   bpmn.on("completeUsertask", async (req) => {
     LOGGER.info(`completing user task w/ job ${req.data.jobKey} and vars ${JSON.stringify(req.data.variables)}`)
-    const variables = JSON.parse(req.data?.variables || "{}") 
+    const variables = JSON.parse(req.data?.variables || "{}")
     const zbc = _zbc.getClient()
     try {
       await zbc.completeJob({

@@ -75,7 +75,7 @@ class SingletonWebSocket extends WebSocket {
           Log.info(message)
         }
       } else {
-        const message = JSON.stringify(response.body)
+        const message = await response.text()
         EventBus.getInstance().publish(
           "all-messages",
           "message",
