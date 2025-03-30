@@ -69,6 +69,12 @@ $> source test/.env-localdev
 # boot up a c8 version locally from /test/docker
 $> cd test/docker/...; docker-compose up
 
+# boot up standalone postgres as persistence
+# this is mapped on port 5433 (!)
+# and has an adminer instance on http://localhost:8888
+$> cd test/docker/pg-standalone; docker-compose up
+# make sure to enter db connectivity into .cdsrc-private.json
+
 # runtime local, auth(n,z) from BTP
 $> cds bind --exec -- npm run start:hybrid
 
@@ -93,9 +99,12 @@ terminal 2:
 ### common settings
 
 - dev-approuter: port 5001 (not 5000, b/c of macOS port issue)
-
+- approuter locally: port 5001 (see above)
 - UI5 frontend: port 8080
 - CAP backend: port 4004
+
+- standalone PostgreSQL: 5433
+- standalone Adminer for PostgreSQL: http://localhost:8888
 
 - `process.env.DISABLE_CAMUNDA` turns off C8 connectivity
 - `DEBUG=camunda` or `cds.debug("camunda")` will trigger debug log output
@@ -104,12 +113,9 @@ terminal 2:
 
 ### local C8 SM
 
-in folder `test/docker`, all local dev resources are located
+- from https://github.com/camunda/camunda-distributions/tree/main/docker-compose
+- in folder `test/docker`, all local dev resources are located
 
-#### 8.6
-
-- https://github.com/camunda/camunda-platform/blob/8.6%2Bgen5/
-- `dc -f docker-compose-8.6+gen5.yaml -p 86gen5 up --remove-orphans`
 
 ### router
 
