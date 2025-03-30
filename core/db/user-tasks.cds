@@ -11,6 +11,6 @@ entity UserTasks : managed {
       channelId          : String; //> unique client identifier
       user               : User; //> authenticated user that "claimed" that task
       jobKey             : String; //> job identifier, later used for task completion
-      formData           : String; //> json of the linked form
-      variables          : String; //> json of the task's variables
+      formData           : LargeString; //> json of the linked form
+      variables          : LargeString; //> json of the task's variables
 }
