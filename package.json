@@ -23,10 +23,11 @@
     "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
     "hybrid:router": "npm start -w router",
     "hybrid:app": "npm run start:local -w fiori-app",
-    "hybrid:backend": "cd core; cds run --profile hybird"
+    "hybrid:backend": "cd core; cds run --profile hybrid"
   },
   "dependencies": {
-    "@sap/cds": "^8"
+    "@sap/cds": "^8",
+    "@cap-js/postgres": "^1"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.9",
