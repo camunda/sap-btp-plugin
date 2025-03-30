@@ -154,7 +154,7 @@ export default class MainStageController extends BaseController {
    * @param jobKey correlation to zeebe's job
    */
   _cleanupUIchannel(channelId: string): void {
-    void fetch("/backend/odata/v4/bpmn/deleteUIchannel", {
+    void fetch("/backend/odata/v4/bpmn/deleteChannel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

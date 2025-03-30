@@ -25,3 +25,12 @@ Content-Type: application/json
 {
   "jobKey": "2251799813826503"
 }
+
+###
+POST http://localhost:4004/odata/v4/bpmn/deleteChannel
+Authorization: Bearer {{$dotenv jwt}}
+Content-Type: application/json
+
+{
+  "channelId": "txrnw7sy30"
+}

@@ -12,7 +12,7 @@ service BPMN {
     // a UI client's websocket with the service layer
     action runProcess(bpmnProcessId : String, channelId : String, variables : String) returns RunTime;
     action completeUsertask(jobKey : String, variables : String);
-    action deleteUIchannel(channelId : String); //> when the process is finished
+    action deleteChannel(channelId : String); //> when the process is finished
 
     entity UserTasks as projection on camunda.UserTasks where user = $user;
 }
