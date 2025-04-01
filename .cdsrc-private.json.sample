@@ -1,0 +1,32 @@
+{
+  "requires": {
+    "[hybrid]": {
+      "auth": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.eu10-004.hana.ondemand.com",
+          "org": "camunda-dev",
+          "space": "sap-integration",
+          "instance": "uaa-hybrid-instance",
+          "key": "uaa-hybrid-instance-key",
+          "resolved": false
+        },
+        "kind": "xsuaa-auth",
+        "vcap": {
+          "name": "auth"
+        }
+      },
+      "db": {
+        "kind": "postgres",
+        "impl": "@cap-js/postgres",
+        "credentials": {
+          "host": "localhost",
+          "port": 5433,
+          "database": "sap-btp-plugin",
+          "user": "postgres",
+          "password": "postgres"
+        }
+      }
+    }
+  }
+}

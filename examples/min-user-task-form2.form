@@ -1,0 +1,23 @@
+{
+  "components": [
+    {
+      "label": "Text field in user task 2",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1vxzzlp",
+        "columns": null
+      },
+      "id": "Field_0ui7ooo",
+      "key": "textfield2"
+    }
+  ],
+  "type": "default",
+  "id": "form2",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.33.1"
+  },
+  "schemaVersion": 18
+}

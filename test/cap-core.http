@@ -1,0 +1,36 @@
+###
+GET http://localhost:5001/backend/odata/v4/bpmn/$metadata
+Authorization: Bearer {{$dotenv jwt}}
+
+###
+GET http://localhost:4004/odata/v4/bpmn/$metadata
+Authorization: Bearer {{$dotenv jwt}}
+
+###
+POST http://localhost:4004/odata/v4/bpmn/runProcess
+Authorization: Bearer {{$dotenv jwt}}
+Content-Type: application/json
+
+{
+  "bpmnProcessId": "min-user-task",
+  "channelId": "test",
+  "variables": "{\"now\": \"{{$datetime iso8601}}\" }"
+}
+
+###
+POST http://localhost:4004/odata/v4/bpmn/completeUsertask
+Authorization: Bearer {{$dotenv jwt}}
+Content-Type: application/json
+
+{
+  "jobKey": "2251799813826503"
+}
+
+###
+POST http://localhost:4004/odata/v4/bpmn/deleteChannel
+Authorization: Bearer {{$dotenv jwt}}
+Content-Type: application/json
+
+{
+  "channelId": "txrnw7sy30"
+}

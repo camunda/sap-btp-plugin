@@ -1,0 +1,72 @@
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#busyText {
+  text-align: center;
+  position: fixed;
+  top: 55%;
+}
+
+.loading {
+  height: 4rem;
+  position: fixed;
+  top: 52%;
+  animation: beaming 2s normal infinite;
+}
+
+.loading img {
+  width: 100%;
+}
+
+#splash {
+  z-index: 1000000;
+  background: #6c6c6c;
+  opacity: 1;
+  display: block;
+  transition: opacity 0.4s linear 0s;
+}
+
+#splash.fadeOut #busyText,
+#splash.fadeOut .loading {
+  top: -100%;
+}
+
+#splash #busyText,
+#splash .loading {
+  transition: top 0s linear 0.4s;
+}
+
+#splash.fadeIn #busyText {
+  top: 55%;
+  transition: top 0s linear 0.4s;
+}
+#splash.fadeIn .loading {
+  transition: top 0s linear 0s;
+  top: 50%;
+}
+
+#splash.fadeOut {
+  opacity: 0;
+}
+
+#splash.fadeIn {
+  opacity: 1;
+}
+
+.markdown,
+.markdown-description {
+  color: #6a6d70;
+}
+
+.markdown-description h1,
+.markdown-description h2,
+.markdown-description h3,
+.markdown-description h4,
+.markdown-description p,
+.markdown-description ul {
+  margin: 0;
+  font-size: 0.875rem;
+}

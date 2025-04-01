@@ -1,0 +1,54 @@
+{
+  "name": "@camunda8/btp-plugin-core",
+  "version": "1.0.0-alpha.1",
+  "description": "Camunda BTP Integration: core module",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "imports": {
+    "#cds-models/*": "./@cds-models/*/index.js"
+  },
+  "main": "srv/lib/camunda.js",
+  "scripts": {
+    "//_deploy:sqlite": "intended for local dev",
+    "_deploy:sqlite": "cds deploy --to sqlite",
+    "start": "cds-deploy --to sqlite && cds-serve",
+    "start:local": "cds-serve",
+    "test": "jest --forceExit --silent",
+    "build": "npx cds build --production --ws-pack"
+  },
+  "dependencies": {
+    "@camunda8/sdk": "^8.6.16",
+    "@camunda8/websocket": "*",
+    "@cap-js/postgres": "^1.12.0",
+    "@cap-js/sqlite": "^1",
+    "@sap/cds": "^8",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/cds-typer": ">=0.29",
+    "chai": "^4",
+    "chai-as-promised": "^7",
+    "chai-subset": "^1.6.0",
+    "jest": "^29.7.0",
+    "msw": "^2.6.5",
+    "@cap-js/sqlite": "^1"
+  },
+  "cds": {
+    "requires": {
+      "auth": {
+        "restrict_all_services": false
+      },
+      "db": {
+        "kind": "sqlite",
+        "impl": "@cap-js/sqlite",
+        "credentials": {
+          "url": "db.sqlite"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "^22"
+  }
+}

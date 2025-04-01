@@ -1,0 +1,95 @@
+{
+  "_version": "1.12.0",
+
+  "sap.app": {
+    "id": "io.camunda.connector.sap.btp.app",
+    "type": "application",
+    "i18n": {
+      "bundleUrl": "i18n/i18n.properties",
+      "supportedLocales": ["en"],
+      "fallbackLocale": "en"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": {
+      "version": "${version}"
+    },
+    "dataSources": {
+      "backend": {
+        "uri": "/backend/odata/v4/bpmn/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      },
+      "AppViewDataSource": {
+        "uri": "model/AppView.json",
+        "type": "JSON"
+      }
+    }
+  },
+
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {},
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "io.camunda.connector.sap.btp.app.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.ui.core": {},
+        "sap.m": {}
+      }
+    },
+
+    "handleValidation": true,
+
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleUrl": "i18n/i18n.properties",
+          "supportedLocales": ["en"],
+          "fallbackLocale": "en"
+        }
+      },
+      "backend": {
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "dataSource": "backend",
+        "settings": {
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "groupId": "$auto",
+          "operationMode": "Server",
+          "updateGroupId": "$auto"
+        }
+      },
+      "AppView": {
+        "type": "sap.ui.model.json.JSONModel",
+        "dataSource": "AppViewDataSource"
+      }
+    },
+    "resources": {
+      "css": [{ "uri": "css/style.css" }]
+    },
+    "routing": {}
+  }
+}

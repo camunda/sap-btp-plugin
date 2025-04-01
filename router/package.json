@@ -1,0 +1,21 @@
+{
+  "name": "router",
+  "version": "1.0.0-alpha.1",
+  "description": "central entry point routing traffic for the Camunda BTP Integration",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:local": "node ../node_modules/dev-approuter"
+  },
+  "dependencies": {
+    "@sap/approuter": "^17.1.0"
+  },
+  "devDependencies": {
+    "dev-approuter": "^0.3.3",
+    "@camunda8/btp-plugin-core": "*",
+    "@camunda8/fiori-app": "*"
+  }
+}

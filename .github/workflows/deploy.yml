@@ -1,0 +1,26 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  test:
+    uses: ./.github/workflows/reusable_test.yml
+    with:
+      node-version: ${{ matrix.node-version }}
+
+    strategy:
+      matrix:
+        node-version: [23, 22]
+
+  deploy-to-btp:
+    needs: test
+    uses: ./.github/workflows/reusable_deploy-to-btp.yml
+    with:
+      cf_api_endpoint: 'https://api.cf.eu10-004.hana.ondemand.com'
+      cf_org: camunda-dev
+      cf_space: sap-integration
+    secrets: inherit

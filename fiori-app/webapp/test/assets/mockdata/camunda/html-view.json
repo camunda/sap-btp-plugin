@@ -1,0 +1,6 @@
+{
+  "channelId": "testChannel",
+  "type": "form",
+  "jobKey": "3332764813989278",
+  "formData": "{ \"executionPlatform\": \"Camunda Cloud\", \"executionPlatformVersion\": \"8.6.0\", \"exporter\": {  \"name\": \"Camunda Web Modeler\",  \"version\": \"41ec04e\" }, \"schemaVersion\": 18, \"id\": \"Form_0278me0\", \"components\": [  {   \"content\": \"<h1>static html h1</h1>\",   \"type\": \"html\",   \"layout\": {    \"row\": \"Row_08dfm7r\",    \"columns\": null   },   \"id\": \"Field_1bosi0s\"  },  {   \"content\": \"=\\\"<h2>\\\" + dynamicHeader + \\\"</h2>\\\"\",   \"type\": \"html\",   \"layout\": {    \"row\": \"Row_1e8anx5\",    \"columns\": null   },   \"id\": \"Field_12iau96\"  },  {   \"content\": \"<h3>visibility</h3>\",   \"type\": \"html\",   \"layout\": {    \"row\": \"Row_0140q5i\",    \"columns\": null   },   \"id\": \"Field_0k58aed\",   \"conditional\": {    \"hide\": \"=invisible = true\"   }  } ], \"type\": \"default\"}"
+}

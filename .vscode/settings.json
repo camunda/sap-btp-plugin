@@ -1,0 +1,24 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        // "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.autoClosingBrackets": "languageDefined"
+    },
+    "cSpell.words": [
+        "fiori",
+        "zeebe"
+    ],
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "files.autoSave": "onFocusChange",
+    "[cds]": {
+        "editor.defaultFormatter": "SAPSE.vscode-cds"
+    },
+    "search.useGlobalIgnoreFiles": true,
+    "search.useParentIgnoreFiles": true,
+    "editor.tabSize": 2
+}

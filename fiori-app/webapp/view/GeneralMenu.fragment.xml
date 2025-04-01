@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Menu>
+        <MenuItem text="{i18n>GeneralMenu.btn_runThis}"
+            press=".onRunThisPress" />
+    </Menu>
+</core:FragmentDefinition>

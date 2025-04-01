@@ -1,0 +1,22 @@
+{
+  "components": [
+    {
+      "text": "thanks for all the fish!",
+      "type": "text",
+      "layout": {
+        "row": "Row_1xx6znx",
+        "columns": null
+      },
+      "id": "Field_1f8m25f"
+    }
+  ],
+  "type": "default",
+  "id": "form3",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.33.1"
+  },
+  "schemaVersion": 18
+}

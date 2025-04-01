@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd">
+	<name>io.camunda.connector.sap.btp.lib</name>
+	<vendor>Volker Buzek</vendor>
+	<version>${version}</version>
+	<copyright>${copyright}</copyright>
+	<title>io.camunda.connector.sap.btp.lib</title>
+	<documentation>Some description about io.camunda.connector.sap.btp.lib</documentation>
+	<dependencies>
+		<dependency>
+			<libraryName>io.camunda.connector.sap.btp.lib</libraryName>
+		</dependency>
+	</dependencies>
+</library>
