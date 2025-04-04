@@ -15,7 +15,8 @@ modules:
       memory: 256M
       enable-ssh: true
       routes: 
-        - route: <btp-plugin-route>.${default-domain}
+        - route: <btp-plugin-route>
+        # - route: <btp-plugin-route>.${default-domain}
     properties:
       # 15 minutes
       INCOMING_CONNECTION_TIMEOUT: 900000
