@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/fiori-app",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "generic Fiori/UI5 app for Camunda BTP Integration",
   "license": "Apache-2.0",
   "author": "Volker Buzek",

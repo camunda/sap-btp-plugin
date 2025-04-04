@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/sap-btp-plugin",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "private": true,
   "description": "mono repo for the Camunda BTP Integration, part of the SAP Integration",
   "keywords": [],

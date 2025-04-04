@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/btp-plugin-core",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "Camunda BTP Integration: core module",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",

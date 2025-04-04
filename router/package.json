@@ -1,6 +1,6 @@
 {
   "name": "router",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "central entry point routing traffic for the Camunda BTP Integration",
   "keywords": [],
   "license": "ISC",
