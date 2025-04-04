@@ -20,7 +20,8 @@ builder:
       - "io.camunda.connector.sap.btp.lib"
   resources:
     excludes:
-      - "test/e2e/**"
+      - "test/**/*"
+      - "mockserver.html"
   customTasks:
     - name: ui5-tooling-modules-task
       afterTask: replaceVersion
