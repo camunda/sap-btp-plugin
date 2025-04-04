@@ -52,17 +52,17 @@ modules:
       memory: 512M
       enable-ssh: true
     properties:
-      ZEEBE_ADDRESS: xxx
-      ZEEBE_CLIENT_ID: xxx
-      ZEEBE_CLIENT_SECRET: xxx
+      ZEEBE_ADDRESS: <your-cluster-id>.<your-cluster-region>.zeebe.camunda.io:443
+      ZEEBE_CLIENT_ID: <client-id-credential-from-api-client>
+      ZEEBE_CLIENT_SECRET: <client-secret-credential-from-api-client>
       # ZEEBE_AUTHORIZATION_SERVER_URL: xxx
       # ZEEBE_REST_ADDRESS: xxx
       # ZEEBE_GRPC_ADDRESS: xxx
       # ZEEBE_TOKEN_AUDIENCE: xxx
-      CAMUNDA_CLUSTER_ID: xxx
-      CAMUNDA_CLIENT_ID: xxx
-      CAMUNDA_CLIENT_SECRET: xxx
-      CAMUNDA_CLUSTER_REGION: xxx
+      CAMUNDA_CLUSTER_ID: <your-cluster-id>
+      CAMUNDA_CLIENT_ID: <client-id-credential-from-api-client>
+      CAMUNDA_CLIENT_SECRET: <client-secret-credential-from-api-client>
+      CAMUNDA_CLUSTER_REGION: <your-cluster-region>
       # CAMUNDA_CREDENTIALS_SCOPES: xxx
       # CAMUNDA_TASKLIST_BASE_URL: xxx
       # CAMUNDA_OPTIMIZE_BASE_URL: xxx
