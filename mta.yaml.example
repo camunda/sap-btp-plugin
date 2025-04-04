@@ -7,7 +7,7 @@ parameters:
 
 modules:
   # app-router acting as primary traffic distributor
-  - name: btp-plugin-router-<app-version>
+  - name: btp-plugin-router
     type: approuter.nodejs
     path: router
     parameters:
@@ -21,9 +21,9 @@ modules:
       # 15 minutes
       INCOMING_CONNECTION_TIMEOUT: 900000
     requires:
-      - name: uaa-camunda-btp-plugin-<app-version>
-      - name: dest-camunda-btp-plugin-<app-version>
-      - name: conn-camunda-btp-plugin-<app-version>
+      - name: uaa-camunda-btp-plugin
+      - name: dest-camunda-btp-plugin
+      - name: conn-camunda-btp-plugin
       - name: srv-binding
         group: destinations
         properties:
@@ -43,7 +43,7 @@ modules:
         - npm install --production
 
   # CAP services and business logic
-  - name: btp-plugin-srv-<app-version>
+  - name: btp-plugin-srv
     type: nodejs
     path: core/gen/srv
     parameters:
@@ -55,34 +55,34 @@ modules:
       ZEEBE_ADDRESS: xxx
       ZEEBE_CLIENT_ID: xxx
       ZEEBE_CLIENT_SECRET: xxx
-      ZEEBE_AUTHORIZATION_SERVER_URL: xxx
-      ZEEBE_REST_ADDRESS: xxx
-      ZEEBE_GRPC_ADDRESS: xxx
-      ZEEBE_TOKEN_AUDIENCE: xxx
+      # ZEEBE_AUTHORIZATION_SERVER_URL: xxx
+      # ZEEBE_REST_ADDRESS: xxx
+      # ZEEBE_GRPC_ADDRESS: xxx
+      # ZEEBE_TOKEN_AUDIENCE: xxx
       CAMUNDA_CLUSTER_ID: xxx
       CAMUNDA_CLIENT_ID: xxx
       CAMUNDA_CLIENT_SECRET: xxx
       CAMUNDA_CLUSTER_REGION: xxx
-      CAMUNDA_CREDENTIALS_SCOPES: xxx
-      CAMUNDA_TASKLIST_BASE_URL: xxx
-      CAMUNDA_OPTIMIZE_BASE_URL: xxx
-      CAMUNDA_OPERATE_BASE_URL: xxx
-      CAMUNDA_OAUTH_URL: xxx
+      # CAMUNDA_CREDENTIALS_SCOPES: xxx
+      # CAMUNDA_TASKLIST_BASE_URL: xxx
+      # CAMUNDA_OPTIMIZE_BASE_URL: xxx
+      # CAMUNDA_OPERATE_BASE_URL: xxx
+      # CAMUNDA_OAUTH_URL: xxx
     build-parameters:
       builder: custom
       commands:
         - echo "nothing to do, things are vendored :)"
     requires:
-      - name: uaa-camunda-btp-plugin-<app-version>
-      - name: dest-camunda-btp-plugin-<app-version>
-      - name: conn-camunda-btp-plugin-<app-version>
+      - name: uaa-camunda-btp-plugin
+      - name: dest-camunda-btp-plugin
+      - name: conn-camunda-btp-plugin
     provides:
       - name: srv-binding 
         properties:
           srv-url: ${default-url}
 
   # UI5 freestyle UI
-  - name: btp-plugin-ui-<app-version>
+  - name: btp-plugin-ui
     type: html5
     path: fiori-app
     parameters:
@@ -94,9 +94,9 @@ modules:
       commands:
          - echo "nothing to do, things are vendored :)"
     requires:
-      - name: uaa-camunda-btp-plugin-<app-version>
-      - name: dest-camunda-btp-plugin-<app-version>
-      - name: conn-camunda-btp-plugin-<app-version>
+      - name: uaa-camunda-btp-plugin
+      - name: dest-camunda-btp-plugin
+      - name: conn-camunda-btp-plugin
     provides:
       - name: ui-binding # required by consumers of CAP services (e.g. approuter, ui)
         properties:
@@ -104,7 +104,7 @@ modules:
 
 
 resources:
-  - name: uaa-camunda-btp-plugin-<app-version>
+  - name: uaa-camunda-btp-plugin
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
@@ -113,12 +113,12 @@ resources:
       config:
         xsappname: camunda-btp-plugin-<app-version>
         tenant-mode: dedicated
-  - name: dest-camunda-btp-plugin-<app-version>
+  - name: dest-camunda-btp-plugin
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: lite
       service: destination
-  - name: conn-camunda-btp-plugin-<app-version>
+  - name: conn-camunda-btp-plugin
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: lite
