@@ -39,13 +39,6 @@
     "requires": {
       "auth": {
         "restrict_all_services": false
-      },
-      "db": {
-        "kind": "sqlite",
-        "impl": "@cap-js/sqlite",
-        "credentials": {
-          "url": "db.sqlite"
-        }
       }
     }
   },
