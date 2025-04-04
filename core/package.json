@@ -11,7 +11,7 @@
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
     "_deploy:sqlite": "cds deploy --to sqlite",
-    "start": "cds-deploy --to sqlite && cds-serve",
+    "start": "cds-serve",
     "start:local": "cds-serve",
     "test": "jest --forceExit --silent",
     "build": "npx cds build --production --ws-pack; npx @cap-js/cds-typer \"*\" --outputDirectory gen/srv/@cds-models"

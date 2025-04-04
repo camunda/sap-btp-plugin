@@ -76,12 +76,26 @@ modules:
       - name: uaa-camunda-btp-plugin
       - name: dest-camunda-btp-plugin
       - name: conn-camunda-btp-plugin
+      - name: camunda-btp-plugin-postgres
     provides:
       - name: srv-binding 
         properties:
           srv-url: ${default-url}
+  
+  - name: camunda-btp-plugin-postgres-deployer
+    type: nodejs
+    path: gen/pg
+    parameters:
+      buildpack: nodejs_buildpack
+      no-route: true
+      no-start: true
+      tasks:
+        - name: deploy-to-postgresql
+          command: npm start
+    requires:
+      - name: camunda-btp-plugin-postgres
 
-  # UI5 freestyle UI
+
   - name: btp-plugin-ui
     type: html5
     path: fiori-app
@@ -98,7 +112,7 @@ modules:
       - name: dest-camunda-btp-plugin
       - name: conn-camunda-btp-plugin
     provides:
-      - name: ui-binding # required by consumers of CAP services (e.g. approuter, ui)
+      - name: ui-binding 
         properties:
           ui-url: ${default-url}
 
@@ -123,3 +137,8 @@ resources:
     parameters:
       service-plan: lite
       service: connectivity
+  - name: camunda-btp-plugin-postgres
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: postgresql-db
+      service-plan: development
