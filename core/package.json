@@ -14,7 +14,7 @@
     "start": "cds-deploy --to sqlite && cds-serve",
     "start:local": "cds-serve",
     "test": "jest --forceExit --silent",
-    "build": "npx @cap-js/cds-typer \"*\" --outputDirectory @cds-models; npx cds build --production --ws-pack"
+    "build": "npx cds build --production --ws-pack; npx @cap-js/cds-typer \"*\" --outputDirectory gen/srv/@cds-models"
   },
   "dependencies": {
     "@camunda8/sdk": "^8.6.33",
