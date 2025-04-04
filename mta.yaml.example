@@ -141,4 +141,5 @@ resources:
     type: org.cloudfoundry.managed-service
     parameters:
       service: postgresql-db
+      path: ./core/pg-options.json
       service-plan: standard
