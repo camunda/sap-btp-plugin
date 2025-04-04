@@ -18,6 +18,7 @@ builder:
   settings:
     includeDependency:
       - "io.camunda.connector.sap.btp.lib"
+      - "ui5-cc-md"
   resources:
     excludes:
       - "test/**/*"
