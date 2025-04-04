@@ -84,7 +84,7 @@ modules:
   
   - name: camunda-btp-plugin-postgres-deployer
     type: nodejs
-    path: gen/pg
+    path: core/gen/pg
     parameters:
       buildpack: nodejs_buildpack
       no-route: true
