@@ -19,6 +19,7 @@
   "dependencies": {
     "@camunda8/sdk": "^8.6.33",
     "@camunda8/websocket": "*",
+    "@cap-js/cds-typer": ">=0.34",
     "@cap-js/postgres": "^1.13.0",
     "@cap-js/sqlite": "^1",
     "@sap/cds": "^8",
@@ -27,7 +28,6 @@
     "express": "^4"
   },
   "devDependencies": {
-    "@cap-js/cds-typer": ">=0.34",
     "chai": "^4",
     "chai-as-promised": "^7",
     "chai-subset": "^1.6.0",
