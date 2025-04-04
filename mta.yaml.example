@@ -63,11 +63,11 @@ modules:
       CAMUNDA_CLIENT_ID: <client-id-credential-from-api-client>
       CAMUNDA_CLIENT_SECRET: <client-secret-credential-from-api-client>
       CAMUNDA_CLUSTER_REGION: <your-cluster-region>
-      # CAMUNDA_CREDENTIALS_SCOPES: xxx
+      CAMUNDA_CREDENTIALS_SCOPES: Zeebe,Tasklist,Operate,Optimize,Secrets
       # CAMUNDA_TASKLIST_BASE_URL: xxx
       # CAMUNDA_OPTIMIZE_BASE_URL: xxx
       # CAMUNDA_OPERATE_BASE_URL: xxx
-      # CAMUNDA_OAUTH_URL: xxx
+      CAMUNDA_OAUTH_URL: https://login.cloud.camunda.io/oauth/token
     build-parameters:
       builder: custom
       commands:
