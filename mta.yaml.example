@@ -42,7 +42,7 @@ modules:
       commands:
         - npm install --production
 
-  # CAP services and business logic
+
   - name: btp-plugin-srv
     type: nodejs
     path: core/gen/srv
