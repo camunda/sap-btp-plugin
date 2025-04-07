@@ -143,3 +143,5 @@ resources:
       service: postgresql-db
       path: ./core/pg-options.json
       service-plan: standard
+      skip-service-updates:
+        parameters: true
