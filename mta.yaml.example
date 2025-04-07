@@ -12,7 +12,7 @@ modules:
     path: router
     parameters:
       disk-quota: 512M
-      memory: 256M
+      memory: 512M
       enable-ssh: true
       routes: 
         - route: <btp-plugin-route>
@@ -48,8 +48,8 @@ modules:
     path: core/gen/srv
     parameters:
       buildpack: nodejs_buildpack
-      disk-quota: 1G
-      memory: 512M
+      disk-quota: 2G
+      memory: 2G
       enable-ssh: true
     properties:
       ZEEBE_ADDRESS: <your-cluster-id>.<your-cluster-region>.zeebe.camunda.io:443
@@ -101,7 +101,7 @@ modules:
     path: fiori-app
     parameters:
       disk-quota: 1G
-      memory: 256M
+      memory: 1G
       enable-ssh: true
     build-parameters:
       builder: custom
