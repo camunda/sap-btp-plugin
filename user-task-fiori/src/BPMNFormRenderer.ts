@@ -23,7 +23,7 @@ export default {
         rm.renderControl(control)
       })
     } else {
-      if (control.getFormStep() <= 0 || control.getFormStep() === 3) {
+      if (control.getFormStep() < 0 || control.getFormStep() === 3) {
         rm.text(control.getPlaceHolderText())
       }
     }
