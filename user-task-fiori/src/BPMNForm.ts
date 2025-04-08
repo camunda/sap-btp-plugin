@@ -236,7 +236,7 @@ export default class BPMNForm extends Control {
     // REVISIT: is there a reason to display a generic "success" message
     // in addition to the linked form in the user task?
     // if (data.type === "final-task-success") {
-      // content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
+    // content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
     // }
 
     if (data.type === "final-task-fail") {
@@ -399,6 +399,63 @@ export default class BPMNForm extends Control {
   }
 
   getUserData(): userFormData[] {
-    return [] as userFormData[]
+    const data: userFormData[] = []
+    // for each dynamically generated cdontrol,
+    // get its' "key" data for submitting -> job worker
+    // and its' value that was supplied/chosen by the user
+    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+      const ui5Control = Core.byId(control.id) as Control
+
+      // represents the form key as modelled in Camunda
+      const key = ui5Control.getCustomData()[0].getKey()
+
+      const value = this.getValueFromControl(control.type, ui5Control) as string
+      let answer
+      switch (control.type) {
+        case ControlType.CheckBox:
+          {
+            if (ui5Control.getVisible()) {
+              answer = String((ui5Control as CheckBox).getSelected())
+            }
+          }
+          break
+        case ControlType.Select:
+          {
+            const selectedItem = (ui5Control as Select).getSelectedItem()
+            if (selectedItem) {
+              if (selectedItem.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedItem.getText()})`
+              }
+            }
+          }
+          break
+        case ControlType.Radio:
+          {
+            const selectedButton = (ui5Control as RadioButtonGroup).getSelectedButton()
+            if (selectedButton) {
+              if (selectedButton.getText() === value) {
+                answer = value
+              } else {
+                answer = `${value} (${selectedButton.getText()})`
+              }
+            }
+          }
+          break
+        default: {
+          answer = this.getValueFromControl(control.type, ui5Control) as string
+        }
+      }
+      data.push({
+        key,
+        value,
+        question: control.question as string,
+        answer,
+        linkedControlId: control.id,
+        linkedControlType: control.type
+      })
+    })
+    return data
   }
 }
