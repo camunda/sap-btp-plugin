@@ -11,8 +11,8 @@ modules:
     type: approuter.nodejs
     path: router
     parameters:
-      disk-quota: 512M
-      memory: 512M
+      disk-quota: 2G
+      memory: 256M
       enable-ssh: true
       routes: 
         - route: <btp-plugin-route>
@@ -49,7 +49,7 @@ modules:
     parameters:
       buildpack: nodejs_buildpack
       disk-quota: 2G
-      memory: 2G
+      memory: 512M
       enable-ssh: true
     properties:
       ZEEBE_ADDRESS: <your-cluster-id>.<your-cluster-region>.zeebe.camunda.io:443
@@ -86,6 +86,8 @@ modules:
     type: nodejs
     path: core/gen/pg
     parameters:
+      disk-quota: 2G
+      memory: 512M
       buildpack: nodejs_buildpack
       no-route: true
       no-start: true
@@ -100,8 +102,8 @@ modules:
     type: html5
     path: fiori-app
     parameters:
-      disk-quota: 1G
-      memory: 1G
+      disk-quota: 2G
+      memory: 256M
       enable-ssh: true
     build-parameters:
       builder: custom
