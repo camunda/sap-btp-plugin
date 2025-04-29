@@ -1,0 +1,8 @@
+_schema-version: '3.1'
+ID: camunda-btp-plugin-8_7.extension
+extends: camunda-btp-plugin-8_7
+
+resources:
+  - name: camunda-btp-plugin-postgres
+    parameters:
+      service-plan: trial
