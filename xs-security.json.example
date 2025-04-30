@@ -5,6 +5,8 @@
   "attributes": [],
   "role-templates": [],
   "oauth2-configuration": {
-    "redirect-uris": ["https://<btp-plugin-route>"]
+    "redirect-uris": [
+      "https://*.hana.ondemand.com/**"
+      ]
   }
 }
