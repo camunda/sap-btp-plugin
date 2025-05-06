@@ -106,7 +106,7 @@ module.exports = async (job, worker) => {
   try {
     // get associated user for the user task
     const { user } = await SELECT.one`user`.from(BrowserClients).where({
-      processInstanceKey: job.processInstanceKey,
+      processInstanceKey: { in: [job.processInstanceKey, wsData.parentProcessInstanceKey] },
       channelId
     })
     // persist user task for resuming (and eventually completing) later
