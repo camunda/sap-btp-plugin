@@ -26,7 +26,7 @@ jobs:
       - run: npm ci
       
       - name: test backend
-        run: cd core && npx @cap-js/cds-typer "*" && npm test
+        run: cd core && npx @cap-js/cds-typer "*" && DISABLE_CAMUNDA=true npm test
 
       - name: test "sap tasklist" rendering
         run: |
