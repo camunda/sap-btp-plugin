@@ -112,6 +112,7 @@ module.exports = async (job, worker) => {
     ;(await ws.getClient()).send(JSON.stringify(wsData))
 
     // "queue" job completion
+    // it will be completed via the UI Layer (form submit) and CAP layer (completeUsertask)
     return job.forward()
   } catch (err) {
     LOGGER.error(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}:`, err)
