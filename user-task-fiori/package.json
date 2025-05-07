@@ -2,8 +2,8 @@
 	"name": "@camunda8/user-task-fiori",
 	"version": "1.0.0",
 	"description": "rendering Camunda Forms into the Fiori Design System",
-	"license": "Apache-2.0",
-	"author": "Volker Buzek",
+	"license": "Camunda License 1.0",
+	"repository": "https://github.com/camunda/sap-btp-plugin",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "ui5 build --clean-dest",

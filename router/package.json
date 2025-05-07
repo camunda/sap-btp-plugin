@@ -1,10 +1,9 @@
 {
   "name": "router",
   "version": "1.0.0",
-  "description": "central entry point routing traffic for the Camunda BTP Integration",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
+  "description": "central entry point routing traffic for the Camunda BTP Plugin",
+  "repository": "https://github.com/camunda/sap-btp-plugin",
+  "license": "Camunda License 1.0",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -14,8 +13,8 @@
     "@sap/approuter": "^20.1.0"
   },
   "devDependencies": {
-    "dev-approuter": "^0.5.1",
     "@camunda8/btp-plugin-core": "*",
-    "@camunda8/fiori-app": "*"
+    "@camunda8/fiori-app": "*",
+    "dev-approuter": "^0.5.1"
   }
 }

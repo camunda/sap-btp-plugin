@@ -1,10 +1,9 @@
 {
   "name": "@camunda8/websocket",
   "version": "1.0.0",
-  "description": "websocket enablement for the BTP Integration, part of Camunda's SAP Integration",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
+  "description": "websocket enablement for the BTP Plugin, part of Camunda's SAP Integration",
+  "repository": "https://github.com/camunda/sap-btp-plugin",
+  "license": "Camunda License 1.0",
   "main": "cds-plugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
