@@ -104,7 +104,7 @@ module.exports = async (job, worker) => {
   // the error is relayed to the connected client and
   // the job is failed (to not mingle with eventual consistency)
   try {
-    const condition = job.parentProcessInstanceKey ? { in: [job.processInstanceKey, job.parentProcessInstanceKey] } : job.processInstanceKey
+    const condition = job.variables.parentProcessInstanceKey ? { in: [job.processInstanceKey, job.variables.parentProcessInstanceKey] } : job.processInstanceKey
     // get associated user for the user task
     const { user } = await SELECT.one`user`.from(BrowserClients).where({
       processInstanceKey: condition,
