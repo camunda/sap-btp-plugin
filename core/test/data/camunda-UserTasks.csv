@@ -1,0 +1,6 @@
+processInstanceKey,channelId,user,jobKey,formData,variables,createdAt,createdBy,modifiedAt,modifiedBy
+UserTasks-18001374,channelId-18001374,user-18001374,jobKey-18001374,formData-18001374,variables-18001374,2002-12-03T23:00:00.000Z,createdBy.apty6@example.com,2006-06-03T23:00:00.000Z,modifiedBy.apty6@example.com
+UserTasks-18001375,channelId-18001375,user-18001375,jobKey-18001375,formData-18001375,variables-18001375,2020-02-15T23:00:00.000Z,createdBy.apty7@example.org,2012-06-26T23:00:00.000Z,modifiedBy.apty7@example.org
+UserTasks-18001376,channelId-18001376,user-18001376,jobKey-18001376,formData-18001376,variables-18001376,2016-12-29T23:00:00.000Z,createdBy.apty8@example.org,2021-09-05T23:00:00.000Z,modifiedBy.apty8@example.com
+UserTasks-18001377,channelId-18001377,user-18001377,jobKey-18001377,formData-18001377,variables-18001377,2021-08-24T23:00:00.000Z,createdBy.apty9@example.net,2001-10-07T23:00:00.000Z,modifiedBy.apty9@example.org
+UserTasks-18001378,channelId-18001378,user-18001378,jobKey-18001378,formData-18001378,variables-18001378,2013-04-29T23:00:00.000Z,createdBy.aptya@example.com,2009-05-20T23:00:00.000Z,modifiedBy.aptya@example.net
