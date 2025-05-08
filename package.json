@@ -1,11 +1,9 @@
 {
   "name": "@camunda8/sap-btp-plugin",
-  "version": "1.0.0",
-  "private": true,
-  "description": "mono repo for the Camunda BTP Integration, part of the SAP Integration",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
+  "version": "1.0.1",
+  "description": "mono repo for the Camunda BTP plugin, part of the SAP Integration",
+  "repository": "https://github.com/camunda/sap-btp-plugin",
+  "license": "Camunda License 1.0",
   "workspaces": [
     "core",
     "fiori-app",
@@ -15,19 +13,19 @@
   ],
   "scripts": {
     "//start:*": "intended for dev time only",
-    "//start:local": "no authN and auth - dev-approuter also starts the backend - make sure to also set 'authenticationMethod' to 'none' in xs-dev.json",
-    "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
-    "local:router": "npm run start:local -w router",
-    "local:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
     "//start:hybrid": "authN and authZ against BTP xsuaa with the help of cds bind",
-    "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
-    "hybrid:router": "npm start -w router",
+    "//start:local": "no authN and auth - dev-approuter also starts the backend - make sure to also set 'authenticationMethod' to 'none' in xs-dev.json",
     "hybrid:app": "npm run start:local -w fiori-app",
-    "hybrid:backend": "cd core; cds run --profile hybrid"
+    "hybrid:backend": "cd core; cds run --profile hybrid",
+    "hybrid:router": "npm start -w router",
+    "local:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
+    "local:router": "npm run start:local -w router",
+    "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
+    "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*"
   },
   "dependencies": {
-    "@sap/cds": "^8",
-    "@cap-js/postgres": "^1"
+    "@cap-js/postgres": "^1",
+    "@sap/cds": "^8"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.10",

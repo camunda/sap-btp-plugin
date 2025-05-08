@@ -4,6 +4,7 @@ const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes(
 
 const ws = require("@camunda8/websocket")
 const retry = require("./retry")
+const { persistUserTask } = require("./persistUserTask")
 
 /**
  * @param {import("@camunda8/sdk/dist/zeebe/types.d.ts").Job} job
@@ -100,25 +101,14 @@ module.exports = async (job, worker) => {
   }
 
   const { UserTasks, BrowserClients } = require("#cds-models/camunda")
-  // if persisting the user task for later resuming fails, 
-  // the error is relayed to the connected client and
-  // the job is failed (to not mingle with eventual consistency)
   try {
-    // get associated user for the user task
-    const { user } = await SELECT.one`user`.from(BrowserClients).where({
-      processInstanceKey: job.processInstanceKey,
-      channelId
-    })
-    // persist user task for resuming (and eventually completing) later
-    await UPSERT.into(UserTasks).entries({
-      processInstanceKey: job.processInstanceKey,
+    await persistUserTask({
+      job,
       channelId,
-      user,
-      jobKey: job.key,
-      formData: form.schema, //> we trust in CAP to serialize properly :)
-      variables: job.variables //> we trust in CAP to serialize properly :)
+      BrowserClients,
+      UserTasks
     })
-    LOGGER.info(`persisted user task for PI ${job.processInstanceKey}, channel ${channelId} and user ${user}`)
+    LOGGER.info(`persisted user task for PI ${job.processInstanceKey}, channel ${channelId}`)
     ;(await ws.getClient()).send(JSON.stringify(wsData))
 
     // "queue" job completion
