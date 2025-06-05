@@ -24,9 +24,11 @@ prerequisite: create local destinations in `router/default-env.json` (not under 
 ```
 
 - build of both UI and backend are at deploy-time only  
-  dev-time uses hot reload (UI) and `cds` tooling for serving the modules  
-  deployment uses app router for both
-  
+- dev-time uses either
+  - hot reload (UI) and `cds` tooling for serving the modules  
+  - app router (for hybrid scenario)
+- deployment uses app router for both
+
 ### local setup
 
 ...w/o authN and authZ
