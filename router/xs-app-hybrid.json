@@ -1,0 +1,39 @@
+{
+  "welcomeFile": "/app/index.html",
+  "authenticationMethod": "route",
+  "websockets": {
+    "enabled": true
+  },
+  "cors": [
+    {
+      "uriPattern": "^\/backend\/inbound$",
+      "allowedMethods": ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
+      "allowedOrigin": ["*"],
+      "allowedHeaders": ["X-Requested-With", "Authorization", "Content-Type"],
+      "allowedCredentials": true
+    }
+  ],
+  "routes": [
+    {
+      "source": "/backend/(.*)$",
+      "target": "/$1",
+      "destination": "@camunda8/btp-integration-core",
+      "csrfProtection": false,
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "/channel(.*)$",
+      "target": "/channel$1",
+      "destination": "@camunda8/btp-integration-core",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/app/(.*)$",
+      "target": "$1",
+      "destination": "ui",
+      "cacheControl": "no-cache, no-store, must-revalidate",
+      "authenticationType": "xsuaa"
+    }
+  ]
+}
