@@ -61,7 +61,9 @@ create necessary `xsuaa` service instance:
 # in / of the proj
 $> cf login ...
 
+# optional if uaa instance has already been created
 $> cf cs xsuaa application uaa-hybrid-instance -c xs-security.json
+
 $> cds bind -2 uaa-hybrid-instance # auto-creates a service key
 # ... creates .cdsrc-private.json
 
@@ -78,6 +80,9 @@ $> cd test/docker/pg-standalone; docker-compose up
 # make sure to enter db connectivity into .cdsrc-private.json
 
 # runtime local, auth(n,z) from BTP
+# this will also 
+# - cp /router/xs-app.json /router/xs-app.json.orig
+# - cp /router/xs-app-hybrid.json /router/xs-app.json
 $> cds bind --exec -- npm run start:hybrid
 
 # -> http://localhost:5001
