@@ -11,7 +11,9 @@
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
     "_deploy:sqlite": "cds deploy --to sqlite",
-    "build": "npx cds build --production --ws-pack; npx @cap-js/cds-typer \"*\" --outputDirectory gen/srv/@cds-models",
+    "build": "run-s _build:cds _build:types",
+    "_build:cds": "npx cds build --production --ws-pack",
+    "_build:types": "npx @cap-js/cds-typer \"*\" --outputDirectory gen/srv/@cds-models",
     "start": "cds-serve",
     "start:local": "cds-serve",
     "test": "jest --forceExit --silent"
@@ -25,6 +27,7 @@
     "@sap/cds": "^8",
     "@sap/cds-dk": "^8",
     "@sap/xssec": "^4",
+    "npm-run-all": "^4.1.5",Ì
     "express": "^4"
   },
   "devDependencies": {
