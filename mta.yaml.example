@@ -71,7 +71,8 @@ modules:
     build-parameters:
       builder: custom
       commands:
-        - echo "nothing to do, things are vendored :)"
+        # only an informative placeholder because nothing needs to be done
+        - make -v
     requires:
       - name: uaa-camunda-btp-plugin
       - name: dest-camunda-btp-plugin
@@ -108,7 +109,8 @@ modules:
     build-parameters:
       builder: custom
       commands:
-         - echo "nothing to do, things are vendored :)"
+        # only an informative placeholder because nothing needs to be done
+         - make -v 
     requires:
       - name: uaa-camunda-btp-plugin
       - name: dest-camunda-btp-plugin
