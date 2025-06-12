@@ -1,0 +1,10 @@
+diff --git a/node_modules/ui5-cc-md/Markdown.js b/node_modules/ui5-cc-md/Markdown.js
+index 7ac623e..e3a58fb 100644
+--- a/node_modules/ui5-cc-md/Markdown.js
++++ b/node_modules/ui5-cc-md/Markdown.js
+@@ -1,4 +1,4 @@
+-sap.ui.define(["sap/ui/core/Control", "./marked/marked.min"], (Control /*, marked */) => {
++sap.ui.define(["sap/ui/core/Control", "marked/marked.min"], (Control /*, marked */) => {
+     return Control.extend("cc.md.Markdown", {
+         metadata: {
+             properties: {

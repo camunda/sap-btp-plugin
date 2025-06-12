@@ -24,6 +24,7 @@
     "@ui5/webcomponents": "^2.11.0",
     "@ui5/webcomponents-icons": "^2.11.0",
     "feelers": "^1.4.0",
+    "patch-package": "^8.0.0",
     "ui5-cc-md": "^0.0.7"
   },
   "devDependencies": {

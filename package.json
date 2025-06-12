@@ -23,11 +23,13 @@
     "local:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
     "local:router": "npm run start:local -w router",
     "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
-    "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*"
+    "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@cap-js/postgres": "^1",
-    "@sap/cds": "^8"
+    "@sap/cds": "^8",
+    "patch-package": "^8.0.0"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.11",
