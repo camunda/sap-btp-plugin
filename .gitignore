@@ -4,6 +4,7 @@ _out
 *.sqlite
 connection.properties
 default-*.json
+!_misc/default-env.json
 .cdsrc-private.json
 gen/
 node_modules/

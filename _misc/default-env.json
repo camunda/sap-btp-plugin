@@ -1,0 +1,16 @@
+{
+  "PORT": 5001,
+  "//destinations": "this is for dev time only!",
+  "destinations": [
+    {
+      "name": "@camunda8/btp-integration-core",
+      "url": "http://localhost:4004",
+      "forwardAuthToken": true
+    },
+    {
+      "name": "ui",
+      "url": "http://localhost:8080",
+      "forwardAuthToken": true
+    }
+  ]
+}
