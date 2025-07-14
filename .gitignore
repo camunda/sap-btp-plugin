@@ -6,6 +6,7 @@ connection.properties
 default-*.json
 !_misc/default-env.json
 .cdsrc-private.json
+!_misc/.cdsrc-private.json
 gen/
 node_modules/
 target/
