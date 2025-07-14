@@ -12,4 +12,4 @@ done
 cp "_misc/default-env.json" "./router"
 
 # deploy sample data
-cds deploy --profile hybrid
+cd core && cds deploy --profile hybrid && cd ..
