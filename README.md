@@ -10,7 +10,7 @@ prerequisite: create local destinations in `router/default-env.json` (not under 
   "//destinations": "this is for dev time only!",
   "destinations": [
     {
-      "name": "srv_api",
+      "name": "@camunda8/btp-integration-core",
       "url": "http://localhost:4004",
       "forwardAuthToken": true
     },
@@ -66,6 +66,9 @@ $> cf cs xsuaa application uaa-hybrid-instance -c xs-security.json
 
 $> cds bind -2 uaa-hybrid-instance # auto-creates a service key
 # ... creates .cdsrc-private.json
+
+# fiddle up files for local runtime
+./_misc/setup-local.sh
 
 # credentials for local c8
 $> source test/.env-localdev
