@@ -11,5 +11,8 @@ done
 # make the @sap/approuter aware of traffic dispatching locally
 cp "_misc/default-env.json" "./router"
 
+# generate types
+cd core && npx @cap-js/cds-typer "*" && cd ..
+
 # deploy sample data
 cd core && cds deploy --profile hybrid && cd ..
