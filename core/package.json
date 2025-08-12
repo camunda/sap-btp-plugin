@@ -22,6 +22,7 @@
     "@camunda8/sdk": "^8.7.17",
     "@camunda8/websocket": "*",
     "@cap-js/cds-typer": ">=0.35",
+    "@cap-js/cds-types": "^0.11.0",
     "@cap-js/postgres": "^1.13.0",
     "@cap-js/sqlite": "^1",
     "@sap/cds": "^8",
