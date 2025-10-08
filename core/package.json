@@ -19,7 +19,7 @@
     "test": "jest --forceExit --silent"
   },
   "dependencies": {
-    "@camunda8/sdk": "^8.7.17",
+    "@camunda8/sdk": "^8.7.30",
     "@camunda8/websocket": "*",
     "@cap-js/cds-typer": ">=0.35",
     "@cap-js/cds-types": "^0.11.0",
