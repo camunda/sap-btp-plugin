@@ -36,19 +36,19 @@ async function fetchProcessInstances(processDefinitionId: string): Promise<any> 
 
 test('Start process via UI and check instances on camunda', async ({ page }) => {
   await page.goto('/')
-  const instancesBefore = await fetchProcessInstances('process2');
+  const instancesBefore = await fetchProcessInstances('e2eTestProcess');
   await page.getByRole('button', { name: 'menu2' }).click();
   await page.getByRole('menuitem', { name: 'run this process...' }).click();
-  await page.locator('[id="__component0---app--processName-inner"]').fill('process2');
+  await page.locator('[id="__component0---app--processName-inner"]').fill('e2eTestProcess');
   await page.getByRole('button', { name: 'start above process' }).click();
-  await expect(page.getByRole('textbox', { name: 'Text field' })).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Text area' })).toBeVisible();
+
+  await expect(page.getByText('Success! This form is delivered by Camunda.')).toBeVisible();
+  
   await expect(page.getByRole('button', { name: 'Next' })).toBeVisible();
   await page.getByRole('button', { name: 'Next' }).click();
 
-  const instancesAfter = await fetchProcessInstances('process2');
   await expect.poll(async () => {
-    return fetchProcessInstances('process2');
+    return fetchProcessInstances('e2eTestProcess');
   }, {
     message: `Process instance should be increased to ${instancesBefore + 1}`,
     timeout: 10000 // timeout after 10 sec
