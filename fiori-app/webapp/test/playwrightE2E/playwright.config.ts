@@ -18,7 +18,7 @@ export default defineConfig({
   // Globale Konfiguration für alle Tests
   use: {
     // Basis-URL für Aktionen wie page.goto('/')
-    baseURL: 'http://localhost:5001',
+    baseURL: 'http://localhost:5001/app/index.html',
 
     // Erstellt einen Trace-Bericht bei fehlgeschlagenen Tests
     trace: 'on-first-retry',

@@ -59,7 +59,7 @@ test('Start process via UI and check instances on camunda', async ({ page }) => 
   }).toBe(instancesBefore + 1); 
 })
 
-test.only('Start process via URL and check instances on camunda', async ({ page }) => {
+test('Start process via URL and check instances on camunda', async ({ page }) => {
   await page.goto('?run=e2eTestProcess')
   
   // fetch instances before starting a new one
