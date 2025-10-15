@@ -24,6 +24,8 @@
     "local:router": "npm run start:local -w router",
     "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
+    "e2e:codegen": "npx playwright codegen --browser=chromium http://localhost:5001/app/index.html",
+    "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
     "postinstall": "patch-package"
   },
   "dependencies": {
