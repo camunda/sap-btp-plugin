@@ -41,8 +41,11 @@ $> source test/.env-localdev
 # boot up a c8 version locally from /test/docker
 $> cd test/docker/...; docker-compose up
 
-# start the btp plugin
-$> npm run start:local
+# boot up a the postgresql server
+$> cd test/docker/pgstandalone; docker-compose up
+
+# start the btp plugin... docker ports differ a bit from JAVA Node Camunda version, therefor override tasklist base url
+$> CAMUNDA_TASKLIST_BASE_URL=http://localhost:8088 npm run start:local
 
 # -> http://localhost:5001
 ```
