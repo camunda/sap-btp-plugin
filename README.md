@@ -130,3 +130,13 @@ terminal 2:
 ### router
 
 - make sure that an env var `destinations` is present and hold `srv_api` and `ui` pointing to the "backend" (`core`) and "UI" (`fiori-app`) respectively
+
+### E2E Testing
+
+#### Codegen
+
+Using the codegenerator for creating new tests run `npm run e2e:codegen`. A chromium instance starts, where you can use the ui and in background your click path is collected in form of playwright testcode.
+
+#### Run tests
+
+Run `npm run e2e:test` to execute playwright tests in a headless browser instance.
