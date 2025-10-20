@@ -44,6 +44,9 @@ $> cd test/docker/...; docker-compose up
 # boot up a the postgresql server
 $> cd test/docker/pgstandalone; docker-compose up
 
+# prepare local development with local postgres server and disabled auth strategy
+$> sh _misc/setup-local.sh
+
 # start the btp plugin... docker ports differ a bit from JAVA Node Camunda version, therefor override tasklist base url
 $> CAMUNDA_TASKLIST_BASE_URL=http://localhost:8088 npm run start:local
 

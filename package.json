@@ -20,7 +20,7 @@
     "//hybrid:xs-app": "this is needed for destination resolution",
     "hybrid:xs-app": "cp router/xs-app.json router/xs-app.json.orig; cp router/xs-app-hybrid.json router/xs-app.json",
     "hybrid:router": "npm start -w router",
-    "local:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
+    "local:app": "npm run -w core deploy; npm run start:local -w fiori-app",
     "local:router": "npm run start:local -w router",
     "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",

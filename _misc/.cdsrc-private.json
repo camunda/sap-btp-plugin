@@ -27,6 +27,22 @@
           "password": "postgres"
         }
       }
+    },
+    "[development]": {
+      "auth": {
+        "kind": "dummy"
+      },
+      "db": {
+        "kind": "postgres",
+        "impl": "@cap-js/postgres",
+        "credentials": {
+          "host": "localhost",
+          "port": 5433,
+          "database": "sap-btp-plugin",
+          "user": "postgres",
+          "password": "postgres"
+        }
+      }
     }
   }
 }
