@@ -14,11 +14,12 @@ cp "_misc/default-env.json" "./router"
 # generate types
 cd core && npx @cap-js/cds-typer "*" && cd ..
 
-DB_NAME="sap-btp-plugin"
-DB_USER="postgres"
-DB_HOST="localhost"
-DB_PORT="5433"
-DB_PASS="postgres"
+# Either ENV-variables or default values
+DB_USER="${DB_USER:-postgres}"
+DB_PASS="${DB_PASS:-postgres}"
+DB_HOST="${DB_HOST:-localhost}"
+DB_PORT="${DB_PORT:-5433}"
+DB_NAME="${DB_NAME:-sap-btp-plugin}"
 
 export PGPASSWORD="$DB_PASS"
 

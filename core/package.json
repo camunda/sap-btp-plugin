@@ -45,15 +45,8 @@
   },
   "cds": {
     "requires": {
-      "[development]": {
-        "auth": {
-          "kind": "dummy"
-        }
-      },
-      "[hybrid]": {
-        "auth": {
-          "kind": "xsuaa"
-        }
+      "auth": {
+        "restrict_all_services": false
       }
     }
   }

@@ -73,9 +73,6 @@ $> cf cs xsuaa application uaa-hybrid-instance -c xs-security.json
 $> cds bind -2 uaa-hybrid-instance # auto-creates a service key
 # ... creates .cdsrc-private.json
 
-# fiddle up files for local runtime
-./_misc/setup-local.sh
-
 # credentials for local c8
 $> source test/.env-localdev
 
@@ -86,7 +83,17 @@ $> cd test/docker/...; docker-compose up
 # this is mapped on port 5433 (!)
 # and has an adminer instance on http://localhost:8888
 $> cd test/docker/pg-standalone; docker-compose up
-# make sure to enter db connectivity into .cdsrc-private.json
+
+# make sure your database credentials are set up correctly in _misc/cdsrc-private.json
+# set up database credentials also in env variables if they differ from default values:
+# DB_USER="postgres"
+# DB_PASS="postgres"
+# DB_HOST="localhost"
+# DB_PORT="5433"
+# DB_NAME="sap-btp-plugin"
+
+# fiddle up files for local runtime
+./_misc/setup-local.sh --hybrid
 
 # runtime local, auth(n,z) from BTP
 # this will also 
