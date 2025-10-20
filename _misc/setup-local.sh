@@ -23,7 +23,7 @@ DB_NAME="${DB_NAME:-sap-btp-plugin}"
 
 export PGPASSWORD="$DB_PASS"
 
-# Prüfen, ob DB existiert
+# check if database exists
 if psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'" | grep -q 1; then
   echo "Database '${DB_NAME}' exists already. Continuing..."
 else

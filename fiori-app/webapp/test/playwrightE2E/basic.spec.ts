@@ -1,4 +1,7 @@
 import { test, expect } from "@playwright/test"
+import { CamundaRequest } from "../../util/CamundaData"
+
+const camundaRest = (globalThis as any).process?.env?.ZEEBE_REST_ADDRESS ?? "http://localhost:8088"
 
 test("App loads and shows title", async ({ page }) => {
   await page.goto("/") // nutzt baseURL
@@ -14,12 +17,10 @@ async function fetchProcessInstances(
   processDefinitionId: string
 ): Promise<{ page: { totalItems: number }; items: { processInstanceKey: string; state: string }[] }> {
   return new Promise((resolve, reject) => {
-    fetch("http://localhost:8088/v2/process-instances/search", {
-      // Ihre Anforderung
+    fetch(`${camundaRest}/v2/process-instances/search`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         filter: {
@@ -40,7 +41,7 @@ async function fetchProcessInstances(
 
 /**
  * fetch information about a process instance by its id
- * 
+ *
  * @param processInstanceId camunda id of process
  * @returns @see https://docs.camunda.io/docs/apis-tools/orchestration-cluster-api-rest/specifications/get-process-instance/
  */
@@ -48,13 +49,8 @@ async function fetchProcessInstanceById(
   processInstanceId: string
 ): Promise<{ processInstanceKey: string; state: string }> {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:8088/v2/process-instances/${processInstanceId}`, {
-      // Ihre Anforderung
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest"
-      }
+    fetch(`${camundaRest}/v2/process-instances/${processInstanceId}`, {
+      method: "GET"
     })
       .then((response) => response.json())
       .then((data) => {

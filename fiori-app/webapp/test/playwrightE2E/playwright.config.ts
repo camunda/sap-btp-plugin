@@ -1,35 +1,35 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  // Verzeichnis, in dem sich Ihre Tests befinden
+  // Directory with test files
   testDir: './',
 
-  // Maximale Zeit, die ein einzelner Test laufen darf (in Millisekunden)
+  // Maximum time a single test can run (in milliseconds)
   timeout: 30000,
 
-  // Maximale Zeit für einzelne Assertions (z.B. expect())
+  // Maximum time for individual assertions (e.g. expect())
   expect: {
     timeout: 5000
   },
 
-  // Reporter für die Kommandozeile
+  // Reporter for the command line
   reporter: 'list',
 
-  // Globale Konfiguration für alle Tests
+  // Global configuration for all tests
   use: {
-    // Basis-URL für Aktionen wie page.goto('/')
+    // Base URL for actions like page.goto('/')
     baseURL: 'http://localhost:5001/app/index.html',
 
-    // Erstellt einen Trace-Bericht bei fehlgeschlagenen Tests
+    // Creates a trace report on failed tests
     trace: 'on-first-retry',
 
-    // Deaktiviert die Browsersicherheitsrichtlinien, nützlich für lokale Tests
+    // Disables browser security policies, useful for local testing
     launchOptions: {
       args: ['--disable-web-security']
     }
   },
 
-  // Konfiguration für das zu testende Browser-Projekt
+  // Configuration for the browser project under test
   projects: [
     {
       name: 'chromium',
