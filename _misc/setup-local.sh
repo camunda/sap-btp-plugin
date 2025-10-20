@@ -32,4 +32,8 @@ else
 fi
 
 # deploy sample data
-cd core && cds deploy --profile hybrid && cd ..
+if [ "$1" = "--hybrid" ]; then
+  cd core && cds deploy --profile hybrid && cd ..
+else
+  cd core && cds deploy && cd ..
+fi
