@@ -41,8 +41,14 @@ $> source test/.env-localdev
 # boot up a c8 version locally from /test/docker
 $> cd test/docker/...; docker-compose up
 
-# start the btp plugin
-$> npm run start:local
+# boot up a the postgresql server
+$> cd test/docker/pgstandalone; docker-compose up
+
+# prepare local development with local postgres server and disabled auth strategy
+$> sh _misc/setup-local.sh
+
+# start the btp plugin... docker ports differ a bit from JAVA Node Camunda version, therefor override tasklist base url
+$> CAMUNDA_TASKLIST_BASE_URL=http://localhost:8088 npm run start:local
 
 # -> http://localhost:5001
 ```
@@ -67,9 +73,6 @@ $> cf cs xsuaa application uaa-hybrid-instance -c xs-security.json
 $> cds bind -2 uaa-hybrid-instance # auto-creates a service key
 # ... creates .cdsrc-private.json
 
-# fiddle up files for local runtime
-./_misc/setup-local.sh
-
 # credentials for local c8
 $> source test/.env-localdev
 
@@ -80,7 +83,17 @@ $> cd test/docker/...; docker-compose up
 # this is mapped on port 5433 (!)
 # and has an adminer instance on http://localhost:8888
 $> cd test/docker/pg-standalone; docker-compose up
-# make sure to enter db connectivity into .cdsrc-private.json
+
+# make sure your database credentials are set up correctly in _misc/cdsrc-private.json
+# set up database credentials also in env variables if they differ from default values:
+# DB_USER="postgres"
+# DB_PASS="postgres"
+# DB_HOST="localhost"
+# DB_PORT="5433"
+# DB_NAME="sap-btp-plugin"
+
+# fiddle up files for local runtime
+./_misc/setup-local.sh --hybrid
 
 # runtime local, auth(n,z) from BTP
 # this will also 
@@ -130,3 +143,13 @@ terminal 2:
 ### router
 
 - make sure that an env var `destinations` is present and hold `srv_api` and `ui` pointing to the "backend" (`core`) and "UI" (`fiori-app`) respectively
+
+### E2E Testing
+
+#### Codegen
+
+Using the codegenerator for creating new tests run `npm run e2e:codegen`. A chromium instance starts, where you can use the ui and in background your click path is collected in form of playwright testcode.
+
+#### Run tests
+
+Run `npm run e2e:test` to execute playwright tests in a headless browser instance.
