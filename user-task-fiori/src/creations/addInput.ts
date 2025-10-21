@@ -21,7 +21,6 @@ export function addInput(this: BPMNForm, element: Component): Control {
   const required = element.validate?.required || false;
 
   const control = new Input(this.generateControlId(element), {
-    visible: this.getVisibleStatement(element),
     enabled: !enabled,
     editable: !readonly,
     required,
@@ -164,7 +163,7 @@ export function addInput(this: BPMNForm, element: Component): Control {
       return control;
     };
     this.addControl(element, hbox, ControlType.Textfield);
-    this.setValueState(control, element, control.getValue());
+    this.setValueState(control, element, control.getValue()); 
 
     return control;
   }

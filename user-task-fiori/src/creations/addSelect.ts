@@ -5,10 +5,8 @@ import { Component, ControlType } from "../BPMNformData"
 import BPMNForm from "../BPMNForm"
 
 export function addSelect(this: BPMNForm, element: Component): Control {
-  const visible = this.getVisibleStatement(element)
 
   const control = new Select(this.generateControlId(element), {
-    visible: visible,
     selectedKey:
       this.getLocalModel().getProperty(`/BPMNform/${element.key}`) ||
       this.getLocalModel().getProperty(`/BPMNform/variables/${element.key}`) ||

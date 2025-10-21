@@ -18,7 +18,6 @@ export function addTextArea(this: BPMNForm, element: Component): Control {
   const required = element.validate?.required || false
   
   const control = new TextArea(this.generateControlId(element), {
-    visible: this.getVisibleStatement(element),
     value: defaultValue,
     enabled: !enabled,
     editable: !readonly,

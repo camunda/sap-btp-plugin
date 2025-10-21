@@ -10,7 +10,7 @@ import JSONModel from "sap/ui/model/json/JSONModel"
 import BusyIndicator from "../util/BusyIndicator"
 import { CamundaRequest } from "../util/CamundaData"
 import WebSocket from "../util/WebSocket"
-import { WebSocketData } from "../util/WebSocketData"
+import { WebSocketData } from "io/camunda/connector/sap/btp/lib/WebSocketData"
 import BaseController from "./BaseController"
 
 enum FormStep {

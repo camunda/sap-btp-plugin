@@ -13,7 +13,6 @@ export function addRadioGroup(this: BPMNForm, element: Component): Control {
   const control = new RadioButtonGroup(this.generateControlId(element), {
     enabled: !enabled,
     editable: !readonly,
-    visible: this.getVisibleStatement(element),
     select: () => {
       control.setValueState(ValueState.None);
       this.provideValueToView(element, control);

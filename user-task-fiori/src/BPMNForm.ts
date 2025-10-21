@@ -39,6 +39,7 @@ import {
 import HBox from "sap/m/HBox"
 import Title from "sap/m/Title"
 import Icon from "sap/ui/core/Icon"
+import DeepJSONModel from "./model/DeepJSONModel"
 
 // name of local json model used for local bindings
 const localModelName = uid()
@@ -173,9 +174,15 @@ export default class BPMNForm extends Control {
   }
 
   provideValueToView(element: Component, control: Control): void {
-    ;(this.getModel(localModelName) as JSONModel).setProperty(
+    // store values for backend sending
+    this.getLocalModel().setProperty(
       `/BPMNform/${element.key}`,
-      this.getValueFromControl(element.type || element.properties?.type, control) || ""
+      this.getValueFromControl(element.type || (element.properties?.type as ControlType), control) || ""
+    )
+    // store values also in variables for dynamic hide/show behavior
+    this.getLocalModel().setProperty(
+      `/BPMNform/variables/${element.key}`,
+      this.getValueFromControl(element.type || (element.properties?.type as ControlType), control) || ""
     )
   }
 
@@ -201,6 +208,24 @@ export default class BPMNForm extends Control {
 
     this._initLocalModel()
 
+    const localModel = this.getModel(localModelName) as DeepJSONModel
+    localModel.attachPropertyChange((oEvent) => {
+      const sPath = oEvent.getParameter("path") as string
+      const value = oEvent.getParameter("value")
+      if (sPath && sPath.startsWith("/BPMNform")) {
+        const controls = this.getItems()
+        for (let i = 0; i < controls.length; i++) {
+          const control = controls[i].data("control") as Control
+          if (control) {
+            const element = controls[i].data("element") as Component
+            const visible = this.getVisibleStatement(element)
+            control.setVisible(visible)
+          }
+        }
+        console.log(`Eigenschaft geändert: Pfad='${sPath}', Neuer Wert='${JSON.stringify(value)}'`)
+      }
+    })
+
     EventBus.getInstance().subscribe("Camunda", "startProcess", () => {
       this._initLocalModel()
     })
@@ -213,9 +238,9 @@ export default class BPMNForm extends Control {
         variables: {}
       }
     }
-    const localModel = this.getModel(localModelName) as JSONModel
+    const localModel = this.getModel(localModelName) as DeepJSONModel
     if (!localModel) {
-      this.setModel(new JSONModel(data), localModelName)
+      this.setModel(new DeepJSONModel(data), localModelName)
     } else if (Object.keys((localModel.getProperty("/BPMNform/variables") as object) || {}).length === 0) {
       localModel.setData(data)
     }
@@ -264,6 +289,8 @@ export default class BPMNForm extends Control {
   }
 
   processVariables(data: WebSocketData): void {
+    // TODO: merge variables from default values to variables provided for view
+
     // populate local model with variables from server for use in UI conditions
     this._updateFormVariables(data.variables)
   }
@@ -285,8 +312,13 @@ export default class BPMNForm extends Control {
     this._generateControls(formData.components)
   }
 
-  getLocalModel(): JSONModel {
-    return this.getModel(this.localModelName) as JSONModel
+  getLocalModel(): DeepJSONModel {
+    let model = this.getModel(this.localModelName) as DeepJSONModel
+    if (!model) {
+      model = new DeepJSONModel()
+      this.setModel(model, this.localModelName)
+    }
+    return model
   }
 
   _updateFormVariables(variables: { [index: string]: string }): void {
