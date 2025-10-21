@@ -9,13 +9,30 @@
 		"strictNullChecks": false,
 		"strictPropertyInitialization": false,
 		"rootDir": "./webapp",
-		"types": ["@openui5/types", "@types/qunit", "@camunda8/user-task-fiori"],
+		"types": [
+			"@openui5/types",
+			"@types/qunit",
+			"@camunda8/user-task-fiori"
+		],
 		"paths": {
-			"io/camunda/connector/sap/btp/app/*": ["./webapp/*"],
-			"unit/*": ["./webapp/test/unit/*"],
-			"integration/*": ["./webapp/test/integration/*"]
+			"io/camunda/connector/sap/btp/app/*": [
+				"./webapp/*"
+			],
+			"io/camunda/connector/sap/btp/lib/*": [
+				"../user-task-fiori/src/*"
+			],
+			"unit/*": [
+				"./webapp/test/unit/*"
+			],
+			"integration/*": [
+				"./webapp/test/integration/*"
+			]
 		}
 	},
-	"exclude": ["./webapp/test/e2e/**/*"],
-	"include": ["./webapp/**/*"]
+	"exclude": [
+		"./webapp/test/e2e/**/*"
+	],
+	"include": [
+		"./webapp/**/*"
+	]
 }
