@@ -20,10 +20,12 @@
     "//hybrid:xs-app": "this is needed for destination resolution",
     "hybrid:xs-app": "cp router/xs-app.json router/xs-app.json.orig; cp router/xs-app-hybrid.json router/xs-app.json",
     "hybrid:router": "npm start -w router",
-    "local:app": "npm run -w core _deploy:sqlite; npm run start:local -w fiori-app",
+    "local:app": "npm run -w core deploy; npm run start:local -w fiori-app",
     "local:router": "npm run start:local -w router",
     "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
+    "e2e:codegen": "npx playwright codegen --browser=chromium http://localhost:5001/app/index.html",
+    "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -35,6 +37,7 @@
     "@cap-js/cds-types": "^0.11",
     "@cap-js/sqlite": "^1",
     "@eslint/js": "^9.28.0",
+    "@types/node": "^24.8.1",
     "cross-env": "^7.0.3",
     "eslint": "^9.28.0",
     "globals": "^16.2.0",

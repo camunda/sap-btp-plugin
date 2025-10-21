@@ -11,6 +11,7 @@
   "scripts": {
     "//_deploy:sqlite": "intended for local dev",
     "_deploy:sqlite": "cds deploy --to sqlite",
+    "deploy": "cds deploy",
     "build": "run-s _build:cds _build:types",
     "_build:cds": "npx cds build --production --ws-pack",
     "_build:types": "npx @cap-js/cds-typer \"*\" --outputDirectory gen/srv/@cds-models",
@@ -19,7 +20,7 @@
     "test": "jest --forceExit --silent"
   },
   "dependencies": {
-    "@camunda8/sdk": "^8.7.17",
+    "@camunda8/sdk": "^8.7.30",
     "@camunda8/websocket": "*",
     "@cap-js/cds-typer": ">=0.35",
     "@cap-js/cds-types": "^0.11.0",
