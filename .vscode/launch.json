@@ -8,8 +8,14 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}/fiori-app/webapp"
+            "url": "http://localhost:5001",
+            "webRoot": "${workspaceFolder}/fiori-app/webapp",
+            "sourceMaps": true,
+            "trace": true,
+            "pathMapping": {
+                "/app/resources/io/camunda/connector/sap/btp/lib": "${workspaceFolder}/user-task-fiori/src",
+                "/app": "${workspaceFolder}/fiori-app/webapp"
+            }
         }
     ]
 }
