@@ -67,6 +67,14 @@ class SingletonWebSocket extends WebSocket {
         })
       })
       if (response.ok && response.status < 300) {
+        const body = await response.json()
+
+        // Machen Sie sie für Tests verfügbar
+        // if ((window as any).playwright) {
+          // Optional: Nur im Test-Modus
+          ;(window as any).testing = (window as any).testing || {}
+          ;(window as any).testing.processInstanceKey = body.processInstanceKey
+        // }
         // const runData = (await response.json()) as CamundaRunReturn
         // EventBus.getInstance().publish("Camunda", "run", runData)
         if (new URL(document.location.href).searchParams.get("debug")) {
