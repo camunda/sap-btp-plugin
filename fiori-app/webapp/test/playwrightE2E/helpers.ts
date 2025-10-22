@@ -157,10 +157,30 @@ async function fetchProcessInstanceById(
   })
 }
 
+/**
+ * Wait until the process instance reaches the COMPLETED state
+ * @param processInstanceKey key of process instance
+ */
+async function waitForProcessCompletion(processInstanceKey: string) {
+  await expect
+    .poll(
+      async () => {
+        const instance = await fetchProcessInstanceById(processInstanceKey)
+        return instance.state
+      },
+      {
+        message: `Process should be COMPLETED`,
+        timeout: 10000 // timeout after 10 sec
+      }
+    )
+    .toBe("COMPLETED")
+}
+
 export {
   fetchVariableFromProcessInstanceAPI,
   fetchForceVariableFromProcessInstance,
   getProcessInstanceKey,
   fetchProcessInstanceById,
-  fetchProcessInstances
+  fetchProcessInstances,
+  waitForProcessCompletion
 }

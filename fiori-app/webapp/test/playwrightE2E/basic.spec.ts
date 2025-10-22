@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test"
-import { fetchProcessInstanceById, fetchProcessInstances } from "./helpers"
+import { fetchProcessInstanceById, fetchProcessInstances, waitForProcessCompletion } from "./helpers"
 
 test.describe("Basic E2E Tests to start and complete a process", () => {
   test("App loads and shows title", async ({ page }) => {
@@ -43,19 +43,7 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
 
     await page.getByRole("button", { name: "finish Process" }).click()
 
-    // Polling current process until its state is COMPLETED
-    await expect
-      .poll(
-        async () => {
-          const instance = await fetchProcessInstanceById(currentInstance.processInstanceKey)
-          return instance.state
-        },
-        {
-          message: `Process should be COMPLETED`,
-          timeout: 10000 // timeout after 10 sec
-        }
-      )
-      .toBe("COMPLETED")
+    await waitForProcessCompletion(currentInstance.processInstanceKey)
   })
 
   test("Start process via URL and check instances on camunda", async ({ page }) => {
@@ -90,17 +78,6 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
     await page.getByRole("button", { name: "finish Process" }).click()
 
     // Polling current process until its state is COMPLETED
-    await expect
-      .poll(
-        async () => {
-          const instance = await fetchProcessInstanceById(currentInstance.processInstanceKey)
-          return instance.state
-        },
-        {
-          message: `Process should be COMPLETED`,
-          timeout: 10000 // timeout after 10 sec
-        }
-      )
-      .toBe("COMPLETED")
+    await waitForProcessCompletion(currentInstance.processInstanceKey)
   })
 })
