@@ -1,0 +1,74 @@
+{
+  "components": [
+    {
+      "label": "Decision",
+      "values": [
+        {
+          "label": "option1",
+          "value": "option1"
+        },
+        {
+          "label": "option2",
+          "value": "option2"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_1w2zl71",
+        "columns": null
+      },
+      "id": "Field_0noybfq",
+      "key": "switch",
+      "defaultValue": "invisible"
+    },
+    {
+      "label": "Option 1 selected",
+      "values": [
+        {
+          "label": "SomeValueOption1",
+          "value": "SomeValueOption1"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_1kvjpe3",
+        "columns": null
+      },
+      "id": "Field_0vsj9l9",
+      "key": "radio_value_1",
+      "defaultValue": "SomeValueOption1",
+      "conditional": {
+        "hide": "=switch = \"option2\""
+      }
+    },
+    {
+      "label": "Option 2 selected",
+      "values": [
+        {
+          "label": "SomeValueOption2",
+          "value": "SomeValueOption2"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_05gdwyi",
+        "columns": null
+      },
+      "id": "Field_0wjnvcr",
+      "key": "radio_value_2",
+      "conditional": {
+        "hide": "=switch = \"option1\""
+      },
+      "defaultValue": "SomeValueOption2"
+    }
+  ],
+  "type": "default",
+  "id": "form_45_radiogroup",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "schemaVersion": 18
+}

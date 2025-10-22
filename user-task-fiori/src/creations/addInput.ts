@@ -158,7 +158,7 @@ export function addInput(this: BPMNForm, element: Component): Control {
           control.setValueState(ValueState.Error);
         }
         control.setValue("");
-        this._provideValueToView(element, control);
+        this.provideValueToView(element, control);
       }
       return control;
     };

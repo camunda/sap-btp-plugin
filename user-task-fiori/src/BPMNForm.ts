@@ -119,7 +119,8 @@ export default class BPMNForm extends Control {
         break
       }
       case ControlType.CheckBox:
-        if (control && (control as CheckBox).getVisible()) {
+        // check, if containing vbox is visible
+        if (control && (control as CheckBox).data("container").getVisible()) {
           value = (control as CheckBox).getSelected()
         } else {
           value = ""
@@ -164,7 +165,7 @@ export default class BPMNForm extends Control {
       if (!valueState) {
         valueState = control.getValueState ? control.getValueState() : false
       }
-      if (valueState !== ValueState.None && control.getVisible()) {
+      if (valueState !== ValueState.None && control.data("container").getVisible()) {
         valid = false
       }
       return !valid
@@ -209,13 +210,26 @@ export default class BPMNForm extends Control {
     this._initLocalModel()
 
     const localModel = this.getModel(localModelName) as DeepJSONModel
+    this._addVisiblilityChangeObserver(localModel)
+
+    EventBus.getInstance().subscribe("Camunda", "startProcess", () => {
+      this._initLocalModel()
+    })
+  }
+
+  /**
+   * observe changes in local model to re-evaluate visibility conditions of all controls
+   *
+   * @param localModel local json model with all variables coming from camunda and ui
+   */
+  private _addVisiblilityChangeObserver(localModel: DeepJSONModel) {
     localModel.attachPropertyChange((oEvent) => {
       const sPath = oEvent.getParameter("path") as string
       const value = oEvent.getParameter("value")
       if (sPath && sPath.startsWith("/BPMNform")) {
         const controls = this.getItems()
         for (let i = 0; i < controls.length; i++) {
-          const control = controls[i].data("control") as Control
+          const control = controls[i]
           if (control) {
             const element = controls[i].data("element") as Component
             const visible = this.getVisibleStatement(element)
@@ -224,10 +238,6 @@ export default class BPMNForm extends Control {
         }
         console.log(`Eigenschaft geändert: Pfad='${sPath}', Neuer Wert='${JSON.stringify(value)}'`)
       }
-    })
-
-    EventBus.getInstance().subscribe("Camunda", "startProcess", () => {
-      this._initLocalModel()
     })
   }
 
@@ -340,7 +350,7 @@ export default class BPMNForm extends Control {
     console.debug(`[${this.getMetadata().getName()}] > onAfterRendering`)
   }
 
-  private generateLabelFromElement(element: Component): string {
+  private generateLabelTextFromElement(element: Component): string {
     return element.description ? `${element.label} (${element.description})` : element.label
   }
 
@@ -354,7 +364,7 @@ export default class BPMNForm extends Control {
   ) {
     const visible = this.getVisibleStatement(element)
     const id = control.getId()
-    const title = this.generateLabelFromElement(element)
+    const title = this.generateLabelTextFromElement(element)
 
     if (keepTrack) {
       // keep track of generated control for later value retrieval
@@ -375,7 +385,6 @@ export default class BPMNForm extends Control {
     if (showLabel) {
       vbox.addItem(
         new Label({
-          visible: visible,
           text: title,
           labelFor: id,
           required: element.validate?.required,
@@ -383,6 +392,8 @@ export default class BPMNForm extends Control {
         })
       )
     }
+
+    control.data("container", vbox)
 
     vbox.addItem(control).addStyleClass("sapUiResponsiveMargin")
     vbox.data("control", control)
@@ -435,8 +446,12 @@ export default class BPMNForm extends Control {
     // for each dynamically generated cdontrol,
     // get its' "key" data for submitting -> job worker
     // and its' value that was supplied/chosen by the user
-    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+    this.generatedControls.forEach((control: GeneratedControl) => {
       const ui5Control = Core.byId(control.id) as Control
+
+      if (!ui5Control.data("container").getVisible()) {
+        return
+      }
 
       // represents the form key as modelled in Camunda
       const key = ui5Control.getCustomData()[0].getKey()
@@ -446,9 +461,7 @@ export default class BPMNForm extends Control {
       switch (control.type) {
         case ControlType.CheckBox:
           {
-            if (ui5Control.getVisible()) {
-              answer = String((ui5Control as CheckBox).getSelected())
-            }
+            answer = String((ui5Control as CheckBox).getSelected())
           }
           break
         case ControlType.Select:

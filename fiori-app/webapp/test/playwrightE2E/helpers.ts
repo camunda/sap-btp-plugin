@@ -1,4 +1,4 @@
-import test, { expect } from "@playwright/test"
+import test, { expect, Page } from "@playwright/test"
 
 const camundaRest = (globalThis as any).process?.env?.ZEEBE_REST_ADDRESS ?? "http://localhost:8088"
 
@@ -9,7 +9,7 @@ const camundaRest = (globalThis as any).process?.env?.ZEEBE_REST_ADDRESS ?? "htt
  * @param variableName variable name to fetch
  * @returns variable value
  */
-async function fetchVariableFromProcessInstanceAPI(processInstanceKey: string, variableName: string): Promise<any> {
+async function fetchVariableFromProcessInstance(processInstanceKey: string, variableName: string): Promise<any> {
   return new Promise((resolve, reject) => {
     fetch(`${camundaRest}/v2/variables/search`, {
       method: "POST",
@@ -35,34 +35,19 @@ async function fetchVariableFromProcessInstanceAPI(processInstanceKey: string, v
 
 /**
  * Get variable from camunda backend by calling process instance variable endpoint
- * It forces to wait until variable is set in process instance and extracts process instance key from window.testing if not given
- *
- * Whereas fetchVariableFromProcessInstance tries only once to get the variable, this function will poll until the variable is set.
  *
  * @param variableName variable to fetch from browser session
- * @param page optional page object of playwright. only needed, if no process instance key is given
- * @param processInstanceKey optional process instance identifier. If not given, we try to extract that from server
+ * @param processInstanceKey process instance identifier
  * @returns
  */
-async function fetchForceVariableFromProcessInstance(
-  variableName: string,
-  processInstanceKey: string = "",
-  page: any = {}
-): Promise<any> {
+async function pollVariableFromProcessInstance(variableName: string, processInstanceKey: string): Promise<any> {
   return new Promise(async (resolve, reject) => {
     let variable: string
-    if (processInstanceKey === "") {
-      if (!page) {
-        reject("No page object given to extract processInstanceKey from window.testing")
-        return
-      }
-      processInstanceKey = await getProcessInstanceKey(page)
-    }
 
     await expect
       .poll(
         async () => {
-          variable = (await fetchVariableFromProcessInstanceAPI(processInstanceKey, variableName)) as string
+          variable = (await fetchVariableFromProcessInstance(processInstanceKey, variableName)) as string
           return variable
         },
         {
@@ -76,31 +61,30 @@ async function fetchForceVariableFromProcessInstance(
 }
 
 /**
- * Get process instance key of camunda
+ * Start a new process instance by navigating to the fiori app with ?run=processDefinitionId
  *
- * It tries to extract the process instance key from window.testing object in the browser.
- * This is custom behavior of the fiori app to expose testing information in that object.
- *
+ * @param processDefinitionId camunda process definition used in Camunda GUI
  * @param page page object of playwright
- * @returns
+ * @returns process instance key of started process
  */
-async function getProcessInstanceKey(page: any) {
-  let processInstanceKey: string
-  await expect
-    .poll(
-      async () => {
-        const testing = (await page.evaluate(() => (window as any).testing)) || {}
-        processInstanceKey = testing.processInstanceKey
-        console.log("Process Instance Key from window.testing:", processInstanceKey)
-        return testing.processInstanceKey
-      },
-      {
-        timeout: 5000,
-        message: "Waiting for processInstanceKey to be set in window.testing"
-      }
-    )
-    .not.toBeUndefined()
-  return processInstanceKey
+async function startProcessInstance(processDefinitionId: string, page: Page): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    
+    const runProcessPromise = page.waitForResponse((response) => {
+      return response.url().endsWith("runProcess") && response.status() === 200
+    })
+
+    await page.goto("?run=" + processDefinitionId)
+
+    const response = await runProcessPromise
+    
+    if (response.ok()) {
+      const body = await response.json()
+      resolve(body.processInstanceKey)
+    } else {
+      reject(`Failed to start process instance for ${processDefinitionId}`)
+    }
+  })
 }
 
 /**
@@ -158,6 +142,34 @@ async function fetchProcessInstanceById(
 }
 
 /**
+ * Get process instance key of camunda
+ *
+ * It tries to extract the process instance key from window.testing object in the browser.
+ * This is custom behavior of the fiori app to expose testing information in that object.
+ *
+ * @param page page object of playwright
+ * @returns
+ */
+async function getProcessInstanceKey(page: any) {
+  let processInstanceKey: string
+  await expect
+    .poll(
+      async () => {
+        const testing = (await page.evaluate(() => (window as any).testing)) || {}
+        processInstanceKey = testing.processInstanceKey
+        console.log("Process Instance Key from window.testing:", processInstanceKey)
+        return testing.processInstanceKey
+      },
+      {
+        timeout: 5000,
+        message: "Waiting for processInstanceKey to be set in window.testing"
+      }
+    )
+    .not.toBeUndefined()
+  return processInstanceKey
+}
+
+/**
  * Wait until the process instance reaches the COMPLETED state
  * @param processInstanceKey key of process instance
  */
@@ -177,10 +189,10 @@ async function waitForProcessCompletion(processInstanceKey: string) {
 }
 
 export {
-  fetchVariableFromProcessInstanceAPI,
-  fetchForceVariableFromProcessInstance,
-  getProcessInstanceKey,
+  fetchVariableFromProcessInstance,
+  pollVariableFromProcessInstance,
   fetchProcessInstanceById,
   fetchProcessInstances,
-  waitForProcessCompletion
+  waitForProcessCompletion,
+  startProcessInstance
 }
