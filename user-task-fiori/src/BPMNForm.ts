@@ -227,18 +227,22 @@ export default class BPMNForm extends Control {
       const sPath = oEvent.getParameter("path") as string
       const value = oEvent.getParameter("value")
       if (sPath && sPath.startsWith("/BPMNform")) {
-        const controls = this.getItems()
-        for (let i = 0; i < controls.length; i++) {
-          const control = controls[i]
-          if (control) {
-            const element = controls[i].data("element") as Component
-            const visible = this.getVisibleStatement(element)
-            control.setVisible(visible)
-          }
-        }
+        this.updateControlVisibility()
         console.log(`Eigenschaft geändert: Pfad='${sPath}', Neuer Wert='${JSON.stringify(value)}'`)
       }
     })
+  }
+
+  private updateControlVisibility() {
+    const controls = this.getItems()
+    for (let i = 0; i < controls.length; i++) {
+      const control = controls[i]
+      if (control) {
+        const element = controls[i].data("element") as Component
+        const visible = this.getVisibleStatement(element)
+        control.setVisible(visible)
+      }
+    }
   }
 
   _initLocalModel() {
@@ -399,6 +403,8 @@ export default class BPMNForm extends Control {
     vbox.data("control", control)
     vbox.data("controlType", controlType)
     vbox.data("element", element)
+
+    this.provideValueToView(element, control)
 
     this.addItem(vbox)
   }
