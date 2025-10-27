@@ -1,0 +1,46 @@
+{
+  "components": [
+    {
+      "label": "Decision",
+      "values": [
+        {
+          "label": "Visible",
+          "value": "visible"
+        },
+        {
+          "label": "Hidden",
+          "value": "hidden"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_015eqiq",
+        "columns": null
+      },
+      "id": "Field_1t93jrh",
+      "key": "switch",
+      "defaultValue": "hidden"
+    },
+    {
+      "text": "# Text",
+      "type": "text",
+      "layout": {
+        "row": "Row_0dngx9g",
+        "columns": null
+      },
+      "id": "Field_16j7gnh",
+      "conditional": {
+        "hide": "=switch = \"hidden\""
+      }
+    }
+  ],
+  "type": "default",
+  "id": "form_45_text",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "schemaVersion": 18
+}

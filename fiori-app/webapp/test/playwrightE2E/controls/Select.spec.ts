@@ -3,7 +3,7 @@ import { fetchVariableFromProcessInstance, startProcessInstance, waitForProcessC
 import Page from "@playwright/test"
 
 test.describe("select Control E2E Test (process_45_select)", () => {
-  test.only("should hide select controls according to hidden expression and hidden fields should not be submitted", async ({
+  test("should hide select controls according to hidden expression and hidden fields should not be submitted", async ({
     page
   }) => {
     const processDefinitionId = "process_45_select"
