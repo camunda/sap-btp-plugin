@@ -1,0 +1,38 @@
+{
+  "components": [
+    {
+      "label": "Visibility is hidden",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_15ewxvs",
+        "columns": null
+      },
+      "id": "Field_1nc6wa8",
+      "key": "switch",
+      "defaultValue": true
+    },
+    {
+      "label": "Checkbox",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1rfli77",
+        "columns": null
+      },
+      "id": "Field_1ngoux5",
+      "key": "checkbox_1",
+      "conditional": {
+        "hide": "=switch = \"checked\""
+      },
+      "defaultValue": true
+    }
+  ],
+  "type": "default",
+  "id": "form_45_checkbox",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "schemaVersion": 18
+}

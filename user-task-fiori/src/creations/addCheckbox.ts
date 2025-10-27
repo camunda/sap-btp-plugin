@@ -25,7 +25,6 @@ export function addCheckbox(this: BPMNForm, element: Component): Control {
     }
   })
 
-  this.provideValueToView(element, control)
   this.addControl(element, control, ControlType.CheckBox, false)
   this.validate()
 

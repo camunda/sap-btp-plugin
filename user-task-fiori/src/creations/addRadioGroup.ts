@@ -39,8 +39,6 @@ export function addRadioGroup(this: BPMNForm, element: Component): Control {
 
   control.setSelectedIndex(selectedIndex);
 
-  this.provideValueToView(element, control);
-
   if (element.validate?.required && (!defaultValue || defaultValue === "<none>")) {
     control.setValueState(ValueState.Error);
   }
