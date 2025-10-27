@@ -225,14 +225,16 @@ export default class BPMNForm extends Control {
   private _addVisiblilityChangeObserver(localModel: DeepJSONModel) {
     localModel.attachPropertyChange((oEvent) => {
       const sPath = oEvent.getParameter("path") as string
-      const value = oEvent.getParameter("value")
       if (sPath && sPath.startsWith("/BPMNform")) {
         this.updateControlVisibility()
-        console.log(`Eigenschaft geändert: Pfad='${sPath}', Neuer Wert='${JSON.stringify(value)}'`)
       }
     })
   }
 
+  /**
+   * update visibility of all controls based on their visibility conditions written in FEEL
+   * Bc of FEEL we cant use the SAPUI5 binding mechanism here
+   */
   private updateControlVisibility() {
     const controls = this.getItems()
     for (let i = 0; i < controls.length; i++) {
@@ -245,6 +247,9 @@ export default class BPMNForm extends Control {
     }
   }
 
+  /**
+   * initialize the local json model used for local bindings and visibility conditions
+   */
   _initLocalModel() {
     console.debug(`[${this.getMetadata().getName()}] > local BPMN form model: ${localModelName}`)
     const data = {
@@ -272,17 +277,7 @@ export default class BPMNForm extends Control {
     const container = new HBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin").setAlignItems("Center")
     const content = new VBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin")
 
-    // REVISIT: is there a reason to display a generic "success" message
-    // in addition to the linked form in the user task?
-    // if (data.type === "final-task-success") {
-    // content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
-    // }
-
     if (data.type === "final-task-fail") {
-      // REVISIT: is there a reason to display a generic "fail" message
-      // in addition to the linked form in the user task?
-      // const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
-      // h1.addStyleClass("sapUiSmallMarginBegin")
       const title = new HBox({
         items: [
           new Icon({ src: "sap-icon://alert", color: "red" })
