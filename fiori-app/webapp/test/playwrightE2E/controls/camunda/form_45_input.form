@@ -1,0 +1,49 @@
+{
+  "components": [
+    {
+      "label": "Decision",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_11wbhth",
+        "columns": null
+      },
+      "id": "Field_1v3qxeg",
+      "key": "switch"
+    },
+    {
+      "label": "Decision equals not \"Option 2\"",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1j61y4z",
+        "columns": null
+      },
+      "id": "Field_0zijd6f",
+      "key": "input_value_1",
+      "conditional": {
+        "hide": "=switch = \"Option 2\""
+      }
+    },
+    {
+      "label": "Decision equals not \"Option 1\"",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_16mqbmi",
+        "columns": null
+      },
+      "id": "Field_060sfug",
+      "key": "input_value_2",
+      "conditional": {
+        "hide": "=switch = \"Option 1\""
+      }
+    }
+  ],
+  "type": "default",
+  "id": "form_45_input",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "schemaVersion": 18
+}
