@@ -211,7 +211,7 @@ describe("datetime input", () => {
     const _minDate = await dp.getMinDate()
     const minDate = await _minDate.toString()
     expect(minDate).toBeDefined()
-    
+
     const today = new Date().toDateString()
     expect(new Date(minDate).toDateString()).toBe(today)
   })

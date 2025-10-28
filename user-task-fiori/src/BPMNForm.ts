@@ -444,7 +444,7 @@ export default class BPMNForm extends Control {
 
   getUserData(): userFormData[] {
     const data: userFormData[] = []
-    // for each dynamically generated cdontrol,
+    // for each dynamically generated control,
     // get its' "key" data for submitting -> job worker
     // and its' value that was supplied/chosen by the user
     this.generatedControls.forEach((control: GeneratedControl) => {

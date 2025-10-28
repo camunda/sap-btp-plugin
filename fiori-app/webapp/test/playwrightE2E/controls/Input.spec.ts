@@ -16,7 +16,7 @@ test.describe("Input Control E2E Test (process_45_input)", () => {
     await page.getByRole("textbox", { name: 'Decision equals not "Option 1"' }).fill("Something")
     await page.getByRole("textbox", { name: 'Decision equals not "Option 2"' }).fill("Something")
 
-    // test 1: fill in "Option 2", should hide first input 
+    // test 1: fill in "Option 2", should hide first input
     await page.getByRole("textbox", { name: "Decision", exact: true }).fill("Option 2")
 
     await expect(page.getByText('Decision equals not "Option 2"')).toBeHidden()

@@ -9,14 +9,13 @@ test.describe("Checkbox Control E2E Test (process_45_checkbox)", () => {
     const processDefinitionId = "process_45_checkbox"
     const instanceKey = await startProcessInstance(processDefinitionId, page)
 
-    await expect(page.getByRole('checkbox', { name: 'Checkbox' })).toBeHidden();
-    
+    await expect(page.getByRole("checkbox", { name: "Checkbox" })).toBeHidden()
 
-    await page.getByRole('checkbox', { name: 'Visibility is hidden' }).click();
-    await expect(page.getByRole('checkbox', { name: 'Checkbox' })).toBeVisible();
+    await page.getByRole("checkbox", { name: "Visibility is hidden" }).click()
+    await expect(page.getByRole("checkbox", { name: "Checkbox" })).toBeVisible()
 
-    await page.getByRole('checkbox', { name: 'Visibility is hidden' }).click();
-    await expect(page.getByRole('checkbox', { name: 'Checkbox' })).toBeHidden();
+    await page.getByRole("checkbox", { name: "Visibility is hidden" }).click()
+    await expect(page.getByRole("checkbox", { name: "Checkbox" })).toBeHidden()
 
     // finish process and check variables
     await page.getByRole("button", { name: "Next" }).click()
@@ -25,6 +24,5 @@ test.describe("Checkbox Control E2E Test (process_45_checkbox)", () => {
 
     // check variables. The hidden field should not be submitted
     expect(await fetchVariableFromProcessInstance(instanceKey, "checkbox_1")).toBeUndefined()
-
   })
 })

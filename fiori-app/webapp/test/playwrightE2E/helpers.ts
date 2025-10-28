@@ -69,7 +69,6 @@ async function pollVariableFromProcessInstance(variableName: string, processInst
  */
 async function startProcessInstance(processDefinitionId: string, page: Page): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    
     const runProcessPromise = page.waitForResponse((response) => {
       return response.url().endsWith("runProcess") && response.status() === 200
     })
@@ -77,7 +76,7 @@ async function startProcessInstance(processDefinitionId: string, page: Page): Pr
     await page.goto("?run=" + processDefinitionId)
 
     const response = await runProcessPromise
-    
+
     if (response.ok()) {
       const body = await response.json()
       resolve(body.processInstanceKey)

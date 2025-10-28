@@ -29,7 +29,7 @@ builder:
       afterTask: replaceVersion
       configuration:
         addToNamespace: false
-        prependPathMappings: true 
+        prependPathMappings: true
         debug: "verbose"
     - name: ui5-tooling-transpile-task
       afterTask: replaceVersion

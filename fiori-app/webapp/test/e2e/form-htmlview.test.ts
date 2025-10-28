@@ -106,7 +106,7 @@ describe("HTML control", () => {
 
     expect(containsExpected).toBeTruthy()
   })
-  
+
   it("should hide HTML content when visibility set to false via FEEL", async () => {
     const htmlSelector = {
       selector: {

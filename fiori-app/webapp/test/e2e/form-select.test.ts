@@ -78,7 +78,6 @@ describe("select", () => {
     expect(visibleAfter).toBeFalsy()
   })
 
-
   it.skip("static disabled", async () => {})
   it.skip("static read-only", async () => {})
   it.skip("input data", async () => {})
