@@ -12,7 +12,7 @@
     "ws": "^8.18.2"
   },
   "peerDependencies": {
-    "@sap/cds": "^8"
+    "@sap/cds": "^9"
   },
   "peerDependenciesMeta": {
     "@sap/cds": {
