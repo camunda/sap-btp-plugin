@@ -153,7 +153,7 @@ export function addInput(this: BPMNForm, element: Component): Control {
     const fn = hbox.setVisible;
     hbox.setVisible = (value) => {
       fn.apply(control, [value]);
-      if (control.getVisible() === false) {
+      if (control.data("container").getVisible() === false) {
         if (element.validate?.required) {
           control.setValueState(ValueState.Error);
         }
@@ -162,6 +162,11 @@ export function addInput(this: BPMNForm, element: Component): Control {
       }
       return control;
     };
+    // generate getValue proxy function for HBox to retrieve value from inner Input control 
+    // so its behaviour is consistent to real direct input controls
+    hbox.getValue = () => {
+      return control.getValue();
+    }
     this.addControl(element, hbox, ControlType.Textfield);
     this.setValueState(control, element, control.getValue()); 
 
