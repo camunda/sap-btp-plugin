@@ -1,8 +1,8 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test"
 
 export default defineConfig({
   // Directory with test files
-  testDir: './',
+  testDir: "./",
 
   // Maximum time a single test can run (in milliseconds)
   timeout: 30000,
@@ -13,27 +13,27 @@ export default defineConfig({
   },
 
   // Reporter for the command line
-  reporter: 'list',
+  reporter: "list",
 
   // Global configuration for all tests
   use: {
     // Base URL for actions like page.goto('/')
-    baseURL: 'http://localhost:5001/app/index.html',
+    baseURL: "http://localhost:5001/app/index.html",
 
     // Creates a trace report on failed tests
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
 
     // Disables browser security policies, useful for local testing
     launchOptions: {
-      args: ['--disable-web-security']
+      args: ["--disable-web-security"]
     }
   },
 
   // Configuration for the browser project under test
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
-});
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] }
+    }
+  ]
+})

@@ -1,0 +1,38 @@
+{
+  "components": [
+    {
+      "subtype": "date",
+      "dateLabel": "Date hides other date, when set to \"2025-10-27\"",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_07sh3fd",
+        "columns": null
+      },
+      "id": "Field_1txuq6l",
+      "key": "control"
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Date",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_089puxg",
+        "columns": null
+      },
+      "id": "Field_08fzbxh",
+      "key": "check",
+      "conditional": {
+        "hide": "=control = \"2025-10-27\""
+      }
+    }
+  ],
+  "type": "default",
+  "id": "form_45_datetime",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "schemaVersion": 18
+}

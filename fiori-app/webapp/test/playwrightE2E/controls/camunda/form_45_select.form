@@ -1,0 +1,74 @@
+{
+  "components": [
+    {
+      "label": "Decision",
+      "values": [
+        {
+          "label": "Option 1",
+          "value": "option1"
+        },
+        {
+          "label": "Option 2",
+          "value": "option2"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_0g4zez8",
+        "columns": null
+      },
+      "id": "Field_1vvrxnj",
+      "key": "switch",
+      "defaultValue": "option1"
+    },
+    {
+      "label": "Option 1: Decision equals not Option 2",
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1igvy3l",
+        "columns": null
+      },
+      "id": "Field_1t66j0c",
+      "key": "select_option_1",
+      "conditional": {
+        "hide": "=switch = \"option2\""
+      },
+      "defaultValue": "value"
+    },
+    {
+      "label": "Option 2: Decision equals not Option 1",
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1ip3jm8",
+        "columns": null
+      },
+      "id": "Field_0oxb50d",
+      "key": "select_option_2",
+      "conditional": {
+        "hide": "=switch = \"option1\""
+      },
+      "defaultValue": "value"
+    }
+  ],
+  "type": "default",
+  "id": "form_45_select",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.36.1"
+  },
+  "schemaVersion": 18
+}

@@ -67,6 +67,7 @@ class SingletonWebSocket extends WebSocket {
         })
       })
       if (response.ok && response.status < 300) {
+        const body = await response.json()
         // const runData = (await response.json()) as CamundaRunReturn
         // EventBus.getInstance().publish("Camunda", "run", runData)
         if (new URL(document.location.href).searchParams.get("debug")) {

@@ -1,0 +1,22 @@
+{
+  "components": [
+    {
+      "text": "**Final user task** has been called with **success**.",
+      "type": "text",
+      "layout": {
+        "row": "Row_01zfqcu",
+        "columns": null
+      },
+      "id": "Field_193mo3u"
+    }
+  ],
+  "type": "default",
+  "id": "final-user-task-success",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.39.0"
+  },
+  "schemaVersion": 19
+}

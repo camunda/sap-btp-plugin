@@ -62,7 +62,7 @@ describe("text input", () => {
     for (const control of markdowns) {
       expect(await control.getVisible()).toBe(true)
     }
-    
+
     const feelVars = [{ name: "invisible", value: true }]
     await injectFEEL("__xmlview0--BPMNform", feelVars)
     const markdownsAfter = await browser.allControls<Markdown>(textSelector)

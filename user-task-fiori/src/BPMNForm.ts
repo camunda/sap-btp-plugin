@@ -39,6 +39,7 @@ import {
 import HBox from "sap/m/HBox"
 import Title from "sap/m/Title"
 import Icon from "sap/ui/core/Icon"
+import DeepJSONModel from "./model/DeepJSONModel"
 
 // name of local json model used for local bindings
 const localModelName = uid()
@@ -118,13 +119,18 @@ export default class BPMNForm extends Control {
         break
       }
       case ControlType.CheckBox:
-        if (control && (control as CheckBox).getVisible()) {
+        // check, if containing vbox is visible
+        if (control && (control as CheckBox).data("container").getVisible()) {
           value = (control as CheckBox).getSelected()
         } else {
           value = ""
         }
         break
       case ControlType.Text:
+        break
+      case ControlType.HTML:
+        break
+      case ControlType.Image:
         break
       default:
         console.error(`[${this.getId()}] - working an unknown form control type ${type}`)
@@ -163,7 +169,7 @@ export default class BPMNForm extends Control {
       if (!valueState) {
         valueState = control.getValueState ? control.getValueState() : false
       }
-      if (valueState !== ValueState.None && control.getVisible()) {
+      if (valueState !== ValueState.None && control.data("container").getVisible()) {
         valid = false
       }
       return !valid
@@ -173,9 +179,15 @@ export default class BPMNForm extends Control {
   }
 
   provideValueToView(element: Component, control: Control): void {
-    ;(this.getModel(localModelName) as JSONModel).setProperty(
+    // store values for backend sending
+    this.getLocalModel().setProperty(
       `/BPMNform/${element.key}`,
-      this.getValueFromControl(element.type || element.properties?.type, control) || ""
+      this.getValueFromControl(element.type || (element.properties?.type as ControlType), control) || ""
+    )
+    // store values also in variables for dynamic hide/show behavior
+    this.getLocalModel().setProperty(
+      `/BPMNform/variables/${element.key}`,
+      this.getValueFromControl(element.type || (element.properties?.type as ControlType), control) || ""
     )
   }
 
@@ -201,11 +213,47 @@ export default class BPMNForm extends Control {
 
     this._initLocalModel()
 
+    const localModel = this.getModel(localModelName) as DeepJSONModel
+    this._addVisiblilityChangeObserver(localModel)
+
     EventBus.getInstance().subscribe("Camunda", "startProcess", () => {
       this._initLocalModel()
     })
   }
 
+  /**
+   * observe changes in local model to re-evaluate visibility conditions of all controls
+   *
+   * @param localModel local json model with all variables coming from camunda and ui
+   */
+  private _addVisiblilityChangeObserver(localModel: DeepJSONModel) {
+    localModel.attachPropertyChange((oEvent) => {
+      const sPath = oEvent.getParameter("path") as string
+      if (sPath && sPath.startsWith("/BPMNform")) {
+        this.updateControlVisibility()
+      }
+    })
+  }
+
+  /**
+   * update visibility of all controls based on their visibility conditions written in FEEL
+   * Bc of FEEL we cant use the SAPUI5 binding mechanism here
+   */
+  private updateControlVisibility() {
+    const controls = this.getItems()
+    for (let i = 0; i < controls.length; i++) {
+      const control = controls[i]
+      if (control) {
+        const element = controls[i].data("element") as Component
+        const visible = this.getVisibleStatement(element)
+        control.setVisible(visible)
+      }
+    }
+  }
+
+  /**
+   * initialize the local json model used for local bindings and visibility conditions
+   */
   _initLocalModel() {
     console.debug(`[${this.getMetadata().getName()}] > local BPMN form model: ${localModelName}`)
     const data = {
@@ -213,9 +261,9 @@ export default class BPMNForm extends Control {
         variables: {}
       }
     }
-    const localModel = this.getModel(localModelName) as JSONModel
+    const localModel = this.getModel(localModelName) as DeepJSONModel
     if (!localModel) {
-      this.setModel(new JSONModel(data), localModelName)
+      this.setModel(new DeepJSONModel(data), localModelName)
     } else if (Object.keys((localModel.getProperty("/BPMNform/variables") as object) || {}).length === 0) {
       localModel.setData(data)
     }
@@ -233,17 +281,7 @@ export default class BPMNForm extends Control {
     const container = new HBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin").setAlignItems("Center")
     const content = new VBox({ width: "100%" }).addStyleClass("sapUiResponsiveMargin")
 
-    // REVISIT: is there a reason to display a generic "success" message
-    // in addition to the linked form in the user task?
-    // if (data.type === "final-task-success") {
-    // content.addItem(new Title({ text: this.getFinalResultTextSuccess(), level: "H1", wrapping: true }))
-    // }
-
     if (data.type === "final-task-fail") {
-      // REVISIT: is there a reason to display a generic "fail" message
-      // in addition to the linked form in the user task?
-      // const h1 = new Title({ text: this.getFinalResultTextFail(), level: "H1", wrapping: true })
-      // h1.addStyleClass("sapUiSmallMarginBegin")
       const title = new HBox({
         items: [
           new Icon({ src: "sap-icon://alert", color: "red" })
@@ -264,6 +302,8 @@ export default class BPMNForm extends Control {
   }
 
   processVariables(data: WebSocketData): void {
+    // TODO: merge variables from default values to variables provided for view
+
     // populate local model with variables from server for use in UI conditions
     this._updateFormVariables(data.variables)
   }
@@ -285,8 +325,13 @@ export default class BPMNForm extends Control {
     this._generateControls(formData.components)
   }
 
-  getLocalModel(): JSONModel {
-    return this.getModel(this.localModelName) as JSONModel
+  getLocalModel(): DeepJSONModel {
+    let model = this.getModel(this.localModelName) as DeepJSONModel
+    if (!model) {
+      model = new DeepJSONModel()
+      this.setModel(model, this.localModelName)
+    }
+    return model
   }
 
   _updateFormVariables(variables: { [index: string]: string }): void {
@@ -308,7 +353,7 @@ export default class BPMNForm extends Control {
     console.debug(`[${this.getMetadata().getName()}] > onAfterRendering`)
   }
 
-  private generateLabelFromElement(element: Component): string {
+  private generateLabelTextFromElement(element: Component): string {
     return element.description ? `${element.label} (${element.description})` : element.label
   }
 
@@ -322,7 +367,7 @@ export default class BPMNForm extends Control {
   ) {
     const visible = this.getVisibleStatement(element)
     const id = control.getId()
-    const title = this.generateLabelFromElement(element)
+    const title = this.generateLabelTextFromElement(element)
 
     if (keepTrack) {
       // keep track of generated control for later value retrieval
@@ -343,7 +388,6 @@ export default class BPMNForm extends Control {
     if (showLabel) {
       vbox.addItem(
         new Label({
-          visible: visible,
           text: title,
           labelFor: id,
           required: element.validate?.required,
@@ -352,10 +396,14 @@ export default class BPMNForm extends Control {
       )
     }
 
+    control.data("container", vbox)
+
     vbox.addItem(control).addStyleClass("sapUiResponsiveMargin")
     vbox.data("control", control)
     vbox.data("controlType", controlType)
     vbox.data("element", element)
+
+    this.provideValueToView(element, control)
 
     this.addItem(vbox)
   }
@@ -400,11 +448,15 @@ export default class BPMNForm extends Control {
 
   getUserData(): userFormData[] {
     const data: userFormData[] = []
-    // for each dynamically generated cdontrol,
+    // for each dynamically generated control,
     // get its' "key" data for submitting -> job worker
     // and its' value that was supplied/chosen by the user
-    this.generatedControls.forEach((control: { componentConfiguration: Component; type: ControlType }) => {
+    this.generatedControls.forEach((control: GeneratedControl) => {
       const ui5Control = Core.byId(control.id) as Control
+
+      if (!ui5Control.data("container").getVisible()) {
+        return
+      }
 
       // represents the form key as modelled in Camunda
       const key = ui5Control.getCustomData()[0].getKey()
@@ -414,9 +466,7 @@ export default class BPMNForm extends Control {
       switch (control.type) {
         case ControlType.CheckBox:
           {
-            if (ui5Control.getVisible()) {
-              answer = String((ui5Control as CheckBox).getSelected())
-            }
+            answer = String((ui5Control as CheckBox).getSelected())
           }
           break
         case ControlType.Select:

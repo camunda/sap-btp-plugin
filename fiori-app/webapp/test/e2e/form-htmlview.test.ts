@@ -3,20 +3,13 @@ const ui5Service = new _ui5Service()
 
 import { ns, mockIndex, formTarget, injectFEEL } from "./po/commons"
 import HTML from "sap/ui/core/HTML"
-import JSONModel from "sap/ui/model/json/JSONModel"
-import Core from "sap/ui/core/Core"
 
 describe("HTML control", () => {
   before(async () => {
     await browser.goTo(mockIndex())
     await ui5Service.injectUI5()
     await formTarget("html-view")
-    // await browser.screenshot("before-html-test")
   })
-
-  // beforeEach(async () => {
-  //   await browser.screenshot("before-each-html-test")
-  // })
 
   it("should render static HTML content correctly", async () => {
     const htmlSelector = {
@@ -106,7 +99,7 @@ describe("HTML control", () => {
 
     expect(containsExpected).toBeTruthy()
   })
-  
+
   it("should hide HTML content when visibility set to false via FEEL", async () => {
     const htmlSelector = {
       selector: {

@@ -10,7 +10,6 @@ export function addDateTime(this: BPMNForm, element: Component): Control {
   let control: DateTimePicker | DatePicker | TimePicker
   if (element.subtype && element.subtype === "date") {
     control = new DatePicker(this.generateControlId(element), {
-      visible: this.getVisibleStatement(element),
       valueFormat: "yyyy-MM-dd",
       displayFormat: "yyyy-MM-dd"
     })
@@ -19,7 +18,6 @@ export function addDateTime(this: BPMNForm, element: Component): Control {
     }
   } else if (element.subtype && element.subtype === "time") {
     control = new TimePicker(this.generateControlId(element), {
-      visible: this.getVisibleStatement(element),
       support2400: element.use24h,
       valueFormat: element.use24h ? "HH:mm:ss" : "hh:mm:ss aa",
       displayFormat: element.use24h ? "HH:mm:ss" : "hh:mm:ss aa",
@@ -27,7 +25,6 @@ export function addDateTime(this: BPMNForm, element: Component): Control {
     })
   } else if (element.subtype && element.subtype === "datetime") {
     control = new DateTimePicker(this.generateControlId(element), {
-      visible: this.getVisibleStatement(element),
       valueFormat: element.use24h ? "yyyy-MM-ddTHH:mm:ss" : "yyyy-MM-ddThh:mm:ss aa",
       displayFormat: element.use24h ? "yyyy-MM-ddTHH:mm:ss" : "yyyy-MM-ddThh:mm:ss aa",
       showCurrentTimeButton: true

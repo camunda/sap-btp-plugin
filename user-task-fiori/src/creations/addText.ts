@@ -6,12 +6,17 @@ import Markdown from "ui5-cc-md"
 import BPMNForm from "../BPMNForm"
 
 export function addText(this: BPMNForm, element: Component): void {
-  const visible = this.getVisibleStatement(element)
   let content = element.text
   content = evaluate(content, this.getLocalModel().getProperty("/BPMNform/variables"))
   const text = new Markdown(`${uid()}-markdown`, {
-    content,
-    visible
+    content
   }) as Control
-  this.addControl(element, text, ControlType.Text, false, false, true)
+  this.addControl(
+    element,
+    text,
+    ControlType.Text,
+    false /* show Label */,
+    false /* track value for sending to camunda */,
+    true /* full width */
+  )
 }

@@ -21,7 +21,6 @@ export function addInput(this: BPMNForm, element: Component): Control {
   const required = element.validate?.required || false;
 
   const control = new Input(this.generateControlId(element), {
-    visible: this.getVisibleStatement(element),
     enabled: !enabled,
     editable: !readonly,
     required,
@@ -154,17 +153,22 @@ export function addInput(this: BPMNForm, element: Component): Control {
     const fn = hbox.setVisible;
     hbox.setVisible = (value) => {
       fn.apply(control, [value]);
-      if (control.getVisible() === false) {
+      if (control.data("container").getVisible() === false) {
         if (element.validate?.required) {
           control.setValueState(ValueState.Error);
         }
         control.setValue("");
-        this._provideValueToView(element, control);
+        this.provideValueToView(element, control);
       }
       return control;
     };
+    // generate getValue proxy function for HBox to retrieve value from inner Input control 
+    // so its behaviour is consistent to real direct input controls
+    hbox.getValue = () => {
+      return control.getValue();
+    }
     this.addControl(element, hbox, ControlType.Textfield);
-    this.setValueState(control, element, control.getValue());
+    this.setValueState(control, element, control.getValue()); 
 
     return control;
   }
