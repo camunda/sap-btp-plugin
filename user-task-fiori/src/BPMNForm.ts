@@ -128,6 +128,10 @@ export default class BPMNForm extends Control {
         break
       case ControlType.Text:
         break
+      case ControlType.HTML:
+        break
+      case ControlType.Image:
+        break
       default:
         console.error(`[${this.getId()}] - working an unknown form control type ${type}`)
         throw new Error(`${this.getId()}: working an unknown form control type ${type}`)
