@@ -17,7 +17,7 @@
     {
       "source": "/backend/(.*)$",
       "target": "/$1",
-      "destination": "@camunda8/btp-integration-core",
+      "destination": "srv_api",
       "csrfProtection": false,
       "cacheControl": "no-cache, no-store, must-revalidate",
       "authenticationType": "xsuaa"
@@ -25,7 +25,7 @@
     {
       "source": "/channel(.*)$",
       "target": "/channel$1",
-      "destination": "@camunda8/btp-integration-core",
+      "destination": "srv_api",
       "authenticationType": "xsuaa"
     },
     {

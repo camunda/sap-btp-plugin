@@ -141,34 +141,6 @@ async function fetchProcessInstanceById(
 }
 
 /**
- * Get process instance key of camunda
- *
- * It tries to extract the process instance key from window.testing object in the browser.
- * This is custom behavior of the fiori app to expose testing information in that object.
- *
- * @param page page object of playwright
- * @returns
- */
-async function getProcessInstanceKey(page: any) {
-  let processInstanceKey: string
-  await expect
-    .poll(
-      async () => {
-        const testing = (await page.evaluate(() => (window as any).testing)) || {}
-        processInstanceKey = testing.processInstanceKey
-        console.log("Process Instance Key from window.testing:", processInstanceKey)
-        return testing.processInstanceKey
-      },
-      {
-        timeout: 5000,
-        message: "Waiting for processInstanceKey to be set in window.testing"
-      }
-    )
-    .not.toBeUndefined()
-  return processInstanceKey
-}
-
-/**
  * Wait until the process instance reaches the COMPLETED state
  * @param processInstanceKey key of process instance
  */
