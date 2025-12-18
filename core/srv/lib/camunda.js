@@ -41,7 +41,7 @@ module.exports = Object.assign(
         this.zeebe = this._c8.getZeebeGrpcApiClient()
         this.zeebe.onReady = callbacks.onReady
         this.zeebe.onConnectionError = callbacks.onConnectionError
-        this.zeebeRest = this._c8.getZeebeRestClient()
+        this.zeebeRest = this._c8.getCamundaRestClient()
         this.tl = this._c8.getTasklistApiClient()
         DEBUG &&
           this.zeebe.topology().then((topology) => {
