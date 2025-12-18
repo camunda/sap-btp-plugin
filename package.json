@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/sap-btp-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "mono repo for the Camunda BTP plugin, part of the SAP Integration",
   "repository": "https://github.com/camunda/sap-btp-plugin",
   "license": "Camunda License 1.0",
