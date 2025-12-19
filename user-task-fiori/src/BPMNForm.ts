@@ -403,7 +403,7 @@ export default class BPMNForm extends Control {
     vbox.data("controlType", controlType)
     vbox.data("element", element)
 
-    this.provideValueToView(element, control)
+    //this.provideValueToView(element, control)
 
     this.addItem(vbox)
   }
