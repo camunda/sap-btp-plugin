@@ -321,7 +321,7 @@ export default class BPMNForm extends Control {
     // create controls and add to stage
     this._generateControls(formData.components)
 
-    // populate local model with variables from server for use in UI conditions
+    // populate local model with variables from server for use in UI conditions later
     this._updateFormVariables(data.variables)
   }
 
