@@ -318,11 +318,11 @@ export default class BPMNForm extends Control {
   processForm(data: WebSocketData): void {
     const formData = JSON.parse(data.formData) as BPMNformData
 
-    // populate local model with variables from server for use in UI conditions
-    this._updateFormVariables(data.variables)
-
     // create controls and add to stage
     this._generateControls(formData.components)
+
+    // populate local model with variables from server for use in UI conditions
+    this._updateFormVariables(data.variables)
   }
 
   getLocalModel(): DeepJSONModel {
