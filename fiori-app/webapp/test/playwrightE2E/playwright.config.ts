@@ -13,7 +13,11 @@ export default defineConfig({
   },
 
   // Reporter for the command line
-  reporter: "list",
+  reporter: [
+    ['list'],
+    ['html', {embedAnnotationsAsProperties: true, outputFolder: 'html-report'}],
+    ['junit', { outputFile: './test-results/junit-report.xml' }],
+  ],
 
   // Global configuration for all tests
   use: {
