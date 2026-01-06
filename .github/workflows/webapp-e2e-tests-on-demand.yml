@@ -19,7 +19,7 @@ jobs:
         id: detect-base
         shell: bash
         run: |
-          base="stable/8.9"
+          base="stable/8.7"
           echo "base=$base" >> "$GITHUB_OUTPUT"
           
           case "$base" in
