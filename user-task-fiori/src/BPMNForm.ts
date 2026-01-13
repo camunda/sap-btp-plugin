@@ -10,7 +10,6 @@ import Core from "sap/ui/core/Core"
 import type { MetadataOptions } from "sap/ui/core/Element"
 import EventBus from "sap/ui/core/EventBus"
 import { ValueState } from "sap/ui/core/library"
-import JSONModel from "sap/ui/model/json/JSONModel"
 import BPMNFormRenderer from "./BPMNFormRenderer"
 import { BPMNformData, Component, ControlType, GeneratedControl, userFormData } from "./BPMNformData"
 import CheckBox from "sap/m/CheckBox"
@@ -37,7 +36,6 @@ import {
   addTextArea
 } from "./creations/index"
 import HBox from "sap/m/HBox"
-import Title from "sap/m/Title"
 import Icon from "sap/ui/core/Icon"
 import DeepJSONModel from "./model/DeepJSONModel"
 
