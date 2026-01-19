@@ -1,22 +1,26 @@
 name: WebApp E2E Tests On Demand
 
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      version:
+#        description: "Target version"
+#        type: choice
+#        required: true
+#        options:
+#          - "8.6"
+#          - "8.7"
+#          - "8.8"
+#          - "8.9"
+#      base_branch:
+#        description: "Optional: override base branch (e.g. stable/8.8). Leave empty to use default mapping."
+#        type: string
+#        required: false
+#        default: ""
+
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Target version"
-        type: choice
-        required: true
-        options:
-          - "8.6"
-          - "8.7"
-          - "8.8"
-          - "8.9"
-      base_branch:
-        description: "Optional: override base branch (e.g. stable/8.8). Leave empty to use default mapping."
-        type: string
-        required: false
-        default: ""
+  pull_request:
+    types: [opened, edited, synchronize]
 
 permissions:
   contents: read
@@ -36,10 +40,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          version="${{ inputs.version }}"
-          override_base="${{ inputs.base_branch }}"
+          # Read PR body from the event payload
+          pr_body="$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")"
 
-          if [[ -n "$override_base" ]]; then
+          # Parse fields from PR body (case-insensitive)
+          # Example lines in PR description:
+          #   version: 8.6
+          #   base_branch: stable/8.6
+          version="$(echo "$pr_body" | sed -nE 's/^[[:space:]]*[Vv]ersion:[[:space:]]*([0-9]+\.[0-9]+)[[:space:]]*$/\1/p' | head -n1)"
+          override_base="$(echo "$pr_body" | sed -nE 's/^[[:space:]]*[Bb]ase_[Bb]ranch:[[:space:]]*([^[:space:]]+)[[:space:]]*$/\1/p' | head -n1)"
+
+          # Default for testing if not provided
+          if [[ -z "${version:-}" ]]; then
+            version="8.6"
+          fi
+
+          if [[ -n "${override_base:-}" ]]; then
             base="$override_base"
           else
             case "$version" in
@@ -79,11 +95,65 @@ jobs:
           echo "config_path=$cfg" >> "$GITHUB_OUTPUT"
           echo "non_standalone=$non_standalone" >> "$GITHUB_OUTPUT"
 
-          echo "Version input: $version"
-          echo "Override base: ${override_base:-<none>}"
+          echo "PR version: $version"
+          echo "PR override base: ${override_base:-<none>}"
           echo "Detected base: $base"
           echo "Using config path: $cfg"
           echo "NON_STANDALONE: $non_standalone"
+#      - name: Detect base branch and config dir
+#        id: detect-base
+#        shell: bash
+#        run: |
+#          set -euo pipefail
+#
+#          version="${{ inputs.version }}"
+#          override_base="${{ inputs.base_branch }}"
+#
+#          if [[ -n "$override_base" ]]; then
+#            base="$override_base"
+#          else
+#            case "$version" in
+#              "8.6") base="stable/8.6" ;;
+#              "8.7") base="stable/8.7" ;;
+#              "8.8") base="stable/8.8" ;;
+#              "8.9") base="main" ;;
+#              *) echo "Error: unsupported version '$version'"; exit 1 ;;
+#            esac
+#          fi
+#
+#          echo "base=$base" >> "$GITHUB_OUTPUT"
+#
+#          case "$base" in
+#            *8.6*)
+#              cfg="fiori-app/webapp/config/8.6"
+#              non_standalone=true
+#              ;;
+#            *8.7*)
+#              cfg="fiori-app/webapp/config/8.7"
+#              non_standalone=true
+#              ;;
+#            *8.8*)
+#              cfg="fiori-app/webapp/config/8.8"
+#              non_standalone=false
+#              ;;
+#            *8.9*|main)
+#              cfg="fiori-app/webapp/config/8.9"
+#              non_standalone=false
+#              ;;
+#            *)
+#              echo "Error: No config is found for base branch '$base'"
+#              exit 1
+#              ;;
+#          esac
+#
+#          echo "config_path=$cfg" >> "$GITHUB_OUTPUT"
+#          echo "non_standalone=$non_standalone" >> "$GITHUB_OUTPUT"
+#
+#          echo "Version input: $version"
+#          echo "Override base: ${override_base:-<none>}"
+#          echo "Detected base: $base"
+#          echo "Using config path: $cfg"
+#          echo "NON_STANDALONE: $non_standalone"
 
   webapp-e2e-tests:
     name: WebApp E2E Tests (Tasklist ${{ matrix.tasklist_mode }} mode)
@@ -256,8 +326,8 @@ jobs:
 #            --project 'C8' \
 #            --username "$TESTRAIL_USERNAME" \
 #            --key "$TESTRAIL_KEY" \
-#            parse_junit --suite-id 17050 \
-#            --title "On Demand C8 Orchestration Cluster Test Run Results - ${{ github.event.inputs.branch }} (Tasklist ${{ matrix.tasklist_mode }} mode) - $(date '+%Y-%m-%d %H:%M:%S')" \
+#            parse_junit --suite-id 36641 \
+#            --title "On Demand C8 SAP BTP Plugin Fiori App Test Run Results - ${{ github.event.inputs.branch }} (Tasklist ${{ matrix.tasklist_mode }} mode) - $(date '+%Y-%m-%d %H:%M:%S')" \
 #            --close-run \
 #            -f "$JUNIT_RESULTS_FILE"
 #
