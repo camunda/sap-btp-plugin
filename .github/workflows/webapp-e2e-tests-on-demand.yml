@@ -12,11 +12,6 @@ on:
           - "8.7"
           - "8.8"
           - "8.9"
-      base_branch:
-        description: "Optional: override base branch (e.g. stable/8.8). Leave empty to use default mapping."
-        type: string
-        required: false
-        default: ""
 
 permissions:
   contents: read
@@ -37,42 +32,33 @@ jobs:
           set -euo pipefail
 
           version="${{ inputs.version }}"
-          override_base="${{ inputs.base_branch }}"
 
-          if [[ -n "$override_base" ]]; then
-            base="$override_base"
-          else
-            case "$version" in
-              "8.6") base="stable/8.6" ;;
-              "8.7") base="stable/8.7" ;;
-              "8.8") base="stable/8.8" ;;
-              "8.9") base="main" ;;
-              *) echo "Error: unsupported version '$version'"; exit 1 ;;
-            esac
-          fi
+          case "$version" in
+            "8.6") base="stable/8.6" ;;
+            "8.7") base="stable/8.7" ;;
+            "8.8") base="stable/8.8" ;;
+            "8.9") base="main" ;;
+            *) echo "Error: unsupported version '$version'"; exit 1 ;;
+          esac
 
           echo "base=$base" >> "$GITHUB_OUTPUT"
 
-          case "$base" in
-            *8.6*)
+          case "$version" in
+            "8.6")
               cfg="fiori-app/webapp/config/8.6"
               non_standalone=true
               ;;
-            *8.7*)
+            "8.7")
               cfg="fiori-app/webapp/config/8.7"
               non_standalone=true
               ;;
-            *8.8*)
+            "8.8")
               cfg="fiori-app/webapp/config/8.8"
               non_standalone=false
               ;;
-            *8.9*|main)
+            "8.9")
               cfg="fiori-app/webapp/config/8.9"
               non_standalone=false
-              ;;
-            *)
-              echo "Error: No config is found for base branch '$base'"
-              exit 1
               ;;
           esac
 
@@ -80,7 +66,6 @@ jobs:
           echo "non_standalone=$non_standalone" >> "$GITHUB_OUTPUT"
 
           echo "Version input: $version"
-          echo "Override base: ${override_base:-<none>}"
           echo "Detected base: $base"
           echo "Using config path: $cfg"
           echo "NON_STANDALONE: $non_standalone"
