@@ -1,9 +1,11 @@
 const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
+const formHelper = require("./form")
+const retry = require("./retry")
 
 const ws = require("@camunda8/websocket")
-const retry = require("./retry")
+
 const { persistUserTask } = require("./persistUserTask")
 
 /**
@@ -15,6 +17,33 @@ module.exports = async (job, worker) => {
   LOGGER.info("user task worker executing...")
   job.variables && LOGGER.info(`user task variables: ${JSON.stringify(job.variables)}`)
 
+  let type
+  switch (job.type) {
+    case "sap-tl-creating":
+      type = "form"
+      break
+    case "sap-tl-completing-success":
+      type = "final-task-success"
+      break
+    case "sap-tl-completing-fail":
+      type = "final-task-fail"
+      break
+    // legacy support for job workers using custom headers
+    case "io.camunda.zeebe:userTask":
+      switch (job.customHeaders["final-user-task"]) {
+        case "success":
+          type = "final-task-success"
+          break
+        case "fail":
+          type = "final-task-fail"
+          break
+        default:
+          type = "form"
+      }
+      break
+    default:
+      LOGGER.error(`unknown worker type for job ${JSON.stringify(job)}`)
+  }
   const channelId = job.variables.channelId
 
   //> TODO: pass an instance of @camunda8/btp-plugin-core into here for canceling the process
@@ -22,18 +51,7 @@ module.exports = async (job, worker) => {
   if (!channelId || channelId === "") {
     const msg = "No channel id provided -> can't continue!"
     LOGGER.error(msg)
-    // throw new Error("No channel id provided -> can't continue!")
-    // const zbc = require("./camundaCloud").getClient()
-    // const jobToCancel = job.variables.parentProcessInstanceKey || job.processInstanceKey
-    // LOGGER.info(`attempting to cancel process instance ${jobToCancel}...`)
-    // try {
-    //   await zbc.cancelProcessInstance(jobToCancel)
-    //   LOGGER.info(`successfully cancelled process instance ${jobToCancel}!`)
-    // } catch (err) {
-    //   LOGGER.error(`couldn't cancel process instance ${jobToCancel}, b/c:`)
-    //   LOGGER.error(err.message)
-    // }
-    // return job.complete()
+
     return job.fail(msg)
   }
   DEBUG && LOGGER.debug(`dedicated client channel: ${channelId}`)
@@ -41,57 +59,14 @@ module.exports = async (job, worker) => {
   /**
    * @type {import("@camunda8/sdk").Tasklist.TasklistDto.Form}
    */
-  let form = ""
-  try {
-    /**
-     * @type {import("@camunda8/sdk").Tasklist.TasklistApiClient}
-     */
-    const tl = require("./camunda").getClient("tl")
-    const promise = async () => {
-      return tl.getForm(job.customHeaders["io.camunda.zeebe:formKey"], job.processDefinitionKey)
-    }
-    form = await retry(promise, 40, 300) //> max 12 sec
-  } catch (err) {
-    // this frequently happens when in the modelling layer,
-    // the association btw user task service and form is cut/lost
-    // -> display an error, cancel the process
-    LOGGER.error(`error retrieving form: ${JSON.stringify(err)}`)
-
-    const wsPayload = {
-      type: "message",
-      channelId,
-      message: {
-        text: "Error retrieving Form",
-        description: "Camunda experienced a hiccup",
-        additionalText: JSON.stringify(err),
-        type: "Error"
-      }
-    }
-    ;(await ws.getClient()).send(JSON.stringify(wsPayload))
-    return job.fail(
-      `error retrieving form with id ${job.customHeaders["io.camunda.zeebe:formKey"]} and process definition id ${job.processDefinitionKey}`,
-      0
-    )
-  }
-  LOGGER.info(`retrieved form data: ${form.schema}`)
-
-  let type
-  switch (job.customHeaders["final-user-task"]) {
-    case "success":
-      type = "final-task-success"
-      break
-    case "fail":
-      type = "final-task-fail"
-      break
-    default:
-      type = "form"
-  }
+  const form = await formHelper.loadForm(job)
 
   // send received json form data via websocket to UI layer for further processing
   const wsData = {
     channelId,
     type,
-    jobKey: job.key, // this is the correlation id for sending the "complete job" signal to camunda later
+    jobKey: job.key, // legacy: correlation id for gRPC completeJob
+    userTaskKey: job.customHeaders["io.camunda.zeebe:userTaskKey"], // new: REST API expects user task key from custom headers (Camunda 8.8+)
     formData: form.schema,
     variables: job.variables
   }
@@ -102,18 +77,20 @@ module.exports = async (job, worker) => {
 
   const { UserTasks, BrowserClients } = require("#cds-models/camunda")
   try {
+    // update user task
     await persistUserTask({
-      job,
+      job: job,
       channelId,
       BrowserClients,
       UserTasks
     })
     LOGGER.info(`persisted user task for PI ${job.processInstanceKey}, channel ${channelId}`)
+
+    // send form data to the client via websocket
     ;(await ws.getClient()).send(JSON.stringify(wsData))
 
-    // "queue" job completion
-    // it will be completed via the UI Layer (form submit) and CAP layer (completeUsertask)
-    return job.forward()
+    // forward the job (classic Job worker) (or complete worker for orchestration API in C8.8+ with Camunda User Tasks)
+    return job.forward ? job.forward() : job.complete()
   } catch (err) {
     LOGGER.error(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}:`, err)
 

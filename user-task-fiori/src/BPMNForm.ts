@@ -318,13 +318,11 @@ export default class BPMNForm extends Control {
   processForm(data: WebSocketData): void {
     const formData = JSON.parse(data.formData) as BPMNformData
 
-
-    // populate local model with variables from server for use in UI conditions later
+    // populate local model with variables from server for use in UI conditions
     this._updateFormVariables(data.variables)
 
     // create controls and add to stage
     this._generateControls(formData.components)
-
   }
 
   getLocalModel(): DeepJSONModel {
@@ -338,7 +336,6 @@ export default class BPMNForm extends Control {
 
   _updateFormVariables(variables: { [index: string]: string }): void {
     for (const key in variables) {
-      this.getLocalModel().setProperty(`/BPMNform/${key}`, variables[key])
       this.getLocalModel().setProperty(`/BPMNform/variables/${key}`, variables[key])
     }
   }

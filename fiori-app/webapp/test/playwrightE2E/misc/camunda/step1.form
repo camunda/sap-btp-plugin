@@ -1,19 +1,19 @@
 {
   "components": [
     {
-      "text": "**Final user task** has been called with **success**.",
+      "text": "# Process started - Step 1",
       "type": "text",
       "layout": {
-        "row": "Row_01zfqcu",
+        "row": "Row_1yaa9vr",
         "columns": null
       },
-      "id": "Field_193mo3u"
+      "id": "Field_0o85ihe"
     }
   ],
   "type": "default",
-  "id": "final-user-task-success",
+  "id": "form-step1",
   "executionPlatform": "Camunda Cloud",
-  "executionPlatformVersion": "8.7.0",
+  "executionPlatformVersion": "8.8.0",
   "exporter": {
     "name": "Camunda Modeler",
     "version": "5.40.1"

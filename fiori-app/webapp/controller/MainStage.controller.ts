@@ -32,16 +32,10 @@ export default class MainStageController extends BaseController {
 
   onFinish() {
     const viewModel = this.getView().getModel("AppView") as JSONModel
-    // const channelId = viewModel.getProperty("/channelId") as string
-
-    // clean up ws inventory server-side
-    // SingletonWebSocket.getInstance(channelId).close()
 
     viewModel.setProperty("/formStep", FormStep.FINISHED)
 
     void this.onSubmit() //> we don't care about async side effects on the browser at the last UI task
-
-    // window.close()
   }
 
   onFinishedForm() {
@@ -94,6 +88,7 @@ export default class MainStageController extends BaseController {
         },
         body: JSON.stringify({
           jobKey: _json.jobKey,
+          userTaskKey: _json.userTaskKey,
           variables: formVariables
         })
       })

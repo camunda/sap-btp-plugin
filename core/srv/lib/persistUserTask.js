@@ -1,3 +1,4 @@
+
 async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
   const condition = job.variables.parentProcessInstanceKey
     ? { in: [job.processInstanceKey, job.variables.parentProcessInstanceKey] }
@@ -15,6 +16,7 @@ async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
     channelId,
     user,
     jobKey: job.key,
+    userTaskKey: job.customHeaders["io.camunda.zeebe:userTaskKey"],
     formData: job.formData, //> we trust in CAP to serialize properly :)
     variables: job.variables //> we trust in CAP to serialize properly :)
   })

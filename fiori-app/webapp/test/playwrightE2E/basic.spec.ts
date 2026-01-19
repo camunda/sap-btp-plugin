@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test"
-import { fetchProcessInstanceById, fetchProcessInstances, waitForProcessCompletion } from "./helpers"
+import {
+  fetchProcessInstanceById,
+  fetchProcessInstances,
+  startProcessInstance,
+  waitForProcessCompletion
+} from "./helpers"
 
 test.describe("Basic E2E Tests to start and complete a process", () => {
   test("App loads and shows title", async ({ page }) => {
@@ -7,8 +12,8 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
     await expect(page).toHaveTitle(/Camunda SAP BTP Integration/i)
   })
 
-  test("Start process via UI and check instances on camunda", async ({ page }) => {
-    const processDefinitionId = "e2eTestProcess"
+  test("Start process via UI and check instances on camunda as jobWorker", async ({ page }) => {
+    const processDefinitionId = "jobworker"
     let currentInstance: { processInstanceKey: string; state: string }
 
     await page.goto("/")
@@ -21,9 +26,17 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
     await page.locator('[id="__component0---app--processName-inner"]').fill(processDefinitionId)
     await page.getByRole("button", { name: "start above process" }).click()
 
-    await expect(page.getByText("Success! This form is delivered by Camunda.")).toBeVisible()
+
+    await expect(page.getByText("Process started - Step 1")).toBeVisible()
 
     await expect(page.getByRole("button", { name: "Next" })).toBeVisible()
+
+    await page.getByRole("button", { name: "Next" }).click()
+
+    await expect(page.getByText("Process started - Step 2")).toBeVisible()
+
+    await expect(page.getByRole("button", { name: "Next" })).toBeVisible()
+
     await page.getByRole("button", { name: "Next" }).click()
 
     // Polling until the process instance count increases by 1. This is necessary because starting a process might take some time.
@@ -46,38 +59,47 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
     await waitForProcessCompletion(currentInstance.processInstanceKey)
   })
 
-  test("Start process via URL and check instances on camunda", async ({ page }) => {
-    const processDefinitionId = "e2eTestProcess"
-    let currentInstance: { processInstanceKey: string; state: string }
-    await page.goto("?run=" + processDefinitionId)
+  test("Start process via URL and check instances on camunda as jobWorker", async ({ page }) => {
+    const processDefinitionId = "jobworker"
 
-    // fetch instances before starting a new one
-    const instances = await fetchProcessInstances(processDefinitionId)
-    const instancesBefore = instances.page.totalItems
+    const instanceKey = await startProcessInstance(processDefinitionId, page)
 
-    await expect(page.getByText("Success! This form is delivered by Camunda.")).toBeVisible()
+    await expect(page.getByText("Process started - Step 1")).toBeVisible()
 
     await expect(page.getByRole("button", { name: "Next" })).toBeVisible()
+
     await page.getByRole("button", { name: "Next" }).click()
 
-    // Polling until the process instance count increases by 1. This is necessary because starting a process might take some time.
-    await expect
-      .poll(
-        async () => {
-          const instances = await fetchProcessInstances(processDefinitionId)
-          currentInstance = instances.items[0] as { processInstanceKey: string; state: string }
-          return instances.page.totalItems
-        },
-        {
-          message: `Process instance should be increased to ${instancesBefore + 1}`,
-          timeout: 10000 // timeout after 10 sec
-        }
-      )
-      .toBe(instancesBefore + 1)
+    await expect(page.getByText("Process started - Step 2")).toBeVisible()
+
+    await expect(page.getByRole("button", { name: "Next" })).toBeVisible()
+
+    await page.getByRole("button", { name: "Next" }).click()
 
     await page.getByRole("button", { name: "finish Process" }).click()
 
-    // Polling current process until its state is COMPLETED
-    await waitForProcessCompletion(currentInstance.processInstanceKey)
+    await waitForProcessCompletion(instanceKey)
+  })
+
+  test("Start process via URL and check instances on camunda as camunda user task", async ({ page }) => {
+    const processDefinitionId = "camundausertask"
+
+    const instanceKey = await startProcessInstance(processDefinitionId, page)
+
+    await expect(page.getByText("Process started - Step 1")).toBeVisible()
+
+    await expect(page.getByRole("button", { name: "Next" })).toBeVisible()
+
+    await page.getByRole("button", { name: "Next" }).click()
+
+    await expect(page.getByText("Process started - Step 2")).toBeVisible()
+
+    await expect(page.getByRole("button", { name: "Next" })).toBeVisible()
+
+    await page.getByRole("button", { name: "Next" }).click()
+
+    await page.getByRole("button", { name: "finish Process" }).click()
+
+    await waitForProcessCompletion(instanceKey)
   })
 })
