@@ -1,8 +1,22 @@
 name: WebApp E2E Tests On Demand
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize] # Triggers on PR open, new commits on PR and when the PR description is edited
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Target version"
+        type: choice
+        required: true
+        options:
+          - "8.6"
+          - "8.7"
+          - "8.8"
+          - "8.9"
+      base_branch:
+        description: "Optional: override base branch (e.g. stable/8.8). Leave empty to use default mapping."
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -14,52 +28,73 @@ jobs:
       base: ${{ steps.detect-base.outputs.base }}
       config_path: ${{ steps.detect-base.outputs.config_path }}
       non_standalone: ${{ steps.detect-base.outputs.non_standalone }}
+
     steps:
       - name: Detect base branch and config dir
         id: detect-base
         shell: bash
         run: |
-          base="stable/8.7"
+          set -euo pipefail
+
+          version="${{ inputs.version }}"
+          override_base="${{ inputs.base_branch }}"
+
+          if [[ -n "$override_base" ]]; then
+            base="$override_base"
+          else
+            case "$version" in
+              "8.6") base="stable/8.6" ;;
+              "8.7") base="stable/8.7" ;;
+              "8.8") base="stable/8.8" ;;
+              "8.9") base="main" ;;
+              *) echo "Error: unsupported version '$version'"; exit 1 ;;
+            esac
+          fi
+
           echo "base=$base" >> "$GITHUB_OUTPUT"
-          
+
           case "$base" in
-          *8.6*)
-          cfg="fiori-app/webapp/config/8.6"
-          non_standalone=true
-          ;;
-          *8.7*)
-          cfg="fiori-app/webapp/config/8.7"
-          non_standalone=true
-          ;;
-          *8.8*)
-          cfg="fiori-app/webapp/config/8.8"
-          non_standalone=false
-          ;;
-          *8.9*)
-          cfg="fiori-app/webapp/config/8.9"
-          non_standalone=false
-          ;;
-          *)
-          echo "Error: No config is found for base branch '$base'"
-          exit 1
-          ;;
+            *8.6*)
+              cfg="fiori-app/webapp/config/8.6"
+              non_standalone=true
+              ;;
+            *8.7*)
+              cfg="fiori-app/webapp/config/8.7"
+              non_standalone=true
+              ;;
+            *8.8*)
+              cfg="fiori-app/webapp/config/8.8"
+              non_standalone=false
+              ;;
+            *8.9*|main)
+              cfg="fiori-app/webapp/config/8.9"
+              non_standalone=false
+              ;;
+            *)
+              echo "Error: No config is found for base branch '$base'"
+              exit 1
+              ;;
           esac
-          
+
           echo "config_path=$cfg" >> "$GITHUB_OUTPUT"
           echo "non_standalone=$non_standalone" >> "$GITHUB_OUTPUT"
 
+          echo "Version input: $version"
+          echo "Override base: ${override_base:-<none>}"
           echo "Detected base: $base"
           echo "Using config path: $cfg"
           echo "NON_STANDALONE: $non_standalone"
 
   webapp-e2e-tests:
     name: WebApp E2E Tests (Tasklist ${{ matrix.tasklist_mode }} mode)
+    needs: [validate-branch]
+    runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
-        tasklist_mode: ${{ fromJSON( (needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v1","v2"]' ) }}
-    needs: [validate-branch]
-    runs-on: ubuntu-latest
+        tasklist_mode: ${{ fromJSON((needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v1","v2"]') }}
+
     steps:
       - name: Print base branch and tasklist mode
         run: |
@@ -102,6 +137,7 @@ jobs:
         run: |
           echo "Checking if services are up..."
           ready=false
+
           for i in {1..90}; do
             if [[ "$NON_STANDALONE" == "true" ]]; then
               tasklist_status=$(curl -s -m 5 http://localhost:8080 || echo "Failed")
@@ -114,13 +150,11 @@ jobs:
 
             if [[ "$NON_STANDALONE" == "true" ]]; then
               if [[ "$tasklist_status" != "Failed" && "$operate_status" != "Failed" ]]; then
-                echo "Services are ready!"
                 ready=true
                 break
               fi
             else
               if [[ "$tasklist_status" != "Failed" && "$operate_status" != "Failed" && "$identity_status" != "Failed" ]]; then
-                echo "Services are ready!"
                 ready=true
                 break
               fi
@@ -130,7 +164,7 @@ jobs:
             sleep 10
           done
 
-          if [ "$ready" = true ]; then
+          if [[ "$ready" == true ]]; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "Services failed to start in time."
@@ -185,6 +219,7 @@ jobs:
 #        with:
 #          python-version: "3.x"
 #
+#
 #      - name: Run tests
 #        shell: bash
 #        env:
@@ -201,4 +236,34 @@ jobs:
 #            TEST_ARGS=(--project=chromium)
 #          else
 #            export CORE_APPLICATION_URL="http://localhost:8080"
-#            export ZEEBE_REST_ADDRESS="http://localhost:808
+#            export ZEEBE_REST_ADDRESS="http://localhost:8080"
+#            TEST_ARGS=(--project=chromium)
+#          echo "Running tests with args: ${TEST_ARGS[*]}"
+#          npm run test -- "${TEST_ARGS[@]}"
+#        working-directory: fiori-app/webapp
+#
+#      - name: Publish test results to TestRail
+#        if: always()
+#        shell: bash
+#        env:
+#          TESTRAIL_HOST: "https://camunda.testrail.com/"
+#          TESTRAIL_USERNAME: ${{ steps.secrets.outputs.TESTRAIL_QA_EMAIL }}
+#          TESTRAIL_KEY: ${{ steps.secrets.outputs.TESTRAIL_QA_PSW }}
+#          JUNIT_RESULTS_FILE: "qa/c8-orchestration-cluster-e2e-test-suite/test-results/junit-report.xml"
+#        run: |
+#          pip install trcli
+#          trcli -y -h "$TESTRAIL_HOST" \
+#            --project 'C8' \
+#            --username "$TESTRAIL_USERNAME" \
+#            --key "$TESTRAIL_KEY" \
+#            parse_junit --suite-id 17050 \
+#            --title "On Demand C8 Orchestration Cluster Test Run Results - ${{ github.event.inputs.branch }} (Tasklist ${{ matrix.tasklist_mode }} mode) - $(date '+%Y-%m-%d %H:%M:%S')" \
+#            --close-run \
+#            -f "$JUNIT_RESULTS_FILE"
+#
+#      - uses: actions/upload-artifact@v4
+#        if: failure()
+#        with:
+#          name: SAP BTP Plugin Fiori App (Tasklist ${{ matrix.tasklist_mode }} mode)
+#          path: fiori-app/webapp/html-report
+#          retention-days: 10
