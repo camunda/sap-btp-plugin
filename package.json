@@ -26,7 +26,9 @@
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
     "e2e:codegen": "npx playwright codegen --browser=chromium http://localhost:5001/app/index.html",
     "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "//e2e:test:deployForms": "deploy forms to camunda platform before running e2e tests",
+    "e2e:test:deployForms": "cd fiori-app/webapp/test/playwrightE2E && zbctl deploy --insecure controls/camunda/* && zbctl deploy --insecure misc/camunda/*"
   },
   "dependencies": {
     "@cap-js/postgres": "^2",
