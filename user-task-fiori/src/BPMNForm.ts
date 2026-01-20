@@ -10,7 +10,6 @@ import Core from "sap/ui/core/Core"
 import type { MetadataOptions } from "sap/ui/core/Element"
 import EventBus from "sap/ui/core/EventBus"
 import { ValueState } from "sap/ui/core/library"
-import JSONModel from "sap/ui/model/json/JSONModel"
 import BPMNFormRenderer from "./BPMNFormRenderer"
 import { BPMNformData, Component, ControlType, GeneratedControl, userFormData } from "./BPMNformData"
 import CheckBox from "sap/m/CheckBox"
@@ -37,7 +36,6 @@ import {
   addTextArea
 } from "./creations/index"
 import HBox from "sap/m/HBox"
-import Title from "sap/m/Title"
 import Icon from "sap/ui/core/Icon"
 import DeepJSONModel from "./model/DeepJSONModel"
 
@@ -318,11 +316,13 @@ export default class BPMNForm extends Control {
   processForm(data: WebSocketData): void {
     const formData = JSON.parse(data.formData) as BPMNformData
 
-    // populate local model with variables from server for use in UI conditions
+
+    // populate local model with variables from server for use in UI conditions later
     this._updateFormVariables(data.variables)
 
     // create controls and add to stage
     this._generateControls(formData.components)
+
   }
 
   getLocalModel(): DeepJSONModel {
@@ -336,6 +336,7 @@ export default class BPMNForm extends Control {
 
   _updateFormVariables(variables: { [index: string]: string }): void {
     for (const key in variables) {
+      this.getLocalModel().setProperty(`/BPMNform/${key}`, variables[key])
       this.getLocalModel().setProperty(`/BPMNform/variables/${key}`, variables[key])
     }
   }
