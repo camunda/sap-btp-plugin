@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/sap-btp-plugin",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "mono repo for the Camunda BTP plugin, part of the SAP Integration",
   "repository": "https://github.com/camunda/sap-btp-plugin",
   "license": "Camunda License 1.0",
@@ -26,18 +26,16 @@
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
     "e2e:codegen": "npx playwright codegen --browser=chromium http://localhost:5001/app/index.html",
     "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
-    "//e2e:test:deployForms": "deploy forms to camunda platform before running e2e tests",
-    "e2e:test:deployForms": "cd fiori-app/webapp/test/playwrightE2E && zbctl deploy --insecure controls/camunda/* && zbctl deploy --insecure misc/camunda/*",
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@cap-js/postgres": "^1",
-    "@sap/cds": "^8",
+    "@cap-js/postgres": "^2",
+    "@sap/cds": "^9",
     "patch-package": "^8.0.0"
   },
   "devDependencies": {
-    "@cap-js/cds-types": "^0.11",
-    "@cap-js/sqlite": "^1",
+    "@cap-js/cds-types": "^0.15",
+    "@cap-js/sqlite": "^2",
     "@eslint/js": "^9.28.0",
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.8.1",
