@@ -1,9 +1,10 @@
 const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:form-helper")
 const retry = require("./retry")
+const ws = require("@camunda8/websocket")
 
 module.exports = {
-  async loadForm(job) {
+  async loadAndSendForm(job, type) {
     const channelId = job.variables.channelId
     let form = ""
     try {
@@ -15,6 +16,9 @@ module.exports = {
         return tl.getForm(job.customHeaders["io.camunda.zeebe:formKey"], job.processDefinitionKey)
       }
 
+      /**
+       * @type {import("@camunda8/sdk").Tasklist.TasklistDto.Form}
+       */
       form = await retry(promise, 40, 300) //> max 12 sec
     } catch (err) {
       // this frequently happens when in the modelling layer,
@@ -39,6 +43,21 @@ module.exports = {
       )
     }
     LOGGER.info(`retrieved form data: ${form.schema}`)
-    return form
+
+    // send received json form data via websocket to UI layer for further processing
+    const wsData = {
+      channelId,
+      type,
+      jobKey: job.key, // legacy: correlation id for gRPC completeJob
+      userTaskKey: job.customHeaders["io.camunda.zeebe:userTaskKey"], // new: REST API expects user task key from custom headers (Camunda 8.8+)
+      formData: form.schema,
+      variables: job.variables
+    }
+    // "persist" parent process id for use in subprocess worker via global variable scope
+    if (job.customHeaders.setProcessInstanceKey) {
+      wsData.parentProcessInstanceKey = job.processInstanceKey
+    }
+
+    ;(await ws.getClient()).send(JSON.stringify(wsData))
   }
 }

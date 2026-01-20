@@ -56,25 +56,6 @@ module.exports = async (job, worker) => {
   }
   DEBUG && LOGGER.debug(`dedicated client channel: ${channelId}`)
 
-  /**
-   * @type {import("@camunda8/sdk").Tasklist.TasklistDto.Form}
-   */
-  const form = await formHelper.loadForm(job)
-
-  // send received json form data via websocket to UI layer for further processing
-  const wsData = {
-    channelId,
-    type,
-    jobKey: job.key, // legacy: correlation id for gRPC completeJob
-    userTaskKey: job.customHeaders["io.camunda.zeebe:userTaskKey"], // new: REST API expects user task key from custom headers (Camunda 8.8+)
-    formData: form.schema,
-    variables: job.variables
-  }
-  // "persist" parent process id for use in subprocess worker via global variable scope
-  if (job.customHeaders.setProcessInstanceKey) {
-    wsData.parentProcessInstanceKey = job.processInstanceKey
-  }
-
   const { UserTasks, BrowserClients } = require("#cds-models/camunda")
   try {
     // update user task
@@ -85,10 +66,11 @@ module.exports = async (job, worker) => {
       UserTasks
     })
     LOGGER.info(`persisted user task for PI ${job.processInstanceKey}, channel ${channelId}`)
-
+    
     // send form data to the client via websocket
-    ;(await ws.getClient()).send(JSON.stringify(wsData))
-
+    await formHelper.loadAndSendForm(job, type)
+    LOGGER.info(`sent form data for PI ${job.processInstanceKey}, channel ${channelId}`)
+    
     // forward the job (classic Job worker) (or complete worker for orchestration API in C8.8+ with Camunda User Tasks)
     return job.forward ? job.forward() : job.complete()
   } catch (err) {
