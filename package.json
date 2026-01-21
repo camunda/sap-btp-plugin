@@ -26,7 +26,8 @@
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
     "e2e:codegen": "npx playwright codegen --browser=chromium http://localhost:5001/app/index.html",
     "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "gh:test": "act workflow_dispatch -W .github/workflows/webapp-e2e-tests-on-demand.yml  --input version=8.9 -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest"
   },
   "dependencies": {
     "@cap-js/postgres": "^2",

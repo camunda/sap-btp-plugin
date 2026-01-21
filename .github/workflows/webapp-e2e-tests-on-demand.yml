@@ -174,81 +174,41 @@ jobs:
           node-version: 22
           cache: npm
 
-#      - name: Clean install dependencies
-#        shell: bash
-#        run: |
-#          rm -rf node_modules package-lock.json
-#          npm install
-#        working-directory: fiori-app/webapp
-#
-#      - name: Import Secrets
-#        id: secrets
-#        uses: hashicorp/vault-action@734c523c4fbdb289cdf26dd2dc177f3627d1e140
-#        with:
-#          url: ${{ secrets.VAULT_ADDR }}
-#          method: approle
-#          roleId: ${{ secrets.VAULT_ROLE_ID }}
-#          secretId: ${{ secrets.VAULT_SECRET_ID }}
-#          exportEnv: false
-#          secrets: |
-#            secret/data/github.com/organizations/camunda TESTRAIL_QA_EMAIL;
-#            secret/data/github.com/organizations/camunda TESTRAIL_QA_PSW;
-#
-#      - name: Install Playwright Browsers
-#        shell: bash
-#        run: npx playwright install --with-deps chromium
-#        working-directory: fiori-app/webapp
-#
-#      - name: Python setup
-#        uses: actions/setup-python@v5
-#        with:
-#          python-version: "3.x"
-#
-#
-#      - name: Run tests
-#        shell: bash
-#        env:
-#          LOCAL_TEST: "false"
-#          CAMUNDA_AUTH_STRATEGY: "BASIC"
-#          CAMUNDA_BASIC_AUTH_USERNAME: "demo"
-#          CAMUNDA_BASIC_AUTH_PASSWORD: "demo"
-#          CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
-#        run: |
-#          if [[ "$NON_STANDALONE" == "true" ]]; then
-#            export CORE_APPLICATION_TASKLIST_URL="http://localhost:8080"
-#            export CORE_APPLICATION_OPERATE_URL="http://localhost:8081"
-#            export ZEEBE_REST_ADDRESS="http://localhost:8089"
-#            TEST_ARGS=(--project=chromium)
-#          else
-#            export CORE_APPLICATION_URL="http://localhost:8080"
-#            export ZEEBE_REST_ADDRESS="http://localhost:8080"
-#            TEST_ARGS=(--project=chromium)
-#          echo "Running tests with args: ${TEST_ARGS[*]}"
-#          npm run test -- "${TEST_ARGS[@]}"
-#        working-directory: fiori-app/webapp
-#
-#      - name: Publish test results to TestRail
-#        if: always()
-#        shell: bash
-#        env:
-#          TESTRAIL_HOST: "https://camunda.testrail.com/"
-#          TESTRAIL_USERNAME: ${{ steps.secrets.outputs.TESTRAIL_QA_EMAIL }}
-#          TESTRAIL_KEY: ${{ steps.secrets.outputs.TESTRAIL_QA_PSW }}
-#          JUNIT_RESULTS_FILE: "fiori-app/webapp/test-results/junit-report.xml"
-#        run: |
-#          pip install trcli
-#          trcli -y -h "$TESTRAIL_HOST" \
-#            --project 'C8' \
-#            --username "$TESTRAIL_USERNAME" \
-#            --key "$TESTRAIL_KEY" \
-#            parse_junit --suite-id 36641 \
-#            --title "On Demand C8 SAP BTP Plugin Fiori App Test Run Results - ${{ github.event.inputs.branch }} (Tasklist ${{ matrix.tasklist_mode }} mode) - $(date '+%Y-%m-%d %H:%M:%S')" \
-#            --close-run \
-#            -f "$JUNIT_RESULTS_FILE"
-#
-#      - uses: actions/upload-artifact@v4
-#        if: failure()
-#        with:
-#          name: SAP BTP Plugin Fiori App (Tasklist ${{ matrix.tasklist_mode }} mode)
-#          path: fiori-app/webapp/html-report
-#          retention-days: 10
+      - name: Clean install dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        shell: bash
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright Browsers
+        shell: bash
+        run: npx playwright install --with-deps chromium
+        working-directory: fiori-app/webapp
+
+      - name: Run local webserver
+        shell: bash
+        run: npm start:local
+        working-directory: ./
+
+      - name: Deploy Camunda Test models
+        shell: bash
+        run: npm run deploy:tests
+        working-directory: ./
+
+      - name: Run E2E tests
+        shell: bash
+        env:
+          CAMUNDA_AUTH_STRATEGY: "BASIC"
+          CAMUNDA_BASIC_AUTH_USERNAME: "demo"
+          CAMUNDA_BASIC_AUTH_PASSWORD: "demo"
+          CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
+        run: npm run e2e:test
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: SAP BTP Plugin Fiori App (Tasklist ${{ matrix.tasklist_mode }} mode)
+          path: fiori-app/webapp/html-report
+          retention-days: 10
