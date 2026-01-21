@@ -27,7 +27,7 @@ async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
         channelId,
         user,
         jobKey: job.key,
-        userTaskKey: job.customHeaders["io.camunda.zeebe:userTaskKey"],
+        userTaskKey: job.customHeaders ? job.customHeaders["io.camunda.zeebe:userTaskKey"] : undefined,
         formData: job.formData, //> we trust in CAP to serialize properly :)
         variables: job.variables //> we trust in CAP to serialize properly :)
       })
