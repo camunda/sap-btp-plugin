@@ -16,7 +16,7 @@ prerequisite: create local destinations in `router/default-env.json` (not under 
     },
     {
       "name": "ui",
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8095",
       "forwardAuthToken": true
     }
   ]

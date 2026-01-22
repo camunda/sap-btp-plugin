@@ -77,6 +77,7 @@ jobs:
 
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         tasklist_mode: ${{ fromJSON((needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v1","v2"]') }}
 
@@ -173,28 +174,54 @@ jobs:
         with:
           node-version: 22
           cache: npm
+        env:
+          ACTIONS_STEP_DEBUG: 'false'
 
       - name: Clean install dependencies
         shell: bash
-        run: npm ci
+        run: npm ci --no-audit --no-fund --prefer-offline --legacy-peer-deps > /dev/null 2>&1
+
+      - name: start pg docker
+        shell: bash
+        run: cd ./test/docker/pg-standalone; docker compose up -d
+        working-directory: ./
+
+      - name: Install PostgreSQL client (psql)
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+        working-directory: ./
+
+      - name: Prepare server
+        shell: bash
+        run: bash ./_misc/setup-local.sh
+        working-directory: ./
 
       - name: Install Playwright Browsers
         shell: bash
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium > /dev/null 2>&1
 
-      - name: Install Playwright Browsers
+      - name: Run local webserver (background)
         shell: bash
-        run: npx playwright install --with-deps chromium
-        working-directory: fiori-app/webapp
-
-      - name: Run local webserver
-        shell: bash
-        run: npm start:local
+        run: |
+          set -euo pipefail
+          echo "Starting local webserver..."
+          npm run start:local > /tmp/web.log 2>&1 &
+          echo $! > /tmp/web.pid
+          echo "Webserver PID: $(cat /tmp/web.pid)"
+          sleep 5  # Brief pause before checking
+          echo "Checking if server is ready on http://localhost:5001..."
+          tail -f /tmp/web.log &
+          LOG_PID=$!
+          npx --yes wait-on@7.2.0 --timeout 180000 --httpTimeout 10000 http://localhost:5001 || (echo "Server failed to start"; tail -n 100 /tmp/web.log; kill $LOG_PID 2>/dev/null || true; exit 1)
+          kill $LOG_PID 2>/dev/null || true
+          echo "Server is ready!"
         working-directory: ./
 
       - name: Deploy Camunda Test models
         shell: bash
-        run: npm run deploy:tests
+        run: |
+          # c8ctl is available via @camunda8/cli devDependency
+          npm run e2e:test:deployForms
         working-directory: ./
 
       - name: Run E2E tests
@@ -205,6 +232,15 @@ jobs:
           CAMUNDA_BASIC_AUTH_PASSWORD: "demo"
           CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
         run: npm run e2e:test
+
+      - name: Stop local webserver
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f /tmp/web.pid ]]; then
+            kill $(cat /tmp/web.pid) || true
+          fi
+          pkill -f "npm run start:local" || true
 
       - uses: actions/upload-artifact@v4
         if: failure()
