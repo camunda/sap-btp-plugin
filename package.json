@@ -28,7 +28,7 @@
     "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
     "postinstall": "patch-package",
     "//e2e:test:deployForms": "deploy forms to camunda platform before running e2e tests",
-    "e2e:test:deployForms": "cd fiori-app/webapp/test/playwrightE2E && zbctl deploy --insecure controls/camunda/* && zbctl deploy --insecure misc/camunda/*"
+    "e2e:test:deployForms": "cd fiori-app/webapp/test/playwrightE2E && c8ctl deploy --insecure controls/camunda/* && c8ctl deploy --insecure misc/camunda/*"
   },
   "dependencies": {
     "@cap-js/postgres": "^2",

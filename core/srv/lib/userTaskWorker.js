@@ -60,7 +60,7 @@ module.exports = async (job, worker) => {
   try {
     // update user task
     await persistUserTask({
-      job: job,
+      job,
       channelId,
       BrowserClients,
       UserTasks

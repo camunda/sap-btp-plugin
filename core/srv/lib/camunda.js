@@ -31,7 +31,7 @@ module.exports = Object.assign(
 
     topology: null,
 
-    async init() {
+    init() {
       if (!this.zeebe) {
         LOGGER.info("init'ing camunda client...")
         const callbacks = {
@@ -46,7 +46,6 @@ module.exports = Object.assign(
         this.zeebe.onReady = callbacks.onReady
         this.zeebe.onConnectionError = callbacks.onConnectionError
         this.orchestration = createCamundaOrchestrationApiClient()
-        this.topology = await this.zeebe.topology()
 
         this.zeebeRest = this._c8.getCamundaRestClient()
 
@@ -61,21 +60,23 @@ module.exports = Object.assign(
     async registerWorker() {
       await this._createJobWorker("io.camunda.zeebe:userTask", userTaskWorker, "job worker")
 
-      await this._createTaskListenerWorker(
-        "sap-tl-creating",
-        userTaskWorker,
-        "camunda user task worker for creating jobs"
-      )
-      await this._createTaskListenerWorker(
-        "sap-tl-completing-success",
-        userTaskWorker,
-        "camunda user task worker for completing jobs"
-      )
-      await this._createTaskListenerWorker(
-        "sap-tl-completing-fail",
-        userTaskWorker,
-        "camunda user task worker for completing jobs"
-      )
+      await Promise.all([
+        this._createTaskListenerWorker(
+          "sap-tl-creating",
+          userTaskWorker,
+          "camunda user task worker for creating jobs"
+        ),
+        this._createTaskListenerWorker(
+          "sap-tl-completing-success",
+          userTaskWorker,
+          "camunda user task worker for completing jobs"
+        ),
+        this._createTaskListenerWorker(
+          "sap-tl-completing-fail",
+          userTaskWorker,
+          "camunda user task worker for completing jobs"
+        )
+      ])
     },
 
     /**

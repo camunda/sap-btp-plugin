@@ -82,9 +82,7 @@ module.exports = async (bpmn) => {
     try {
       const zbc = await _zbc.getClient()
       const orchestration = await _zbc.getClient("orchestration")
-      const gatewayVersion = (await zbc.topology()).gatewayVersion
       const { UserTasks } = require("#cds-models/camunda")
-      DEBUG && LOGGER.debug(`gateway version: ${gatewayVersion}`)
 
       // For all versions: use completeJob with job key
       if (req.data.jobKey) {
