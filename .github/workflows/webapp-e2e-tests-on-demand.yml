@@ -180,8 +180,14 @@ jobs:
       - name: Clean install dependencies
         shell: bash
         run: |
-          echo "Installing dependencies with npm ci..."
-          npm ci --legacy-peer-deps 2>&1 | tail -20
+          echo "Cleaning old dependencies and lockfiles..."
+          rm -rf node_modules package-lock.json
+          rm -rf */node_modules */package-lock.json
+          echo ""
+          echo "Installing dependencies (this may take several minutes)..."
+          npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund
+          echo ""
+          echo "✓ Dependencies installed successfully"
           echo ""
           echo "Verifying critical binaries..."
           ls -la node_modules/.bin/ | grep -E "ui5|dev-approuter|c8ctl" || echo "Binaries not found"
@@ -201,6 +207,8 @@ jobs:
 
       - name: Prepare server
         shell: bash
+        env:
+          CI: "true"
         run: |
           echo "Setting up local development environment..."
           bash ./_misc/setup-local.sh
@@ -211,8 +219,16 @@ jobs:
         shell: bash
         run: npx playwright install --with-deps chromium > /dev/null 2>&1
 
-      - name: Run local webserver (background)
+      - name: Start webserver and run E2E tests
         shell: bash
+        env:
+          CAMUNDA_REST_ADDRESS: http://localhost:8080
+          CAMUNDA_TASKLIST_BASE_URL: http://localhost:8080
+          ZEEBE_ADDRESS: localhost:26500
+          ZEEBE_CLIENT_ID: ''
+          ZEEBE_CLIENT_SECRET: ''
+          CAMUNDA_OAUTH_URL: ''
+          CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
         run: |
           set -euo pipefail
           echo "Starting local webserver with debug output..."
@@ -221,24 +237,25 @@ jobs:
           export PATH="$PWD/node_modules/.bin:$PATH"
           
           # Start router in background with full output capture
-          npm run start:local 2>&1 | tee /tmp/web.log &
+          # Use :ci variant to disable livereload and avoid port conflicts
+          npm run start:local:ci > /tmp/web.log 2>&1 &
           WEB_PID=$!
           echo $WEB_PID > /tmp/web.pid
           echo "Webserver PID: $WEB_PID"
-          sleep 5
+          sleep 15
           
           # Check if process is still alive
           if ! kill -0 $WEB_PID 2>/dev/null; then
             echo "ERROR: Webserver crashed!"
-            echo "=== Last 100 lines from web.log ==="
-            tail -n 100 /tmp/web.log || true
+            echo "=== Last 150 lines from web.log ==="
+            tail -n 150 /tmp/web.log || true
             exit 1
           fi
           
-          # Poll for server readiness
+          # Poll for server readiness with longer timeout
           echo "Polling for server readiness..."
-          for i in {1..30}; do
-            if curl -s http://localhost:5001/ > /dev/null 2>&1; then
+          for i in {1..60}; do
+            if curl -s http://127.0.0.1:5001/ > /dev/null 2>&1 || curl -s http://localhost:5001/ > /dev/null 2>&1; then
               echo "✓ Server responding on port 5001"
               break
             fi
@@ -248,71 +265,31 @@ jobs:
               cat /tmp/web.log || true
               exit 1
             fi
-            echo "Wait $i/30..."
+            echo "Wait $i/60..."
             sleep 2
           done
           
           # Verify server is responsive
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/app/index.html || echo "000")
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5001/app/index.html 2>/dev/null || echo "000")
+          if [[ "$HTTP_CODE" == "000" ]]; then
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/app/index.html 2>/dev/null || echo "000")
+          fi
           echo "Server HTTP response: $HTTP_CODE"
           if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "304" ]]; then
-            echo "ERROR: Server not responding correctly"
-            curl -v http://localhost:5001/app/index.html || true
+            echo "ERROR: Server not responding correctly (HTTP $HTTP_CODE)"
+            echo "=== Last 100 lines from web.log ==="
+            tail -n 100 /tmp/web.log || true
+            curl -v http://127.0.0.1:5001/app/index.html 2>&1 || true
             exit 1
           fi
           echo "✓ Server is ready!"
-        working-directory: ./
-
-      - name: Deploy Camunda Test models
-        shell: bash
-        run: |
-          # Verify webserver is still running before deploying
-          if [[ -f /tmp/web.pid ]]; then
-            WEB_PID=$(cat /tmp/web.pid)
-            if ! kill -0 $WEB_PID 2>/dev/null; then
-              echo "ERROR: Webserver died after startup!"
-              echo "Last 100 lines from web.log:"
-              tail -n 100 /tmp/web.log || true
-              exit 1
-            fi
-            echo "✓ Webserver still running (PID: $WEB_PID)"
-          fi
           
-          # c8ctl is available via @camunda8/cli devDependency
+          # Deploy forms before tests
           npm run e2e:test:deployForms
-        working-directory: ./
-
-      - name: Run E2E tests
-        shell: bash
-        env:
-          CAMUNDA_AUTH_STRATEGY: "BASIC"
-          CAMUNDA_BASIC_AUTH_USERNAME: "demo"
-          CAMUNDA_BASIC_AUTH_PASSWORD: "demo"
-          CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
-        run: |
-          # Final check before tests
-          if [[ -f /tmp/web.pid ]]; then
-            WEB_PID=$(cat /tmp/web.pid)
-            if ! kill -0 $WEB_PID 2>/dev/null; then
-              echo "ERROR: Webserver not running before tests!"
-              echo "Last 100 lines from web.log:"
-              tail -n 100 /tmp/web.log || true
-              exit 1
-            fi
-            echo "✓ Webserver confirmed running (PID: $WEB_PID)"
-          fi
-          
-          # Test connectivity
-          echo "Testing server connectivity..."
-          curl -I http://localhost:5001/app/index.html || {
-            echo "ERROR: Cannot reach webserver!"
-            echo "Network status:"
-            netstat -tuln | grep 5001 || echo "Port 5001 not listening"
-            exit 1
-          }
           
           echo "Starting E2E tests..."
           npm run e2e:test
+        working-directory: ./
 
       - name: Stop local webserver
         if: always()
@@ -324,8 +301,10 @@ jobs:
           pkill -f "npm run start:local" || true
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: SAP BTP Plugin Fiori App (Tasklist ${{ matrix.tasklist_mode }} mode)
-          path: fiori-app/webapp/html-report
+          path: |
+            fiori-app/webapp/html-report
+            fiori-app/webapp/test-results
           retention-days: 10

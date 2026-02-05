@@ -21,15 +21,17 @@
     "hybrid:xs-app": "cp router/xs-app.json router/xs-app.json.orig; cp router/xs-app-hybrid.json router/xs-app.json",
     "hybrid:router": "npm start -w router",
     "local:app": "npm run -w core deploy; npm run start:local -w fiori-app",
+    "local:app:ci": "npm run -w core deploy; npm run start:local:ci -w fiori-app",
     "local:router": "npm run start:local -w router",
     "start:hybrid": "cross-env NODE_ENV=localdev npm-run-all --parallel hybrid:*",
     "start:local": "cross-env NODE_ENV=localdev npm-run-all --parallel local:*",
+    "start:local:ci": "cross-env NODE_ENV=localdev npm-run-all --parallel local:router local:app:ci",
     "e2e:codegen": "npx playwright codegen --browser=chromium http://localhost:5001/app/index.html",
     "e2e:test": "npx playwright test --config fiori-app/webapp/test/playwrightE2E/playwright.config.ts",
     "postinstall": "patch-package",
     "//e2e:test:deployForms": "deploy forms to camunda platform before running e2e tests",
     "e2e:test:deployForms": "cd fiori-app/webapp/test/playwrightE2E/controls/camunda/ && npx c8ctl deploy --insecure .",
-    "gh:test": "act workflow_dispatch -W .github/workflows/webapp-e2e-tests-on-demand.yml  --input version=8.9 -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest --reuse"
+    "gh:test": "act workflow_dispatch -W .github/workflows/webapp-e2e-tests-on-demand.yml  --input version=8.9 -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest"
   },
   "dependencies": {
     "@cap-js/postgres": "^2",
