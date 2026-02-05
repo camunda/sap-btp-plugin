@@ -123,7 +123,7 @@ terminal 2:
 
 - dev-approuter: port 5001 (not 5000, b/c of macOS port issue)
 - approuter locally: port 5001 (see above)
-- UI5 frontend: port 8080
+- UI5 frontend: port 8095
 - CAP backend: port 4004
 
 - standalone PostgreSQL: 5433

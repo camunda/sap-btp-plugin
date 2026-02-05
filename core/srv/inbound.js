@@ -18,7 +18,7 @@ class InboundService extends cds.ApplicationService {
       /**
        * @type {import("@camunda8/sdk").Zeebe.ZeebeGrpcClient}
        */
-      const zbc = _zbc.getClient()
+      const zbc = await _zbc.getClient()
       try {
         let result
         if (!req.data.wait) {

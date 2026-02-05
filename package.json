@@ -1,6 +1,6 @@
 {
   "name": "@camunda8/sap-btp-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "mono repo for the Camunda BTP plugin, part of the SAP Integration",
   "repository": "https://github.com/camunda/sap-btp-plugin",
   "license": "Camunda License 1.0",
@@ -33,7 +33,8 @@
   },
   "dependencies": {
     "@cap-js/postgres": "^2",
-    "@sap/cds": "^9",
+    "@sap/cds": "^9.6.3",
+    "@cap-js/cds-types": "^0.15.0",
     "patch-package": "^8.0.0"
   },
   "devDependencies": {

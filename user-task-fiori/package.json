@@ -1,6 +1,6 @@
 {
 	"name": "@camunda8/user-task-fiori",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "rendering Camunda Forms into the Fiori Design System",
 	"license": "Camunda License 1.0",
 	"repository": "https://github.com/camunda/sap-btp-plugin",

@@ -11,6 +11,7 @@ entity UserTasks : managed {
       channelId          : String; //> unique client identifier
       user               : User; //> authenticated user that "claimed" that task
       jobKey             : String; //> job identifier, later used for task completion
+      userTaskKey        : String; //> camunda user task identifier
       formData           : LargeString; //> json of the linked form
       variables          : LargeString; //> json of the task's variables
 }

@@ -132,9 +132,11 @@ export default class App extends BaseController {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const {
           jobKey,
+          userTaskKey,
           formData,
           variables
         }: {
+          userTaskKey: string
           jobKey: string
           formData: string
           variables: string
@@ -144,6 +146,7 @@ export default class App extends BaseController {
           data: JSON.stringify({
             channelId,
             type: "form",
+            userTaskKey,
             jobKey,
             formData,
             variables
