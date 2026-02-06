@@ -106,9 +106,16 @@ jobs:
             echo "Using standalone camunda container"
             if [[ "${{ matrix.tasklist_mode }}" == "v1" ]]; then
               echo "Starting with Tasklist V1 mode enabled"
-              CAMUNDA_TASKLIST_V2_MODE_ENABLED=false DATABASE=elasticsearch docker compose up -d camunda
+              CAMUNDA_TASKLIST_V2_MODE_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
+              CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
+              DATABASE=elasticsearch docker compose up -d camunda
             else
               echo "Starting with default Tasklist V2 mode"
+              CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
+              CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
               DATABASE=elasticsearch docker compose up -d camunda
             fi
           fi
@@ -222,9 +229,10 @@ jobs:
       - name: Start webserver and run E2E tests
         shell: bash
         env:
-          CAMUNDA_REST_ADDRESS: http://localhost:8080
-          CAMUNDA_TASKLIST_BASE_URL: http://localhost:8080
-          ZEEBE_ADDRESS: localhost:26500
+          CAMUNDA_REST_ADDRESS: http://127.0.0.1:8080
+          CAMUNDA_TASKLIST_BASE_URL: http://127.0.0.1:8080
+          ZEEBE_ADDRESS: 127.0.0.1:26500
+          CAMUNDA_SECURE_CONNECTION: 'false'
           ZEEBE_CLIENT_ID: ''
           ZEEBE_CLIENT_SECRET: ''
           CAMUNDA_OAUTH_URL: ''
