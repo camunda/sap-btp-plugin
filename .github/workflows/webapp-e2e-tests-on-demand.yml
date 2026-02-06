@@ -188,8 +188,9 @@ jobs:
         shell: bash
         run: |
           echo "Cleaning old dependencies and lockfiles..."
-          rm -rf node_modules package-lock.json
-          rm -rf */node_modules */package-lock.json
+          #rm -rf node_modules package-lock.json
+          #rm -rf */node_modules */package-lock.json
+          rm -rf logs
           echo ""
           echo "Installing dependencies (this may take several minutes)..."
           npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund
@@ -295,11 +296,59 @@ jobs:
           fi
           echo "✓ Server is ready!"
           
+          # Log Camunda container status
+          echo ""
+          echo "=== Camunda Container Status ==="
+          docker ps | grep camunda || echo "Camunda container not found"
+          docker logs camunda 2>&1 | tail -n 20 || echo "Could not get Camunda logs"
+          echo ""
+          
+          # Test Zeebe connectivity
+          echo "=== Testing Zeebe Connectivity ==="
+          timeout 5 bash -c 'echo > /dev/tcp/127.0.0.1/26500' && echo "✓ Port 26500 is open" || echo "✗ Port 26500 is closed"
+          echo ""
+
+          # Wait for Camunda (REST + Zeebe) to be ready
+          echo "=== Waiting for Camunda readiness ==="
+          for i in {1..60}; do
+            rest_ready=false
+            zeebe_ready=false
+
+            if [[ "${NON_STANDALONE:-false}" == "true" ]]; then
+              tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080 || echo "000")
+              operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8081 || echo "000")
+              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
+                rest_ready=true
+              fi
+            else
+              tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/tasklist || echo "000")
+              operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/operate || echo "000")
+              identity_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/identity || echo "000")
+              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" && "$identity_code" != "000" && "$identity_code" != "404" ]]; then
+                rest_ready=true
+              fi
+            fi
+
+            if timeout 2 bash -c 'echo > /dev/tcp/127.0.0.1/26500' 2>/dev/null; then
+              zeebe_ready=true
+            fi
+
+            if [[ "$rest_ready" == true && "$zeebe_ready" == true ]]; then
+              echo "✓ Camunda REST and Zeebe are ready"
+              break
+            fi
+
+            echo "Waiting for Camunda... ($i/60)"
+            sleep 2
+          done
+          echo ""
+          
           # Deploy forms before tests
           npm run e2e:test:deployForms
           
-          echo "Starting E2E tests..."
-          npm run e2e:test
+          echo ""
+          echo "=== Starting Playwright E2E Tests with Debug Info ==="
+          npm run e2e:test 2>&1 | tee -a ./logs/test-output.log || true
         working-directory: ./
 
       - name: Stop local webserver
@@ -319,4 +368,5 @@ jobs:
             fiori-app/webapp/html-report
             fiori-app/webapp/test-results
             logs/web.log
+            logs/test-output.log
           retention-days: 10

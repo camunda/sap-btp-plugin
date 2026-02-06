@@ -46,3 +46,4 @@ xs-security.json
 =======
 .ui5-tooling-modules
 .env
+logs/
