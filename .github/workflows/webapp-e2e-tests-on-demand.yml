@@ -236,11 +236,14 @@ jobs:
           # Ensure node_modules/.bin is in PATH for npm-run-all to find binaries
           export PATH="$PWD/node_modules/.bin:$PATH"
           
+          # Create logs directory in workspace for act compatibility
+          mkdir -p ./logs
+          
           # Start router in background with full output capture
           # Use :ci variant to disable livereload and avoid port conflicts
-          npm run start:local:ci > /tmp/web.log 2>&1 &
+          npm run start:local:ci > ./logs/web.log 2>&1 &
           WEB_PID=$!
-          echo $WEB_PID > /tmp/web.pid
+          echo $WEB_PID > ./logs/web.pid
           echo "Webserver PID: $WEB_PID"
           sleep 15
           
@@ -248,7 +251,7 @@ jobs:
           if ! kill -0 $WEB_PID 2>/dev/null; then
             echo "ERROR: Webserver crashed!"
             echo "=== Last 150 lines from web.log ==="
-            tail -n 150 /tmp/web.log || true
+            tail -n 150 ./logs/web.log || true
             exit 1
           fi
           
@@ -262,7 +265,7 @@ jobs:
             if ! kill -0 $WEB_PID 2>/dev/null; then
               echo "ERROR: Webserver died during startup"
               echo "=== Full web.log ==="
-              cat /tmp/web.log || true
+              cat ./logs/web.log || true
               exit 1
             fi
             echo "Wait $i/60..."
@@ -278,7 +281,7 @@ jobs:
           if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "304" ]]; then
             echo "ERROR: Server not responding correctly (HTTP $HTTP_CODE)"
             echo "=== Last 100 lines from web.log ==="
-            tail -n 100 /tmp/web.log || true
+            tail -n 100 ./logs/web.log || true
             curl -v http://127.0.0.1:5001/app/index.html 2>&1 || true
             exit 1
           fi
@@ -295,8 +298,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [[ -f /tmp/web.pid ]]; then
-            kill $(cat /tmp/web.pid) || true
+          if [[ -f ./logs/web.pid ]]; then
+            kill $(cat ./logs/web.pid) || true
           fi
           pkill -f "npm run start:local" || true
 
@@ -307,4 +310,5 @@ jobs:
           path: |
             fiori-app/webapp/html-report
             fiori-app/webapp/test-results
+            logs/web.log
           retention-days: 10
