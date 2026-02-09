@@ -79,8 +79,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        tasklist_mode: ${{ fromJSON((needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v2"]') }}
-        #tasklist_mode: ${{ fromJSON((needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v1","v2"]') }}
+        tasklist_mode: ${{ fromJSON((needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v1","v2"]') }}
     steps:
       - name: Print base branch and tasklist mode
         run: |
@@ -190,7 +189,8 @@ jobs:
           echo "Cleaning old dependencies and lockfiles..."
           #rm -rf node_modules package-lock.json
           #rm -rf */node_modules */package-lock.json
-          rm -rf logs
+          rm -rf /fiori-app/webapp/test/html-report
+          rm -rf /fiori-app/webapp/test/test-results
           echo ""
           echo "Installing dependencies (this may take several minutes)..."
           npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund

@@ -47,3 +47,5 @@ xs-security.json
 .ui5-tooling-modules
 .env
 logs/
+fiori-app/webapp/test/test-results
+fiori-app/webapp/test/html-report
