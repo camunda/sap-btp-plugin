@@ -1,17 +1,22 @@
 name: WebApp E2E Tests On Demand
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Target version"
-        type: choice
-        required: true
-        options:
-          - "8.6"
-          - "8.7"
-          - "8.8"
-          - "8.9"
+  push:
+    branches:
+      - feature/c8-workflows
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       version:
+#         description: "Target version"
+#         type: choice
+#         required: true
+#         options:
+#           - "8.6"
+#           - "8.7"
+#           - "8.8"
+#           - "8.9"
 
 permissions:
   contents: read
