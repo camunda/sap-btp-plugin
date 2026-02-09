@@ -4,19 +4,18 @@ on:
   push:
     branches:
       - feature/c8-workflows
-
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       version:
-#         description: "Target version"
-#         type: choice
-#         required: true
-#         options:
-#           - "8.6"
-#           - "8.7"
-#           - "8.8"
-#           - "8.9"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Target version"
+        type: choice
+        required: false
+        default: "8.9"
+        options:
+          - "8.6"
+          - "8.7"
+          - "8.8"
+          - "8.9"
 
 permissions:
   contents: read
@@ -36,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          version="${{ inputs.version }}"
+          version="${{ inputs.version || '8.9' }}"
 
           case "$version" in
             "8.6") base="stable/8.6" ;;

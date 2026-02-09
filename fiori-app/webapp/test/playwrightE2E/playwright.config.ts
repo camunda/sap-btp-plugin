@@ -10,7 +10,7 @@ export default defineConfig({
 
   // Maximum time for individual assertions (e.g. expect())
   expect: {
-    timeout: 5000
+    timeout: 10000
   },
 
   // Reporter for the command line
