@@ -2,8 +2,7 @@ name: WebApp E2E Tests On Demand
 
 on:
   push:
-    branches:
-      - feature/c8-workflows
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -21,84 +20,60 @@ permissions:
   contents: read
 
 jobs:
-  validate-branch:
-    runs-on: ubuntu-latest
-    outputs:
-      base: ${{ steps.detect-base.outputs.base }}
-      config_path: ${{ steps.detect-base.outputs.config_path }}
-      non_standalone: ${{ steps.detect-base.outputs.non_standalone }}
-
-    steps:
-      - name: Detect base branch and config dir
-        id: detect-base
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          version="${{ inputs.version || '8.9' }}"
-
-          case "$version" in
-            "8.6") base="stable/8.6" ;;
-            "8.7") base="stable/8.7" ;;
-            "8.8") base="stable/8.8" ;;
-            "8.9") base="main" ;;
-            *) echo "Error: unsupported version '$version'"; exit 1 ;;
-          esac
-
-          echo "base=$base" >> "$GITHUB_OUTPUT"
-
-          case "$version" in
-            "8.6")
-              cfg="fiori-app/webapp/config/8.6"
-              non_standalone=true
-              ;;
-            "8.7")
-              cfg="fiori-app/webapp/config/8.7"
-              non_standalone=true
-              ;;
-            "8.8")
-              cfg="fiori-app/webapp/config/8.8"
-              non_standalone=false
-              ;;
-            "8.9")
-              cfg="fiori-app/webapp/config/8.9"
-              non_standalone=false
-              ;;
-          esac
-
-          echo "config_path=$cfg" >> "$GITHUB_OUTPUT"
-          echo "non_standalone=$non_standalone" >> "$GITHUB_OUTPUT"
-
-          echo "Version input: $version"
-          echo "Detected base: $base"
-          echo "Using config path: $cfg"
-          echo "NON_STANDALONE: $non_standalone"
-
   webapp-e2e-tests:
-    name: WebApp E2E Tests (Tasklist ${{ matrix.tasklist_mode }} mode)
-    needs: [validate-branch]
+    name: WebApp E2E Tests - Version ${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
-        tasklist_mode: ${{ fromJSON((needs.validate-branch.outputs.base == 'stable/8.6' || needs.validate-branch.outputs.base == 'stable/8.7') && '["v1"]' || '["v1","v2"]') }}
+        include:
+          - version: "8.6"
+            tasklist_mode: "v1"
+            base: "stable/8.6"
+            config_path: "fiori-app/webapp/config/8.6"
+            non_standalone: true
+          - version: "8.7"
+            tasklist_mode: "v1"
+            base: "stable/8.7"
+            config_path: "fiori-app/webapp/config/8.7"
+            non_standalone: true
+          - version: "8.8"
+            tasklist_mode: "v1"
+            base: "stable/8.8"
+            config_path: "fiori-app/webapp/config/8.8"
+            non_standalone: false
+          - version: "8.8"
+            tasklist_mode: "v2"
+            base: "stable/8.8"
+            config_path: "fiori-app/webapp/config/8.8"
+            non_standalone: false
+          - version: "8.9"
+            tasklist_mode: "v1"
+            base: "main"
+            config_path: "fiori-app/webapp/config/8.9"
+            non_standalone: false
+          - version: "8.9"
+            tasklist_mode: "v2"
+            base: "main"
+            config_path: "fiori-app/webapp/config/8.9"
+            non_standalone: false
     steps:
       - name: Print base branch and tasklist mode
         run: |
-          echo "Base branch: ${{ needs.validate-branch.outputs.base }}"
+          echo "Base branch: ${{ matrix.base }}"
           echo "Tasklist mode: ${{ matrix.tasklist_mode }}"
-          echo "Config path: ${{ needs.validate-branch.outputs.config_path }}"
-          echo "Non-standalone: ${{ needs.validate-branch.outputs.non_standalone }}"
+          echo "Config path: ${{ matrix.config_path }}"
+          echo "Non-standalone: ${{ matrix.non_standalone }}"
 
       - uses: actions/checkout@v4
 
       - name: Export config variables
         shell: bash
         run: |
-          echo "CONFIG_PATH=${{ needs.validate-branch.outputs.config_path }}" >> "$GITHUB_ENV"
-          echo "NON_STANDALONE=${{ needs.validate-branch.outputs.non_standalone }}" >> "$GITHUB_ENV"
+          echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
+          echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
 
       - name: Start Camunda
         run: |
