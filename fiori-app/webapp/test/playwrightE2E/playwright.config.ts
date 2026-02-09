@@ -20,18 +20,22 @@ export default defineConfig({
       "html",
       {
         embedAnnotationsAsProperties: true,
-        outputFolder: path.resolve(__dirname, "..", "..", "..", "..", "logs", "html-report")
+        outputFolder: path.resolve(__dirname, "..", "html-report")
       }
     ],
-    ["junit", { outputFile: path.resolve(__dirname, "..", "..", "..", "..", "logs", "test-results", "junit-report.xml") }]
+    ["junit", { outputFile: path.resolve(__dirname, "..", "test-results", "junit-report.xml") }]
   ],
 
-  outputDir: path.resolve(__dirname, "..", "..", "..", "..", "logs", "test-results"),
+  outputDir: path.resolve(__dirname, "..", "test-results"),
 
   // Global configuration for all tests
   use: {
     // Base URL for actions like page.goto('/')
     baseURL: "http://localhost:5001/app/index.html",
+
+    // Set timezone to avoid "Invalid time zone specified: Etc/Unknown" error
+    timezoneId: "Europe/Berlin",
+    locale: "de-DE",
 
     // Creates artifacts on failures for easier debugging
     trace: "retain-on-failure",
