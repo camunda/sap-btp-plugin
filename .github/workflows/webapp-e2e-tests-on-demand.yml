@@ -19,45 +19,38 @@ permissions:
   contents: read
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate test matrix
+        id: set-matrix
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+            case "$VERSION" in
+              "8.6") MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true}]' ;;
+              "8.7") MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true}]' ;;
+              "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
+              "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
+            esac
+          else
+            MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true},{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true},{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]'
+          fi
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
   webapp-e2e-tests:
     name: WebApp E2E Tests - Version ${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
+    needs: generate-matrix
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
-        include:
-          - version: "8.6"
-            tasklist_mode: "v1"
-            base: "stable/8.6"
-            config_path: "fiori-app/webapp/config/8.6"
-            non_standalone: true
-          - version: "8.7"
-            tasklist_mode: "v1"
-            base: "stable/8.7"
-            config_path: "fiori-app/webapp/config/8.7"
-            non_standalone: true
-          - version: "8.8"
-            tasklist_mode: "v1"
-            base: "stable/8.8"
-            config_path: "fiori-app/webapp/config/8.8"
-            non_standalone: false
-          - version: "8.8"
-            tasklist_mode: "v2"
-            base: "stable/8.8"
-            config_path: "fiori-app/webapp/config/8.8"
-            non_standalone: false
-          - version: "8.9"
-            tasklist_mode: "v1"
-            base: "main"
-            config_path: "fiori-app/webapp/config/8.9"
-            non_standalone: false
-          - version: "8.9"
-            tasklist_mode: "v2"
-            base: "main"
-            config_path: "fiori-app/webapp/config/8.9"
-            non_standalone: false
+        include: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
     steps:
       - name: Print base branch and tasklist mode
         run: |
@@ -73,6 +66,16 @@ jobs:
         run: |
           echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
           echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
+
+      - name: Clean up leftover Docker containers and volumes
+        shell: bash
+        run: |
+          echo "Stopping and removing leftover containers..."
+          docker stop elasticsearch tasklist operate zeebe camunda 2>/dev/null || true
+          docker rm elasticsearch tasklist operate zeebe camunda 2>/dev/null || true
+          docker volume prune -f 2>/dev/null || true
+          docker ps -a
+        working-directory: ${{ env.CONFIG_PATH }}
 
       - name: Start Camunda
         run: |
