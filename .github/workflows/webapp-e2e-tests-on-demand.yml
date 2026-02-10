@@ -1,7 +1,6 @@
 name: WebApp E2E Tests On Demand
 
 on:
-  push:
   pull_request:
   workflow_dispatch:
     inputs:
