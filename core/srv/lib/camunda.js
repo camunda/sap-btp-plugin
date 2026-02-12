@@ -59,24 +59,27 @@ module.exports = Object.assign(
 
     async registerWorker() {
       await this._createJobWorker("io.camunda.zeebe:userTask", userTaskWorker, "job worker")
-
-      await Promise.all([
-        this._createTaskListenerWorker(
-          "sap-tl-creating",
-          userTaskWorker,
-          "camunda user task worker for creating jobs"
-        ),
-        this._createTaskListenerWorker(
-          "sap-tl-completing-success",
-          userTaskWorker,
-          "camunda user task worker for completing jobs"
-        ),
-        this._createTaskListenerWorker(
-          "sap-tl-completing-fail",
-          userTaskWorker,
-          "camunda user task worker for completing jobs"
-        )
-      ])
+      
+      const topology = await this.zeebe.topology()
+      if (topology.gatewayVersion > "8.7") {
+        await Promise.all([
+          this._createTaskListenerWorker(
+            "sap-tl-creating",
+            userTaskWorker,
+            "camunda user task worker for creating jobs"
+          ),
+          this._createTaskListenerWorker(
+            "sap-tl-completing-success",
+            userTaskWorker,
+            "camunda user task worker for completing jobs"
+          ),
+          this._createTaskListenerWorker(
+            "sap-tl-completing-fail",
+            userTaskWorker,
+            "camunda user task worker for completing jobs"
+          )
+        ])
+      }
     },
 
     /**
