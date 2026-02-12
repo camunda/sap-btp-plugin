@@ -72,6 +72,7 @@ async function startProcessInstance(processDefinitionId: string, page: Page): Pr
 
   const url = new URL(currentUrl)
   url.searchParams.set("run", processDefinitionId)
+  url.searchParams.set("channel", processDefinitionId)
   const targetUrl = url.toString()
 
   // Set up waitForResponse BEFORE navigation

@@ -81,7 +81,7 @@ jobs:
         run: |
           if [[ "$NON_STANDALONE" == "true" ]]; then
             echo "Using single services for older branches (8.6/8.7)"
-            DATABASE=elasticsearch docker compose up -d operate tasklist
+            docker compose up -d
           else
             echo "Using standalone camunda container"
             if [[ "${{ matrix.tasklist_mode }}" == "v1" ]]; then
@@ -211,13 +211,16 @@ jobs:
       - name: Start webserver and run E2E tests
         shell: bash
         env:
+          CAMUNDA_SECURE_CONNECTION: false
+          ZEEBE_ADDRESS: localhost:26500
+          ZEEBE_CLIENT_ID: zeebe
+          ZEEBE_CLIENT_SECRET: zecret
+          CAMUNDA_OAUTH_URL: http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token
+          CAMUNDA_TASKLIST_BASE_URL: http://localhost:8082
+          CAMUNDA_OPERATE_BASE_URL: http://localhost:8081
+          CAMUNDA_OPTIMIZE_BASE_URL: http://localhost:8083
+          CAMUNDA_MODELER_BASE_URL: http://localhost:8070/api
           CAMUNDA_REST_ADDRESS: http://127.0.0.1:8080
-          CAMUNDA_TASKLIST_BASE_URL: http://127.0.0.1:8080
-          ZEEBE_ADDRESS: 127.0.0.1:26500
-          CAMUNDA_SECURE_CONNECTION: 'false'
-          ZEEBE_CLIENT_ID: ''
-          ZEEBE_CLIENT_SECRET: ''
-          CAMUNDA_OAUTH_URL: ''
           CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
         run: |
           set -euo pipefail
