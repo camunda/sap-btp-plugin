@@ -20,6 +20,7 @@ fi
 
 total_deployed=0
 total_failed=0
+failed_files=()
 
 # Iterate through all provided directories
 for dir in "$@"; do
@@ -32,7 +33,7 @@ for dir in "$@"; do
     echo "Processing directory: $dir"
     echo "-----------------------------------"
     
-    # Find all files (not directories) in the specified directory
+    # Find all .bpmn and .form files in the specified directory
     while IFS= read -r -d '' file; do
         echo "Deploying: $file"
         
@@ -42,9 +43,10 @@ for dir in "$@"; do
         else
             echo "✗ Failed to deploy: $file"
             ((total_failed++))
+            failed_files+=("$file")
         fi
         echo ""
-    done < <(find "$dir" -maxdepth 1 -type f -print0)
+    done < <(find "$dir" -maxdepth 1 -type f \( -name "*.bpmn" -o -name "*.form" \) -print0)
     
     echo ""
 done
@@ -56,6 +58,12 @@ echo "  Successfully deployed: $total_deployed"
 echo "  Failed: $total_failed"
 echo "==================================="
 
+# List failed files if any
 if [ $total_failed -gt 0 ]; then
+    echo ""
+    echo "Failed to deploy the following files:"
+    for failed_file in "${failed_files[@]}"; do
+        echo "  - $failed_file"
+    done
     exit 1
 fi
