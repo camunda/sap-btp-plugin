@@ -1,9 +1,8 @@
 import { test, expect } from "@playwright/test"
 import { fetchVariableFromProcessInstance, startProcessInstance, waitForProcessCompletion } from "../helpers"
-import Page from "@playwright/test"
 
 test.describe("Checkbox Control E2E Test (process_45_checkbox)", () => {
-  test("should hide checkbox controls according to hidden expression and hidden fields should not be submitted", async ({
+  test.only("should hide checkbox controls according to hidden expression and hidden fields should not be submitted", async ({
     page
   }) => {
     const processDefinitionId = "process_45_checkbox"

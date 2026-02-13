@@ -61,7 +61,7 @@ module.exports = Object.assign(
       await this._createJobWorker("io.camunda.zeebe:userTask", userTaskWorker, "job worker")
       
       const topology = await this.zeebe.topology()
-      if (topology.gatewayVersion > "8.7") {
+      if (topology.gatewayVersion > "8.8") {
         await Promise.all([
           this._createTaskListenerWorker(
             "sap-tl-creating",

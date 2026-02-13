@@ -13,6 +13,7 @@ async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
     ? { in: [job.processInstanceKey, job.variables.parentProcessInstanceKey] }
     : job.processInstanceKey
 
+  // TODO: We should check the order of executions to avoid the race condition where the user task is persisted before the browser client record is created.
   await retry(
     async () => {
       // Get associated user for the user task
@@ -35,7 +36,6 @@ async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
     5,
     2000
   )
-
 }
 
 module.exports = {

@@ -29,7 +29,7 @@
     <bpmn:sequenceFlow id="Flow_1kebd82" sourceRef="Activity_089dbko" targetRef="Event_1l82lwk" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_45_radiogroup3">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_45_radiogroup">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="182" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
