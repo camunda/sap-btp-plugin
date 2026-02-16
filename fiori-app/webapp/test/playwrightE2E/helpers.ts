@@ -1,6 +1,24 @@
 import test, { expect, Page } from "@playwright/test"
 
-const camundaRest = (globalThis as any).process?.env?.CAMUNDA_REST_ADDRESS ?? "http://localhost:8080"
+const camundaRest = (globalThis as any).process?.env?.CAMUNDA_REST_ADDRESS ?? "http://localhost:8080/"
+
+async function getTopology() {
+  const token = await getCamundaAccessToken()
+  const response = await fetch(`${camundaRest}v1/topology`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Failed to get topology: ${response.status} ${response.statusText} - ${error}`)
+  }
+
+  return await response.json()
+}
 
 /**
  * fetch variable from camunda backend by calling process instance variable endpoint
@@ -10,10 +28,12 @@ const camundaRest = (globalThis as any).process?.env?.CAMUNDA_REST_ADDRESS ?? "h
  * @returns variable value
  */
 async function fetchVariableFromProcessInstance(processInstanceKey: string, variableName: string): Promise<any> {
-  const response = await fetch(`${camundaRest}/v2/variables/search`, {
+  const token = await getCamundaAccessToken()
+  const response = await fetch(`${camundaRest}v1/variables/search`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       filter: {
@@ -61,7 +81,6 @@ async function pollVariableFromProcessInstance(variableName: string, processInst
  * @returns process instance key of started process
  */
 async function startProcessInstance(processDefinitionId: string, page: Page): Promise<string> {
-  // Use baseURL from config, fallback to current URL if already on the app
   let currentUrl = page.url()
 
   // If we're on about:blank or empty, use the baseURL from config
@@ -71,20 +90,29 @@ async function startProcessInstance(processDefinitionId: string, page: Page): Pr
   }
 
   const url = new URL(currentUrl)
+  // url.searchParams.set("channelId", processDefinitionId)
   url.searchParams.set("run", processDefinitionId)
-  url.searchParams.set("channel", processDefinitionId)
+  url.searchParams.set("channelId", processDefinitionId)
   const targetUrl = url.toString()
 
   // Set up waitForResponse BEFORE navigation
-  const responsePromise = page.waitForResponse((response) => response.url().includes("runProcess"), { timeout: 30000 })
+  const responsePromise = page.waitForResponse(
+    (response) => {
+      return response.url().includes("runProcess")
+    },
+    { timeout: 30000 }
+  )
 
   // Navigate after response listener is set up
-  await page.goto(targetUrl, { waitUntil: "domcontentloaded" })
+  await page.goto(targetUrl, { waitUntil: "networkidle" })
 
   // Wait for the response
   try {
     const response = await responsePromise
 
+    console.log(
+      `[startProcessInstance ${processDefinitionId}] runProcess: ${await response.status()} ${await response.statusText()} and ${await response.text()}... `
+    )
     const responseJSON = await response.json()
 
     if (response.status() !== 200) {
@@ -110,7 +138,7 @@ async function startProcessInstance(processDefinitionId: string, page: Page): Pr
 async function fetchProcessInstances(
   processDefinitionId: string
 ): Promise<{ page: { totalItems: number }; items: { processInstanceKey: string; state: string }[] }> {
-  const response = await fetch(`${camundaRest}/v2/process-instances/search`, {
+  const response = await fetch(`${camundaRest}/v1/process-instances/search`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -135,8 +163,14 @@ async function fetchProcessInstances(
 async function fetchProcessInstanceById(
   processInstanceId: string
 ): Promise<{ processInstanceKey: string; state: string }> {
-  const response = await fetch(`${camundaRest}/v2/process-instances/${processInstanceId}`, {
-    method: "GET"
+  const token = await getCamundaAccessToken()
+  const url = `${camundaRest}v1/process-instances/${processInstanceId}`
+  console.log(`Fetching process instance by id from ${url}...`)
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   })
   return await response.json()
 }
@@ -187,11 +221,53 @@ async function waitForProcessCompletion(processInstanceKey: string) {
     .toBe("COMPLETED")
 }
 
+/**
+ * Get an OAuth2 access token from Keycloak using Client Credentials Flow
+ * Uses environment variables: CAMUNDA_CLIENT_ID, CAMUNDA_CLIENT_SECRET, CAMUNDA_OAUTH_URL
+ *
+ * @returns access token
+ */
+async function getCamundaAccessToken(): Promise<string> {
+  const clientId = (globalThis as any).process?.env?.CAMUNDA_CLIENT_ID ?? "zeebe"
+  const clientSecret = (globalThis as any).process?.env?.CAMUNDA_CLIENT_SECRET ?? "zecret"
+  const oauthUrl =
+    (globalThis as any).process?.env?.CAMUNDA_OAUTH_URL ??
+    "http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token"
+
+  const body = new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: clientId,
+    client_secret: clientSecret
+  }).toString()
+
+  const response = await fetch(oauthUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Failed to get access token: ${response.status} ${response.statusText} - ${error}`)
+  }
+
+  const data = await response.json()
+  if (!data.access_token) {
+    throw new Error("No access token in response")
+  }
+
+  return data.access_token
+}
+
 export {
   fetchVariableFromProcessInstance,
   pollVariableFromProcessInstance,
   fetchProcessInstanceById,
   fetchProcessInstances,
   waitForProcessCompletion,
-  startProcessInstance
+  startProcessInstance,
+  getTopology,
+  getCamundaAccessToken
 }

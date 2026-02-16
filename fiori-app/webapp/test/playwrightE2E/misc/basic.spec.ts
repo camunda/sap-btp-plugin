@@ -53,7 +53,7 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
     await waitForProcessCompletion(currentInstance.processInstanceKey)
   })
 
-  test("Start process via URL and check instances on camunda as jobWorker", async ({ page }) => {
+  test("Start process via URL and check instances on camunda as job worker", async ({ page }) => {
     const processDefinitionId = "jobworker"
 
     const instanceKey = await startProcessInstance(processDefinitionId, page)
