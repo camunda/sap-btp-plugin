@@ -58,6 +58,10 @@ module.exports = async (job, worker) => {
 
   const { UserTasks, BrowserClients } = require("#cds-models/camunda")
   try {
+    // send form data to the client via websocket
+    await formHelper.loadAndSendForm(job, type)
+    LOGGER.info(`sent form data for PI ${job.processInstanceKey}, channel ${channelId}`)
+
     // update user task
     await persistUserTask({
       job,
@@ -66,11 +70,7 @@ module.exports = async (job, worker) => {
       UserTasks
     })
     LOGGER.info(`persisted user task for PI ${job.processInstanceKey}, channel ${channelId}`)
-    
-    // send form data to the client via websocket
-    await formHelper.loadAndSendForm(job, type)
-    LOGGER.info(`sent form data for PI ${job.processInstanceKey}, channel ${channelId}`)
-    
+
     // forward the job (classic Job worker) (or complete worker for orchestration API in C8.8+ with Camunda User Tasks)
     return job.forward ? job.forward() : job.complete()
   } catch (err) {
