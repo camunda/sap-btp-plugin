@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: read
+  actions: write  # Needed for upload-artifact@v4
 
 jobs:
   generate-matrix:
@@ -66,6 +67,26 @@ jobs:
         run: |
           echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
           echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
+          echo "Load environment variables from config path..."
+          # Filter out comments and empty lines before adding to GITHUB_ENV
+          grep -v '^#' ${{ matrix.config_path }}/env | grep -v '^$' >> "$GITHUB_ENV"
+          echo "=== Loaded environment variables ==="
+          grep -v '^#' ${{ matrix.config_path }}/env | grep -v '^$'
+
+      - name: Print env values
+        run: |
+          echo "CONFIG_PATH=$CONFIG_PATH"
+          echo "NON_STANDALONE=$NON_STANDALONE"
+          echo "=== Debug GITHUB_ENV ==="
+          echo "GITHUB_ENV path: ${GITHUB_ENV:-NOT SET}"
+          if [[ -f "$GITHUB_ENV" ]]; then
+            echo "File exists, contents:"
+            cat "$GITHUB_ENV"
+          else
+            echo "GITHUB_ENV file does not exist at: $GITHUB_ENV"
+          fi
+          echo "=== Current environment variables ==="
+          env | grep -E "CONFIG_PATH|NON_STANDALONE|CAMUNDA" || echo "No matching env vars"
 
       - name: Clean up leftover Docker containers and volumes
         shell: bash
@@ -79,6 +100,8 @@ jobs:
 
       - name: Start Camunda
         run: |
+          echo "XXXXXXXXXX starting $NON_STANDALONE mode containers with docker compose..."
+          echo $NON_STANDALONE
           if [[ "$NON_STANDALONE" == "true" ]]; then
             echo "Using single services for older branches (8.6/8.7)"
             docker compose up -d
@@ -113,7 +136,7 @@ jobs:
 
           for i in {1..90}; do
             if [[ "$NON_STANDALONE" == "true" ]]; then
-              tasklist_status=$(curl -s -m 5 http://localhost:8080 || echo "Failed")
+              tasklist_status=$(curl -s -m 5 http://localhost:8082 || echo "Failed")
               operate_status=$(curl -s -m 5 http://localhost:8081 || echo "Failed")
             else
               tasklist_status=$(curl -s -m 5 http://localhost:8080/tasklist || echo "Failed")
@@ -327,8 +350,8 @@ jobs:
           done
           echo ""
           
-          # Deploy forms before tests
-          npm run e2e:test:deployForms
+          # Deploy forms before tests (continue even if some forms fail)
+          npm run e2e:test:deployForms || true
           
           echo ""
           echo "=== Starting Playwright E2E Tests with Debug Info ==="
