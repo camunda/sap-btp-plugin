@@ -104,7 +104,7 @@ async function startProcessInstance(processDefinitionId: string, page: Page): Pr
   )
 
   // Navigate after response listener is set up
-  await page.goto(targetUrl, { waitUntil: "networkidle" })
+  await page.goto(targetUrl, { waitUntil: "domcontentloaded" })
 
   // Wait for the response
   try {
@@ -138,10 +138,12 @@ async function startProcessInstance(processDefinitionId: string, page: Page): Pr
 async function fetchProcessInstances(
   processDefinitionId: string
 ): Promise<{ page: { totalItems: number }; items: { processInstanceKey: string; state: string }[] }> {
-  const response = await fetch(`${camundaRest}/v1/process-instances/search`, {
+  const token = await getCamundaAccessToken()
+  const response = await fetch(`${camundaRest}v1/process-instances/search`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       filter: {
@@ -165,7 +167,6 @@ async function fetchProcessInstanceById(
 ): Promise<{ processInstanceKey: string; state: string }> {
   const token = await getCamundaAccessToken()
   const url = `${camundaRest}v1/process-instances/${processInstanceId}`
-  console.log(`Fetching process instance by id from ${url}...`)
   const response = await fetch(url, {
     method: "GET",
     headers: {

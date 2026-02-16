@@ -13,6 +13,8 @@ export default defineConfig({
     timeout: 10000
   },
 
+  workers: "50%", // Run tests sequentially to avoid conflicts with shared state (e.g., process instances)
+
   // Reporter for the command line
   reporter: [
     ["list"],

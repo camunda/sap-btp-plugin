@@ -7,19 +7,31 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
     await expect(page).toHaveTitle(/Camunda SAP BTP Integration/i)
   })
 
+  
   test("Start process via UI and check instances on camunda as jobWorker", async ({ page }) => {
     const processDefinitionId = "jobworker"
-    let currentInstance: { processInstanceKey: string; state: string }
+
+    // Set up waitForResponse BEFORE navigation
+    const responsePromise = page.waitForResponse(
+      (response) => {
+        return response.url().includes("runProcess")
+      },
+      { timeout: 30000 }
+    )
 
     await page.goto("/")
-
-    // fetch instances before starting a new one
-    const instancesBefore = (await fetchProcessInstances(processDefinitionId)).page.totalItems
 
     await page.getByRole("button", { name: "menu2" }).click()
     await page.getByRole("menuitem", { name: "run this process..." }).click()
     await page.locator('[id="__component0---app--processName-inner"]').fill(processDefinitionId)
     await page.getByRole("button", { name: "start above process" }).click()
+
+    const response = await responsePromise
+
+    if (response.status() !== 200) {
+      throw new Error(`runProcess returned ${response.status()}: ${response.statusText()}`)
+    }
+    const currentInstance = await response.json()
 
     await expect(page.getByText("Process started - Step 1")).toBeVisible()
 
@@ -33,25 +45,11 @@ test.describe("Basic E2E Tests to start and complete a process", () => {
 
     await page.getByRole("button", { name: "Next" }).click()
 
-    // Polling until the process instance count increases by 1. This is necessary because starting a process might take some time.
-    await expect
-      .poll(
-        async () => {
-          const instances = await fetchProcessInstances(processDefinitionId)
-          currentInstance = instances.items[0] as { processInstanceKey: string; state: string }
-          return instances.page.totalItems
-        },
-        {
-          message: `Process instance should be increased to ${instancesBefore + 1}`,
-          timeout: 10000 // timeout after 10 sec
-        }
-      )
-      .toBe(instancesBefore + 1)
-
     await page.getByRole("button", { name: "finish Process" }).click()
 
     await waitForProcessCompletion(currentInstance.processInstanceKey)
   })
+
 
   test("Start process via URL and check instances on camunda as job worker", async ({ page }) => {
     const processDefinitionId = "jobworker"
