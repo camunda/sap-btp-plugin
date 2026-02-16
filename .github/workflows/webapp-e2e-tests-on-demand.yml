@@ -104,7 +104,7 @@ jobs:
           echo $NON_STANDALONE
           if [[ "$NON_STANDALONE" == "true" ]]; then
             echo "Using single services for older branches (8.6/8.7)"
-            docker compose up -d
+            docker compose --env-file env up -d 
           else
             echo "Using standalone camunda container"
             if [[ "${{ matrix.tasklist_mode }}" == "v1" ]]; then
@@ -113,13 +113,13 @@ jobs:
               CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
               CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
               CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
-              DATABASE=elasticsearch docker compose up -d camunda
+              DATABASE=elasticsearch docker compose --env-file env up -d camunda
             else
               echo "Starting with default Tasklist V2 mode"
               CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
               CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
               CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
-              DATABASE=elasticsearch docker compose up -d camunda
+              DATABASE=elasticsearch docker compose --env-file env up -d camunda
             fi
           fi
         working-directory: ${{ env.CONFIG_PATH }}
