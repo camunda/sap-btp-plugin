@@ -1,10 +1,10 @@
 import test, { expect, Page } from "@playwright/test"
 
-const camundaRest = (globalThis as any).process?.env?.CAMUNDA_REST_ADDRESS ?? "http://localhost:8080/"
+const camundaRest = (globalThis as any).process?.env?.CAMUNDA_REST_ADDRESS ?? "http://localhost:8080"
 
 async function getTopology() {
   const token = await getCamundaAccessToken()
-  const response = await fetch(`${camundaRest}v1/topology`, {
+  const response = await fetch(`${camundaRest}/v1/topology`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -29,7 +29,7 @@ async function getTopology() {
  */
 async function fetchVariableFromProcessInstance(processInstanceKey: string, variableName: string): Promise<any> {
   const token = await getCamundaAccessToken()
-  const response = await fetch(`${camundaRest}v1/variables/search`, {
+  const response = await fetch(`${camundaRest}/v1/variables/search`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -139,7 +139,7 @@ async function fetchProcessInstances(
   processDefinitionId: string
 ): Promise<{ page: { totalItems: number }; items: { processInstanceKey: string; state: string }[] }> {
   const token = await getCamundaAccessToken()
-  const response = await fetch(`${camundaRest}v1/process-instances/search`, {
+  const response = await fetch(`${camundaRest}/v1/process-instances/search`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -166,7 +166,7 @@ async function fetchProcessInstanceById(
   processInstanceId: string
 ): Promise<{ processInstanceKey: string; state: string }> {
   const token = await getCamundaAccessToken()
-  const url = `${camundaRest}v1/process-instances/${processInstanceId}`
+  const url = `${camundaRest}/v1/process-instances/${processInstanceId}`
   const response = await fetch(url, {
     method: "GET",
     headers: {
