@@ -274,7 +274,14 @@ jobs:
 
           # Start router in background with full output capture
           # Use :ci variant to disable livereload and avoid port conflicts
-          CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
+          # For Camunda < 8.8, use CAMUNDA_TASKLIST_BASE_URL env var
+          if [[ "${{ matrix.version }}" < "8.8" ]]; then
+            echo "Starting with CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
+            CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
+          else
+            echo "Starting without CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
+            npm run start:local:ci > ./logs/web.log 2>&1 &
+          fi
           WEB_PID=$!
           echo $WEB_PID > ./logs/web.pid
           echo "Webserver PID: $WEB_PID"
@@ -388,8 +395,8 @@ jobs:
         with:
           name: SAP BTP Plugin Fiori App v${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
           path: |
-            fiori-app/webapp/html-report
-            fiori-app/webapp/test-results
+            fiori-app/webapp/test/html-report
+            fiori-app/webapp/test/test-results
             logs/web.log
             logs/test-output.log
           retention-days: 10
