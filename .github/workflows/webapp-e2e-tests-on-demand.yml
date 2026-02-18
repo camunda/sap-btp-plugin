@@ -68,6 +68,10 @@ jobs:
           echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
           echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
           echo "Load environment variables from config path..."
+          if [[ ! -f "${{ matrix.config_path }}/.env" ]]; then
+            echo "Creating .env from env in ${{ matrix.config_path }}"
+            cp "${{ matrix.config_path }}/env" "${{ matrix.config_path }}/.env"
+          fi
           # Filter out comments and empty lines before adding to GITHUB_ENV
           grep -v '^#' ${{ matrix.config_path }}/env | grep -v '^$' >> "$GITHUB_ENV"
           echo "=== Loaded environment variables ==="
