@@ -35,7 +35,7 @@ jobs:
               "8.6") MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true}]' ;;
               "8.7") MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true}]' ;;
               "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
-              "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
+              "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
             esac
           else
             MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true},{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true},{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]'
@@ -291,11 +291,11 @@ jobs:
           # Use :ci variant to disable livereload and avoid port conflicts
           # For Camunda < 8.8, use CAMUNDA_TASKLIST_BASE_URL env var
           if [[ "${{ matrix.version }}" < "8.8" ]]; then
-            echo "Starting with CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
-            CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
-          else
             echo "Starting without CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
             npm run start:local:ci > ./logs/web.log 2>&1 &
+            else
+            echo "Starting with CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
+            CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
           fi
           WEB_PID=$!
           echo $WEB_PID > ./logs/web.pid
