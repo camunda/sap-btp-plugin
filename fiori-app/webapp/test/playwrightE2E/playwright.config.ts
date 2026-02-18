@@ -13,7 +13,8 @@ export default defineConfig({
     timeout: 10000
   },
 
-  workers: "100%", // Run tests sequentially to avoid conflicts with shared state (e.g., process instances)
+  // Run tests sequentially to avoid conflicts with shared state (e.g., process instances)
+  workers: 1,
 
   // Reporter for the command line
   reporter: [
@@ -46,7 +47,12 @@ export default defineConfig({
 
     // Disables browser security policies, useful for local testing
     launchOptions: {
-      args: ["--disable-web-security"]
+      args: [
+        "--disable-web-security",
+        "--no-sandbox", // Required for container environments (Docker, act, CI)
+        "--disable-setuid-sandbox", // Required for container environments
+        "--disable-dev-shm-usage" // Overcome limited shared memory in containers
+      ]
     }
   },
 
