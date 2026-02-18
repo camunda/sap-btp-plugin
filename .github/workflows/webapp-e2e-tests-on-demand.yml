@@ -65,7 +65,6 @@ jobs:
       - name: Export config variables
         shell: bash
         run: |
-          echo "export DATABASE=elasticsearch" >> "$GITHUB_ENV"
           echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
           echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
           echo "Load environment variables from config path..."
@@ -223,8 +222,6 @@ jobs:
             rm -rf node_modules package-lock.json */node_modules */package-lock.json
             npm i --include=optional --legacy-peer-deps --no-audit --no-fund
           }
-          # Workaround for npm optional dependency bug affecting rollup native binaries
-          npm i --no-save @rollup/rollup-linux-x64-gnu
           echo ""
           echo "✓ Dependencies installed successfully"
           echo ""
@@ -233,6 +230,24 @@ jobs:
           echo ""
           echo "Checking @ui5/cli installation..."
           ls -la node_modules/@ui5/cli/bin/ 2>/dev/null || echo "@ui5/cli bin directory not found"
+
+      - name: Install Rollup binary for platform
+        shell: bash
+        run: |
+          # Workaround for npm optional dependency bug affecting rollup native binaries
+          # Detect architecture and install the correct rollup binary
+          ARCH=$(uname -m)
+          echo "Detected architecture: $ARCH"
+          if [[ "$ARCH" == "x86_64" ]]; then
+            echo "Installing rollup binary for x64..."
+            npm i --no-save @rollup/rollup-linux-x64-gnu || echo "Warning: Could not install x64 rollup binary"
+          elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
+            echo "Installing rollup binary for ARM64..."
+            npm i --no-save @rollup/rollup-linux-arm64-gnu || echo "Warning: Could not install ARM64 rollup binary"
+          else
+            echo "Unknown architecture: $ARCH - skipping rollup binary installation"
+          fi
+          echo "✓ Rollup binary installation completed"
 
       - name: start pg docker
         shell: bash
