@@ -23,7 +23,14 @@ jobs:
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
 
-      - run: npm ci
+      - name: Install dependencies
+        shell: bash
+        run: |
+          npm ci || {
+            echo "npm ci failed; retrying with npm i after removing lockfiles"
+            rm -rf node_modules package-lock.json */node_modules */package-lock.json
+            npm i --include=optional --no-audit --no-fund
+          }
       
       - name: test backend
         run: cd core && npx @cap-js/cds-typer "*" && DISABLE_CAMUNDA=true npm test

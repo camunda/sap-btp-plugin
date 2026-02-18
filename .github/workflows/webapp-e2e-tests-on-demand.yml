@@ -201,7 +201,13 @@ jobs:
           rm -rf /fiori-app/webapp/test/test-results
           echo ""
           echo "Installing dependencies (this may take several minutes)..."
-          npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund
+          npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund || {
+            echo "npm install failed; retrying with npm i after removing lockfiles"
+            rm -rf node_modules package-lock.json */node_modules */package-lock.json
+            npm i --include=optional --legacy-peer-deps --no-audit --no-fund
+          }
+          # Workaround for npm optional dependency bug affecting rollup native binaries
+          npm i --no-save @rollup/rollup-linux-x64-gnu
           echo ""
           echo "✓ Dependencies installed successfully"
           echo ""

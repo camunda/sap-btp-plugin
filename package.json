@@ -31,7 +31,7 @@
     "postinstall": "patch-package",
     "//e2e:test:deployForms": "deploy forms to camunda platform before running e2e tests. We use the shell script as wrapper, bc we dont want to stop the deployment, if there are errors in the form content, which can happen bc not all features are supported by the camunda version running.",
     "e2e:test:deployForms": "./_misc/deployForms.sh fiori-app/webapp/test/playwrightE2E/controls/camunda fiori-app/webapp/test/playwrightE2E/misc/camunda",
-    "gh:test": "act workflow_dispatch -W .github/workflows/webapp-e2e-tests-on-demand.yml  --input version=8.9 -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest"
+    "gh:test": "act workflow_dispatch -W .github/workflows/webapp-e2e-tests-on-demand.yml  --input version=8.7 -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest"
   },
   "dependencies": {
     "@cap-js/cds-types": "^0.15.0",
