@@ -68,14 +68,30 @@ jobs:
           echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
           echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
           echo "Load environment variables from config path..."
-          if [[ ! -f "${{ matrix.config_path }}/.env" ]]; then
-            echo "Creating .env from env in ${{ matrix.config_path }}"
-            cp "${{ matrix.config_path }}/env" "${{ matrix.config_path }}/.env"
+          ENV_FILE_ABS="$GITHUB_WORKSPACE/${{ matrix.config_path }}/env"
+          ENV_FILE_REL="env"
+          if [[ -f "$ENV_FILE_ABS" ]]; then
+            if [[ ! -f "${{ matrix.config_path }}/.env" ]]; then
+              echo "Creating .env from env in ${{ matrix.config_path }}"
+              cp "$ENV_FILE_ABS" "$GITHUB_WORKSPACE/${{ matrix.config_path }}/.env"
+            fi
+          else
+            ENV_FILE_ABS="$GITHUB_WORKSPACE/${{ matrix.config_path }}/envs/.env.database.elasticsearch"
+            ENV_FILE_REL="envs/.env.database.elasticsearch"
+            if [[ -f "$ENV_FILE_ABS" ]]; then
+              echo "Using env file for 8.8/8.9: $ENV_FILE_ABS"
+              echo "DATABASE=elasticsearch" >> "$GITHUB_ENV"
+            else
+              echo "No env file found in ${{ matrix.config_path }}"
+              exit 1
+            fi
           fi
+          echo "ENV_FILE_ABS=$ENV_FILE_ABS" >> "$GITHUB_ENV"
+          echo "ENV_FILE_REL=$ENV_FILE_REL" >> "$GITHUB_ENV"
           # Filter out comments and empty lines before adding to GITHUB_ENV
-          grep -v '^#' ${{ matrix.config_path }}/env | grep -v '^$' >> "$GITHUB_ENV"
+          grep -v '^#' "$ENV_FILE_ABS" | grep -v '^$' >> "$GITHUB_ENV"
           echo "=== Loaded environment variables ==="
-          grep -v '^#' ${{ matrix.config_path }}/env | grep -v '^$'
+          grep -v '^#' "$ENV_FILE_ABS" | grep -v '^$'
 
       - name: Print env values
         run: |
@@ -108,7 +124,7 @@ jobs:
           echo $NON_STANDALONE
           if [[ "$NON_STANDALONE" == "true" ]]; then
             echo "Using single services for older branches (8.6/8.7)"
-            docker compose --env-file env up -d 
+            docker compose --env-file "$ENV_FILE_REL" up -d 
           else
             echo "Using standalone camunda container"
             if [[ "${{ matrix.tasklist_mode }}" == "v1" ]]; then
@@ -117,13 +133,13 @@ jobs:
               CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
               CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
               CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
-              DATABASE=elasticsearch docker compose --env-file env up -d camunda
+              DATABASE=elasticsearch docker compose up -d camunda
             else
               echo "Starting with default Tasklist V2 mode"
               CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
               CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
               CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
-              DATABASE=elasticsearch docker compose --env-file env up -d camunda
+              DATABASE=elasticsearch docker compose up -d camunda
             fi
           fi
         working-directory: ${{ env.CONFIG_PATH }}
@@ -371,7 +387,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: SAP BTP Plugin Fiori App (Tasklist ${{ matrix.tasklist_mode }} mode)
+          name: SAP BTP Plugin Fiori App v${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
           path: |
             fiori-app/webapp/html-report
             fiori-app/webapp/test-results
