@@ -8,7 +8,7 @@ async function getTopology() {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: token ? `Bearer ${token}` : ""
     }
   })
 
@@ -229,8 +229,12 @@ async function waitForProcessCompletion(processInstanceKey: string) {
  * @returns access token
  */
 async function getCamundaAccessToken(): Promise<string> {
-  const clientId = (globalThis as any).process?.env?.CAMUNDA_CLIENT_ID ?? "zeebe"
-  const clientSecret = (globalThis as any).process?.env?.CAMUNDA_CLIENT_SECRET ?? "zecret"
+  const clientId = (globalThis as any).process?.env?.CAMUNDA_CLIENT_ID
+  const clientSecret = (globalThis as any).process?.env?.CAMUNDA_CLIENT_SECRET
+  // If either clientId or clientSecret is missing, return an empty string (no token)
+  if (!clientId || !clientSecret) {
+    return ""
+  }
   const oauthUrl =
     (globalThis as any).process?.env?.CAMUNDA_OAUTH_URL ??
     "http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token"

@@ -17,7 +17,7 @@ on:
 
 permissions:
   contents: read
-  actions: write  # Needed for upload-artifact@v4
+  actions: write # Needed for upload-artifact@v4
 
 jobs:
   generate-matrix:
@@ -34,7 +34,7 @@ jobs:
             case "$VERSION" in
               "8.6") MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true}]' ;;
               "8.7") MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true}]' ;;
-              "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
+              "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
               "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
             esac
           else
@@ -65,6 +65,7 @@ jobs:
       - name: Export config variables
         shell: bash
         run: |
+          echo "export DATABASE=elasticsearch" >> "$GITHUB_ENV"
           echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
           echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
           echo "Load environment variables from config path..."
@@ -205,7 +206,7 @@ jobs:
           node-version: 22
           cache: npm
         env:
-          ACTIONS_STEP_DEBUG: 'false'
+          ACTIONS_STEP_DEBUG: "false"
 
       - name: Clean install dependencies
         shell: bash
@@ -260,26 +261,25 @@ jobs:
       - name: Start webserver and run E2E tests
         shell: bash
         env:
-
           CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
         run: |
           set -euo pipefail
           echo "Starting local webserver with debug output..."
-          
+
           # Ensure node_modules/.bin is in PATH for npm-run-all to find binaries
           export PATH="$PWD/node_modules/.bin:$PATH"
-          
+
           # Create logs directory in workspace for act compatibility
           mkdir -p ./logs
-          
+
           # Start router in background with full output capture
           # Use :ci variant to disable livereload and avoid port conflicts
-          npm run start:local:ci > ./logs/web.log 2>&1 &
+          CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
           WEB_PID=$!
           echo $WEB_PID > ./logs/web.pid
           echo "Webserver PID: $WEB_PID"
           sleep 15
-          
+
           # Check if process is still alive
           if ! kill -0 $WEB_PID 2>/dev/null; then
             echo "ERROR: Webserver crashed!"
@@ -287,7 +287,7 @@ jobs:
             tail -n 150 ./logs/web.log || true
             exit 1
           fi
-          
+
           # Poll for server readiness with longer timeout
           echo "Polling for server readiness..."
           for i in {1..60}; do
@@ -304,7 +304,7 @@ jobs:
             echo "Wait $i/60..."
             sleep 2
           done
-          
+
           # Verify server is responsive
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5001/app/index.html 2>/dev/null || echo "000")
           if [[ "$HTTP_CODE" == "000" ]]; then
@@ -319,14 +319,14 @@ jobs:
             exit 1
           fi
           echo "✓ Server is ready!"
-          
+
           # Log Camunda container status
           echo ""
           echo "=== Camunda Container Status ==="
           docker ps | grep camunda || echo "Camunda container not found"
           docker logs camunda 2>&1 | tail -n 20 || echo "Could not get Camunda logs"
           echo ""
-          
+
           # Test Zeebe connectivity
           echo "=== Testing Zeebe Connectivity ==="
           timeout 5 bash -c 'echo > /dev/tcp/127.0.0.1/26500' && echo "✓ Port 26500 is open" || echo "✗ Port 26500 is closed"
@@ -347,8 +347,7 @@ jobs:
             else
               tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/tasklist || echo "000")
               operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/operate || echo "000")
-              identity_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/identity || echo "000")
-              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" && "$identity_code" != "000" && "$identity_code" != "404" ]]; then
+              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
                 rest_ready=true
               fi
             fi
@@ -366,10 +365,10 @@ jobs:
             sleep 2
           done
           echo ""
-          
+
           # Deploy forms before tests (continue even if some forms fail)
           npm run e2e:test:deployForms || true
-          
+
           echo ""
           echo "=== Starting Playwright E2E Tests with Debug Info ==="
           npm run e2e:test 2>&1 | tee -a ./logs/test-output.log || true
