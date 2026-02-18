@@ -378,7 +378,10 @@ jobs:
 
           echo ""
           echo "=== Starting Playwright E2E Tests with Debug Info ==="
-          npm run e2e:test 2>&1 | tee -a ./logs/test-output.log || true
+          npm run e2e:test 2>&1 | tee -a ./logs/test-output.log
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          echo "Tests finished with exit code: $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
         working-directory: ./
 
       - name: Stop local webserver
