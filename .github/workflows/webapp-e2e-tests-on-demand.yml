@@ -38,7 +38,7 @@ jobs:
               "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
             esac
           else
-            MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]'
+            MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]'
           fi
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 

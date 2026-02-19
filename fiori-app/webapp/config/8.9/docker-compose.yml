@@ -99,6 +99,7 @@ services:
     container_name: camunda
     image: camunda/camunda:SNAPSHOT
     environment:
+      - DATABASE=elasticsearch 
       - 'JAVA_TOOL_OPTIONS=-Xms512m -Xmx1g'
       - ZEEBE_BROKER_NETWORK_HOST=camunda
       - SPRING_PROFILES_ACTIVE=e2e-test,consolidated-auth,tasklist,broker,operate,identity
