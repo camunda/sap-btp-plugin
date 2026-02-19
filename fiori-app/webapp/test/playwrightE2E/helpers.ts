@@ -216,7 +216,7 @@ async function waitForProcessCompletion(processInstanceKey: string) {
       },
       {
         message: `Process should be COMPLETED`,
-        timeout: 20000
+        timeout: 10000
       }
     )
     .toBe("COMPLETED")
