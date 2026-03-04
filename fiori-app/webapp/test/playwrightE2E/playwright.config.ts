@@ -14,7 +14,7 @@ export default defineConfig({
   },
 
   // Run tests sequentially to avoid conflicts with shared state (e.g., process instances)
-  workers: "100%",
+  workers: "50%",
 
   // Reporter for the command line
   reporter: [

@@ -212,6 +212,9 @@ async function waitForProcessCompletion(processInstanceKey: string) {
     .poll(
       async () => {
         const instance = await fetchProcessInstanceById(processInstanceKey)
+        console.log(
+          `[waitForProcessCompletion] Polled process instance ${processInstanceKey} with state ${instance.state}`
+        )
         return instance.state
       },
       {
