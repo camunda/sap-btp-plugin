@@ -2,7 +2,6 @@ const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
 const formHelper = require("./form")
-const retry = require("./retry")
 
 const ws = require("@camunda8/websocket")
 
