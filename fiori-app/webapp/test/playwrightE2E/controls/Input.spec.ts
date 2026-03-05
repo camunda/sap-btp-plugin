@@ -32,10 +32,11 @@ test.describe("Input Control E2E Test (process_45_input)", () => {
     // finish process and check variables
     await page.getByRole("button", { name: "Next" }).click()
     await page.getByRole("button", { name: "finish Process" }).click()
-    await waitForProcessCompletion(instanceKey)
 
     // check variables. The hidden field should not be submitted
     expect(await fetchVariableFromProcessInstance(instanceKey, "input_value_1")).toEqual('"Something"')
     expect(await fetchVariableFromProcessInstance(instanceKey, "input_value_2")).toBeUndefined()
+    
+    await waitForProcessCompletion(instanceKey)
   })
 })

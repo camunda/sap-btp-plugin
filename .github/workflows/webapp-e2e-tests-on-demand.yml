@@ -1,0 +1,420 @@
+name: WebApp E2E Tests On Demand
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Target version"
+        type: choice
+        required: false
+        default: "8.9"
+        options:
+          - "8.6"
+          - "8.7"
+          - "8.8"
+          - "8.9"
+
+permissions:
+  contents: read
+  actions: write # Needed for upload-artifact@v4
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate test matrix
+        id: set-matrix
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+            case "$VERSION" in
+              "8.6") MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true}]' ;;
+              "8.7") MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true}]' ;;
+              "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
+              "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
+            esac
+          else
+            MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true},{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true},{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]'
+          fi
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+  webapp-e2e-tests:
+    name: WebApp E2E Tests - Version ${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+    steps:
+      - name: Print base branch and tasklist mode
+        run: |
+          echo "Base branch: ${{ matrix.base }}"
+          echo "Tasklist mode: ${{ matrix.tasklist_mode }}"
+          echo "Config path: ${{ matrix.config_path }}"
+          echo "Non-standalone: ${{ matrix.non_standalone }}"
+
+      - uses: actions/checkout@v4
+
+      - name: Export config variables
+        shell: bash
+        run: |
+          echo "CONFIG_PATH=${{ matrix.config_path }}" >> "$GITHUB_ENV"
+          echo "NON_STANDALONE=${{ matrix.non_standalone }}" >> "$GITHUB_ENV"
+          echo "Load environment variables from config path..."
+          ENV_FILE_ABS="$GITHUB_WORKSPACE/${{ matrix.config_path }}/env"
+          ENV_FILE_REL="env"
+          if [[ -f "$ENV_FILE_ABS" ]]; then
+            if [[ ! -f "${{ matrix.config_path }}/.env" ]]; then
+              echo "Creating .env from env in ${{ matrix.config_path }}"
+              cp "$ENV_FILE_ABS" "$GITHUB_WORKSPACE/${{ matrix.config_path }}/.env"
+            fi
+          else
+            ENV_FILE_ABS="$GITHUB_WORKSPACE/${{ matrix.config_path }}/envs/.env.database.elasticsearch"
+            ENV_FILE_REL="envs/.env.database.elasticsearch"
+            if [[ -f "$ENV_FILE_ABS" ]]; then
+              echo "Using env file for 8.8/8.9: $ENV_FILE_ABS"
+              echo "DATABASE=elasticsearch" >> "$GITHUB_ENV"
+            else
+              echo "No env file found in ${{ matrix.config_path }}"
+              exit 1
+            fi
+          fi
+          echo "ENV_FILE_ABS=$ENV_FILE_ABS" >> "$GITHUB_ENV"
+          echo "ENV_FILE_REL=$ENV_FILE_REL" >> "$GITHUB_ENV"
+          # Filter out comments and empty lines before adding to GITHUB_ENV
+          grep -v '^#' "$ENV_FILE_ABS" | grep -v '^$' >> "$GITHUB_ENV"
+          echo "=== Loaded environment variables ==="
+          grep -v '^#' "$ENV_FILE_ABS" | grep -v '^$'
+
+      - name: Print env values
+        run: |
+          echo "CONFIG_PATH=$CONFIG_PATH"
+          echo "NON_STANDALONE=$NON_STANDALONE"
+          echo "=== Debug GITHUB_ENV ==="
+          echo "GITHUB_ENV path: ${GITHUB_ENV:-NOT SET}"
+          if [[ -f "$GITHUB_ENV" ]]; then
+            echo "File exists, contents:"
+            cat "$GITHUB_ENV"
+          else
+            echo "GITHUB_ENV file does not exist at: $GITHUB_ENV"
+          fi
+          echo "=== Current environment variables ==="
+          env | grep -E "CONFIG_PATH|NON_STANDALONE|CAMUNDA" || echo "No matching env vars"
+
+      - name: Clean up leftover Docker containers and volumes
+        shell: bash
+        run: |
+          echo "Stopping and removing leftover containers..."
+          docker stop elasticsearch tasklist operate zeebe camunda 2>/dev/null || true
+          docker rm elasticsearch tasklist operate zeebe camunda 2>/dev/null || true
+          docker volume prune -f 2>/dev/null || true
+          docker ps -a
+        working-directory: ${{ env.CONFIG_PATH }}
+
+      - name: Start Camunda
+        run: |
+          echo "XXXXXXXXXX starting $NON_STANDALONE mode containers with docker compose..."
+          echo $NON_STANDALONE
+          if [[ "$NON_STANDALONE" == "true" ]]; then
+            echo "Using single services for older branches (8.6/8.7)"
+            docker compose --env-file "$ENV_FILE_REL" up -d 
+          else
+            echo "Using standalone camunda container"
+            if [[ "${{ matrix.tasklist_mode }}" == "v1" ]]; then
+              echo "Starting with Tasklist V1 mode enabled"
+              CAMUNDA_TASKLIST_V2_MODE_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
+              CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
+              DATABASE=elasticsearch docker compose up -d camunda
+            else
+              echo "Starting with default Tasklist V2 mode"
+              CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
+              CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
+              DATABASE=elasticsearch docker compose up -d camunda
+            fi
+          fi
+        working-directory: ${{ env.CONFIG_PATH }}
+
+      - name: List running Docker containers
+        run: docker ps -a
+        working-directory: ${{ env.CONFIG_PATH }}
+
+      - name: Wait for services to be ready
+        id: wait-for-services
+        run: |
+          echo "Checking if services are up..."
+          ready=false
+
+          for i in {1..90}; do
+            if [[ "$NON_STANDALONE" == "true" ]]; then
+              tasklist_status=$(curl -s -m 5 http://localhost:8082 || echo "Failed")
+              operate_status=$(curl -s -m 5 http://localhost:8081 || echo "Failed")
+            else
+              tasklist_status=$(curl -s -m 5 http://localhost:8080/tasklist || echo "Failed")
+              operate_status=$(curl -s -m 5 http://localhost:8080/operate || echo "Failed")
+              identity_status=$(curl -s -m 5 http://localhost:8080/identity || echo "Failed")
+            fi
+
+            if [[ "$NON_STANDALONE" == "true" ]]; then
+              if [[ "$tasklist_status" != "Failed" && "$operate_status" != "Failed" ]]; then
+                ready=true
+                break
+              fi
+            else
+              if [[ "$tasklist_status" != "Failed" && "$operate_status" != "Failed" && "$identity_status" != "Failed" ]]; then
+                ready=true
+                break
+              fi
+            fi
+
+            echo "Waiting for services... ($i/90)"
+            sleep 10
+          done
+
+          if [[ "$ready" == true ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Services failed to start in time."
+            exit 1
+          fi
+        working-directory: ${{ env.CONFIG_PATH }}
+
+      - name: Print Docker logs before failing
+        if: failure()
+        run: |
+          if [[ "$NON_STANDALONE" == "true" ]]; then
+            docker compose logs tasklist
+            docker compose logs operate
+          else
+            docker compose logs camunda
+          fi
+        working-directory: ${{ env.CONFIG_PATH }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+        env:
+          ACTIONS_STEP_DEBUG: "false"
+
+      - name: Clean install dependencies
+        shell: bash
+        run: |
+          echo "Cleaning old dependencies and lockfiles..."
+          #rm -rf node_modules package-lock.json
+          #rm -rf */node_modules */package-lock.json
+          rm -rf /fiori-app/webapp/test/html-report
+          rm -rf /fiori-app/webapp/test/test-results
+          echo ""
+          echo "Installing dependencies (this may take several minutes)..."
+          npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund || {
+            echo "npm install failed; retrying with npm i after removing lockfiles"
+            rm -rf node_modules package-lock.json */node_modules */package-lock.json
+            npm i --include=optional --legacy-peer-deps --no-audit --no-fund
+          }
+          echo ""
+          echo "✓ Dependencies installed successfully"
+          echo ""
+          echo "Verifying critical binaries..."
+          ls -la node_modules/.bin/ | grep -E "ui5|dev-approuter|c8ctl" || echo "Binaries not found"
+          echo ""
+          echo "Checking @ui5/cli installation..."
+          ls -la node_modules/@ui5/cli/bin/ 2>/dev/null || echo "@ui5/cli bin directory not found"
+
+      - name: Install Rollup binary for platform
+        shell: bash
+        run: |
+          # Workaround for npm optional dependency bug affecting rollup native binaries
+          # Detect architecture and install the correct rollup binary
+          ARCH=$(uname -m)
+          echo "Detected architecture: $ARCH"
+          if [[ "$ARCH" == "x86_64" ]]; then
+            echo "Installing rollup binary for x64..."
+            npm i --no-save @rollup/rollup-linux-x64-gnu || echo "Warning: Could not install x64 rollup binary"
+          elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
+            echo "Installing rollup binary for ARM64..."
+            npm i --no-save @rollup/rollup-linux-arm64-gnu || echo "Warning: Could not install ARM64 rollup binary"
+          else
+            echo "Unknown architecture: $ARCH - skipping rollup binary installation"
+          fi
+          echo "✓ Rollup binary installation completed"
+
+      - name: start pg docker
+        shell: bash
+        run: cd ./test/docker/pg-standalone; docker compose up -d
+        working-directory: ./
+
+      - name: Install PostgreSQL client (psql)
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+        working-directory: ./
+
+      - name: Prepare server
+        shell: bash
+        env:
+          CI: "true"
+        run: |
+          echo "Setting up local development environment..."
+          bash ./_misc/setup-local.sh
+          echo "Setup completed successfully"
+        working-directory: ./
+
+      - name: Install Playwright Browsers
+        shell: bash
+        run: npx playwright install --with-deps chromium > /dev/null 2>&1
+
+      - name: Start webserver and run E2E tests
+        shell: bash
+        env:
+          CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
+        run: |
+          set -euo pipefail
+          echo "Starting local webserver with debug output..."
+
+          # Ensure node_modules/.bin is in PATH for npm-run-all to find binaries
+          export PATH="$PWD/node_modules/.bin:$PATH"
+
+          # Create logs directory in workspace for act compatibility
+          mkdir -p ./logs
+
+          # Start router in background with full output capture
+          # Use :ci variant to disable livereload and avoid port conflicts
+          # For Camunda < 8.8, use CAMUNDA_TASKLIST_BASE_URL env var
+          if [[ "${{ matrix.version }}" < "8.8" ]]; then
+            echo "Starting without CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
+            npm run start:local:ci > ./logs/web.log 2>&1 &
+            else
+            echo "Starting with CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
+            CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
+          fi
+          WEB_PID=$!
+          echo $WEB_PID > ./logs/web.pid
+          echo "Webserver PID: $WEB_PID"
+          sleep 15
+
+          # Check if process is still alive
+          if ! kill -0 $WEB_PID 2>/dev/null; then
+            echo "ERROR: Webserver crashed!"
+            echo "=== Last 150 lines from web.log ==="
+            tail -n 150 ./logs/web.log || true
+            exit 1
+          fi
+
+          # Poll for server readiness with longer timeout
+          echo "Polling for server readiness..."
+          for i in {1..60}; do
+            if curl -s http://127.0.0.1:5001/ > /dev/null 2>&1 || curl -s http://localhost:5001/ > /dev/null 2>&1; then
+              echo "✓ Server responding on port 5001"
+              break
+            fi
+            if ! kill -0 $WEB_PID 2>/dev/null; then
+              echo "ERROR: Webserver died during startup"
+              echo "=== Full web.log ==="
+              cat ./logs/web.log || true
+              exit 1
+            fi
+            echo "Wait $i/60..."
+            sleep 2
+          done
+
+          # Verify server is responsive
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5001/app/index.html 2>/dev/null || echo "000")
+          if [[ "$HTTP_CODE" == "000" ]]; then
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/app/index.html 2>/dev/null || echo "000")
+          fi
+          echo "Server HTTP response: $HTTP_CODE"
+          if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "304" ]]; then
+            echo "ERROR: Server not responding correctly (HTTP $HTTP_CODE)"
+            echo "=== Last 100 lines from web.log ==="
+            tail -n 100 ./logs/web.log || true
+            curl -v http://127.0.0.1:5001/app/index.html 2>&1 || true
+            exit 1
+          fi
+          echo "✓ Server is ready!"
+
+          # Log Camunda container status
+          echo ""
+          echo "=== Camunda Container Status ==="
+          docker ps | grep camunda || echo "Camunda container not found"
+          docker logs camunda 2>&1 | tail -n 20 || echo "Could not get Camunda logs"
+          echo ""
+
+          # Test Zeebe connectivity
+          echo "=== Testing Zeebe Connectivity ==="
+          timeout 5 bash -c 'echo > /dev/tcp/127.0.0.1/26500' && echo "✓ Port 26500 is open" || echo "✗ Port 26500 is closed"
+          echo ""
+
+          # Wait for Camunda (REST + Zeebe) to be ready
+          echo "=== Waiting for Camunda readiness ==="
+          for i in {1..60}; do
+            rest_ready=false
+            zeebe_ready=false
+
+            if [[ "${NON_STANDALONE:-false}" == "true" ]]; then
+              tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080 || echo "000")
+              operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8081 || echo "000")
+              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
+                rest_ready=true
+              fi
+            else
+              tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/tasklist || echo "000")
+              operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/operate || echo "000")
+              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
+                rest_ready=true
+              fi
+            fi
+
+            if timeout 2 bash -c 'echo > /dev/tcp/127.0.0.1/26500' 2>/dev/null; then
+              zeebe_ready=true
+            fi
+
+            if [[ "$rest_ready" == true && "$zeebe_ready" == true ]]; then
+              echo "✓ Camunda REST and Zeebe are ready"
+              break
+            fi
+
+            echo "Waiting for Camunda... ($i/60)"
+            sleep 2
+          done
+          echo ""
+
+          # Deploy forms before tests (continue even if some forms fail)
+          npm run e2e:test:deployForms || true
+
+          echo ""
+          echo "=== Starting Playwright E2E Tests with Debug Info ==="
+          npm run e2e:test 2>&1 | tee -a ./logs/test-output.log
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          echo "Tests finished with exit code: $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
+        working-directory: ./
+
+      - name: Stop local webserver
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f ./logs/web.pid ]]; then
+            kill $(cat ./logs/web.pid) || true
+          fi
+          pkill -f "npm run start:local" || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SAP BTP Plugin Fiori App v${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
+          path: |
+            fiori-app/webapp/test/html-report
+            fiori-app/webapp/test/test-results
+            logs/web.log
+            logs/test-output.log
+          retention-days: 10

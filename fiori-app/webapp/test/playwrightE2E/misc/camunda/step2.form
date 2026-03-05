@@ -1,0 +1,22 @@
+{
+  "components": [
+    {
+      "text": "# Process started - Step 2",
+      "type": "text",
+      "layout": {
+        "row": "Row_1yaa9vr",
+        "columns": null
+      },
+      "id": "Field_0o85ihe"
+    }
+  ],
+  "type": "default",
+  "id": "form-step2",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.8.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.40.1"
+  },
+  "schemaVersion": 19
+}

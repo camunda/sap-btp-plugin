@@ -16,7 +16,7 @@
   "executionPlatformVersion": "8.7.0",
   "exporter": {
     "name": "Camunda Modeler",
-    "version": "5.39.0"
+    "version": "5.40.1"
   },
   "schemaVersion": 19
 }

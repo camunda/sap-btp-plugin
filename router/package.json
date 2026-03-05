@@ -7,7 +7,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start:local": "node ../node_modules/dev-approuter"
+    "start:local": "node ../node_modules/dev-approuter/index.js"
   },
   "dependencies": {
     "@sap/approuter": "^20.5.1"

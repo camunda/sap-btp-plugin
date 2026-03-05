@@ -34,7 +34,7 @@ fi
 
 # deploy sample data
 if [ "$1" = "--hybrid" ]; then
-  cd core && cds deploy --profile hybrid && cd ..
+  cd core && npx cds deploy --profile hybrid && cd ..
 else
-  cd core && cds deploy && cd ..
+  cd core && npx cds deploy && cd ..
 fi

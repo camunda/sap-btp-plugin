@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test"
+import path from "path"
 
 export default defineConfig({
   // Directory with test files
@@ -9,23 +10,49 @@ export default defineConfig({
 
   // Maximum time for individual assertions (e.g. expect())
   expect: {
-    timeout: 5000
+    timeout: 10000
   },
 
+  // Run tests sequentially to avoid conflicts with shared state (e.g., process instances)
+  workers: "50%",
+
   // Reporter for the command line
-  reporter: "list",
+  reporter: [
+    ["list"],
+    [
+      "html",
+      {
+        embedAnnotationsAsProperties: true,
+        outputFolder: path.resolve(__dirname, "..", "html-report")
+      }
+    ],
+    ["junit", { outputFile: path.resolve(__dirname, "..", "test-results", "junit-report.xml") }]
+  ],
+
+  outputDir: path.resolve(__dirname, "..", "test-results"),
 
   // Global configuration for all tests
   use: {
     // Base URL for actions like page.goto('/')
     baseURL: "http://localhost:5001/app/index.html",
 
-    // Creates a trace report on failed tests
-    trace: "on-first-retry",
+    // Set timezone to avoid "Invalid time zone specified: Etc/Unknown" error
+    timezoneId: "Europe/Berlin",
+    locale: "de-DE",
+
+    // Creates artifacts on failures for easier debugging
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
 
     // Disables browser security policies, useful for local testing
     launchOptions: {
-      args: ["--disable-web-security"]
+      args: [
+        "--disable-web-security",
+        "--no-sandbox", // Required for container environments (Docker, act, CI)
+        "--disable-setuid-sandbox", // Required for container environments
+        "--disable-dev-shm-usage" // Overcome limited shared memory in containers
+      ]
     }
   },
 

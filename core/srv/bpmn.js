@@ -21,13 +21,13 @@ module.exports = async (bpmn) => {
     /**
      * @type {import("@camunda8/sdk").Zeebe.ZeebeGrpcClient}
      */
-    const zbc = _zbc.getClient()
+    const zbc = await _zbc.getClient()
     let processVariables = {}
     if (req.data.variables) {
       processVariables = JSON.parse(req.data.variables)
     }
     processVariables["channelId"] = channelId
-    
+
     let result
     try {
       result = await zbc.createProcessInstance({
@@ -42,14 +42,6 @@ module.exports = async (bpmn) => {
       return req.error(500, msg)
     }
     const { processDefinitionKey, bpmnProcessId, version, processInstanceKey, tenantId } = result
-
-    await zbc.setVariables({
-      elementInstanceKey: processInstanceKey,
-      variables: {
-        parentProcessInstanceKey: processInstanceKey
-      }
-    })
-
     // persist websocket client that triggered the bpmn process executions
     const { BrowserClients } = require("#cds-models/camunda")
     // first make sure we're cleaning previous reference for that client/"channel"
@@ -67,6 +59,13 @@ module.exports = async (bpmn) => {
     })
     DEBUG && LOGGER.debug(`recording client on channel ${channelId} for bpmn process instance ${processInstanceKey}`)
 
+    await zbc.setVariables({
+      elementInstanceKey: processInstanceKey,
+      variables: {
+        parentProcessInstanceKey: processInstanceKey
+      }
+    })
+
     return {
       channelId,
       processInstanceKey,
@@ -76,20 +75,44 @@ module.exports = async (bpmn) => {
   })
 
   bpmn.on("completeUsertask", async (req) => {
-    LOGGER.info(`completing user task w/ job ${req.data.jobKey} and vars ${JSON.stringify(req.data.variables)}`)
+    LOGGER.info(
+      `completing user task w/ job ${req.data.jobKey}/${req.data.userTaskKey} and vars ${JSON.stringify(req.data.variables)}`
+    )
     const variables = JSON.parse(req.data?.variables || "{}")
-    const zbc = _zbc.getClient()
     try {
-      await zbc.completeJob({
-        jobKey: req.data.jobKey,
-        variables
-      })
+      const zbc = await _zbc.getClient()
+      const orchestration = await _zbc.getClient("orchestration")
       const { UserTasks } = require("#cds-models/camunda")
-      await DELETE.from(UserTasks).where({ jobKey: req.data.jobKey })
-      LOGGER.info(`successfully completed (c8) and deleted (db) user task w/ job ${req.data.jobKey}`)
+
+      // For all versions: use completeJob with job key
+      if (req.data.jobKey) {
+        DEBUG && LOGGER.debug(`completing job with key: ${req.data.jobKey}`)
+        await zbc.completeJob({
+          jobKey: req.data.jobKey,
+          variables
+        })
+
+        await DELETE.from(UserTasks).where({ jobKey: req.data.jobKey })
+        LOGGER.info(`successfully completed (c8) and deleted (db) user task w/ job ${req.data.jobKey}`)
+      } else if (req.data.userTaskKey) {
+        // For user tasks: use the orchestration client to complete the user task by its user task key
+        DEBUG && LOGGER.debug(`completing user task with key: ${req.data.userTaskKey}`)
+        await orchestration.completeUserTask({
+          userTaskKey: req.data.userTaskKey,
+          variables
+        })
+
+        await DELETE.from(UserTasks).where({ userTaskKey: req.data.userTaskKey })
+        LOGGER.info(
+          `successfully completed (c8) and deleted (db) user task w/ camunda user task ${req.data.userTaskKey}`
+        )
+      }
     } catch (err) {
-      const message = `error completing user task w/ job ${req.data.jobKey} b/c of: ${JSON.stringify(err)}`
+      const message = `error completing process with userTask ${req.data.userTaskKey} and jobKey ${req.data.jobKey} b/c of: ${
+        typeof err === "object" ? JSON.stringify(err, Object.getOwnPropertyNames(err)) : err
+      }`
       LOGGER.error(message)
+      DEBUG && LOGGER.debug(`full error: ${JSON.stringify(err)}`)
       return req.error(500, message)
     }
     return {}

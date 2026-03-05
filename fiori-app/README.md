@@ -30,7 +30,7 @@ Execute the following command to run the app locally for development in watch mo
 npm start
 ```
 
-As shown in the terminal after executing this command, the app is then running on http://localhost:8080/index.html. A browser window with this URL should automatically open.
+As shown in the terminal after executing this command, the app is then running on http://localhost:8095/index.html. A browser window with this URL should automatically open.
 
 (When using yarn, do `yarn start` instead.)
 
