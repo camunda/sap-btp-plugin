@@ -39,7 +39,7 @@ jobs:
         run: deno -A ./build.ts
 
       - name: build mtar
-        run: npx mbt build
+        run: npx mbt@1.2.49 build
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
