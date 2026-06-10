@@ -25,6 +25,33 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Workaround npm optional dependencies bug (rollup)
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ runner.os }}" in
+            Linux)
+              ROLLUP_PKG="@rollup/rollup-linux-x64-gnu"
+              ;;
+            macOS)
+              if [[ "$(uname -m)" == "arm64" ]]; then
+                ROLLUP_PKG="@rollup/rollup-darwin-arm64"
+              else
+                ROLLUP_PKG="@rollup/rollup-darwin-x64"
+              fi
+              ;;
+            Windows)
+              ROLLUP_PKG="@rollup/rollup-win32-x64-msvc"
+              ;;
+            *)
+              echo "Unsupported runner OS: ${{ runner.os }}" >&2
+              exit 1
+              ;;
+          esac
+
+          echo "Installing $ROLLUP_PKG"
+          npm i --no-save "$ROLLUP_PKG"
       
       - name: test backend
         run: cd core && npx @cap-js/cds-typer "*" && DISABLE_CAMUNDA=true npm test
