@@ -16,11 +16,6 @@
       "automerge": true
     },
     {
-      "matchUpdateTypes": ["major"],
-      "groupName": null,
-      "automerge": false
-    },
-    {
       "matchPackageNames": [
         "eslint",
         "prettier",
