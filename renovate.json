@@ -1,0 +1,79 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "Europe/Berlin",
+  "schedule": ["before 8am on Monday"],
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 3,
+  "rangeStrategy": "bump",
+  "separateMajorMinor": true,
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "groupName": null,
+      "automerge": false
+    },
+    {
+      "matchPackageNames": [
+        "eslint",
+        "prettier",
+        "globals",
+        "@eslint/js",
+        "@types/node"
+      ],
+      "groupName": "lint-and-format-tooling"
+    },
+    {
+      "matchPackageNames": [
+        "typescript",
+        "typescript-eslint",
+        "ts-node"
+      ],
+      "groupName": "typescript-tooling"
+    },
+    {
+      "matchPackageNames": ["@playwright/test", "@wdio/*", "wait-on", "jest", "msw"],
+      "groupName": "test-tooling"
+    },
+    {
+      "matchPackageNames": [
+        "@ui5/cli",
+        "@ui5/*",
+        "@openui5/types",
+        "@sapui5/types",
+        "ui5-tooling-modules",
+        "ui5-tooling-transpile",
+        "ui5-middleware-livereload",
+        "wdio-ui5-service"
+      ],
+      "groupName": "ui5-tooling"
+    },
+    {
+      "matchPackageNames": ["@sap/cds", "@sap/cds-dk", "@sap/approuter", "@sap/xssec", "@cap-js/*"],
+      "groupName": "sap-cap-runtime",
+      "automerge": false
+    },
+    {
+      "matchPackageNames": [
+        "@camunda8/sdk",
+        "@camunda8/orchestration-cluster-api",
+        "@camunda8/cli",
+        "@camunda8/websocket"
+      ],
+      "groupName": "camunda-runtime",
+      "automerge": false
+    },
+    {
+      "matchPackageNames": ["express", "ws"],
+      "groupName": "node-runtime-dependencies",
+      "automerge": false
+    }
+  ]
+}
