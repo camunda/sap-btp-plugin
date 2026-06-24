@@ -34,14 +34,14 @@
     "gh:test": "act workflow_dispatch -W .github/workflows/webapp-e2e-tests-on-demand.yml  --input version=8.7 -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest"
   }, 
   "dependencies": {
-    "@cap-js/cds-types": "^0.15.0",
+    "@cap-js/cds-types": "^0.18.0",
     "@cap-js/postgres": "^2",
     "@sap/cds": "^9.6.3",
     "patch-package": "^8.0.0"
   },
   "devDependencies": {
     "@camunda8/cli": "^1.1.0",
-    "@cap-js/cds-types": "^0.15",
+    "@cap-js/cds-types": "^0.18.0",
     "@cap-js/sqlite": "^2",
     "@eslint/js": "^9.28.0",
     "@playwright/test": "^1.58.2",
