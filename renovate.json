@@ -69,6 +69,11 @@
       "matchPackageNames": ["express", "ws"],
       "groupName": "node-runtime-dependencies",
       "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "groupName": null,
+      "automerge": false
     }
   ]
 }
