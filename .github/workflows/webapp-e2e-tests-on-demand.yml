@@ -32,18 +32,18 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             VERSION="${{ inputs.version }}"
             case "$VERSION" in
-              "8.7") MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true}]' ;;
-              "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
-              "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
-              "8.10") MATRIX='[{"version":"8.10","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false}]' ;;
+              "8.7") MATRIX='[{"version":"8.7","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true,"tasklist_modes":"v1"}]' ;;
+              "8.8") MATRIX='[{"version":"8.8","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false,"tasklist_modes":"v1 v2"}]' ;;
+              "8.9") MATRIX='[{"version":"8.9","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false,"tasklist_modes":"v1 v2"}]' ;;
+              "8.10") MATRIX='[{"version":"8.10","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false,"tasklist_modes":"v2"}]' ;;
             esac
           else
-            MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true},{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.10","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false},{"version":"8.10","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false}]'
+            MATRIX='[{"version":"8.7","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true,"tasklist_modes":"v1"},{"version":"8.8","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false,"tasklist_modes":"v1 v2"},{"version":"8.9","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false,"tasklist_modes":"v1 v2"},{"version":"8.10","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false,"tasklist_modes":"v2"}]'
           fi
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   webapp-e2e-tests:
-    name: WebApp E2E Tests - Version ${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
+    name: WebApp E2E Tests - Version ${{ matrix.version }}
     needs: generate-matrix
     runs-on: ubuntu-latest
 
@@ -56,7 +56,7 @@ jobs:
       - name: Print base branch and tasklist mode
         run: |
           echo "Base branch: ${{ matrix.base }}"
-          echo "Tasklist mode: ${{ matrix.tasklist_mode }}"
+          echo "Tasklist modes: ${{ matrix.tasklist_modes }}"
           echo "Config path: ${{ matrix.config_path }}"
           echo "Non-standalone: ${{ matrix.non_standalone }}"
 
@@ -127,7 +127,8 @@ jobs:
             docker compose --env-file "$ENV_FILE_REL" up -d 
           else
             echo "Using standalone camunda container"
-            if [[ "${{ matrix.tasklist_mode }}" == "v1" ]]; then
+            INITIAL_TASKLIST_MODE="${{ startsWith(matrix.tasklist_modes, 'v1') && 'v1' || 'v2' }}"
+            if [[ "$INITIAL_TASKLIST_MODE" == "v1" ]]; then
               echo "Starting with Tasklist V1 mode enabled"
               CAMUNDA_TASKLIST_V2_MODE_ENABLED=false \
               CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
@@ -211,17 +212,11 @@ jobs:
         shell: bash
         run: |
           echo "Cleaning old dependencies and lockfiles..."
-          #rm -rf node_modules package-lock.json
-          #rm -rf */node_modules */package-lock.json
-          rm -rf /fiori-app/webapp/test/html-report
-          rm -rf /fiori-app/webapp/test/test-results
+          rm -rf fiori-app/webapp/test/html-report
+          rm -rf fiori-app/webapp/test/test-results
           echo ""
           echo "Installing dependencies (this may take several minutes)..."
-          npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund || {
-            echo "npm install failed; retrying with npm i after removing lockfiles"
-            rm -rf node_modules package-lock.json */node_modules */package-lock.json
-            npm i --include=optional --legacy-peer-deps --no-audit --no-fund
-          }
+          npm ci --legacy-peer-deps --prefer-offline --no-audit --no-fund
           echo ""
           echo "✓ Dependencies installed successfully"
           echo ""
@@ -230,6 +225,13 @@ jobs:
           echo ""
           echo "Checking @ui5/cli installation..."
           ls -la node_modules/@ui5/cli/bin/ 2>/dev/null || echo "@ui5/cli bin directory not found"
+
+      - name: Restore Playwright browser cache
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
 
       - name: Install Rollup binary for platform
         shell: bash
@@ -269,134 +271,206 @@ jobs:
           echo "Setup completed successfully"
         working-directory: ./
 
+      - name: Install Playwright system dependencies
+        shell: bash
+        run: npx playwright install-deps chromium > /dev/null 2>&1
+
       - name: Install Playwright Browsers
         shell: bash
-        run: npx playwright install --with-deps chromium > /dev/null 2>&1
+        run: |
+          npx playwright install chromium > /dev/null 2>&1
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
 
       - name: Start webserver and run E2E tests
         shell: bash
-        env:
-          CAMUNDA_TASKLIST_V2_MODE_ENABLED: ${{ matrix.tasklist_mode == 'v2' && 'true' || 'false' }}
         run: |
           set -euo pipefail
-          echo "Starting local webserver with debug output..."
-
-          # Ensure node_modules/.bin is in PATH for npm-run-all to find binaries
           export PATH="$PWD/node_modules/.bin:$PATH"
+          rm -rf ./logs ./artifacts
+          mkdir -p ./logs ./artifacts
 
-          # Create logs directory in workspace for act compatibility
-          mkdir -p ./logs
-
-          # Start router in background with full output capture
-          # Use :ci variant to disable livereload and avoid port conflicts
-          # For Camunda < 8.8, use CAMUNDA_TASKLIST_BASE_URL env var
-          if [[ "${{ matrix.version }}" < "8.8" ]]; then
-            echo "Starting without CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
-            npm run start:local:ci > ./logs/web.log 2>&1 &
-            else
-            echo "Starting with CAMUNDA_TASKLIST_BASE_URL for version ${{ matrix.version }}"
-            CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local:ci > ./logs/web.log 2>&1 &
-          fi
-          WEB_PID=$!
-          echo $WEB_PID > ./logs/web.pid
-          echo "Webserver PID: $WEB_PID"
-          sleep 15
-
-          # Check if process is still alive
-          if ! kill -0 $WEB_PID 2>/dev/null; then
-            echo "ERROR: Webserver crashed!"
-            echo "=== Last 150 lines from web.log ==="
-            tail -n 150 ./logs/web.log || true
-            exit 1
-          fi
-
-          # Poll for server readiness with longer timeout
-          echo "Polling for server readiness..."
-          for i in {1..60}; do
-            if curl -s http://127.0.0.1:5001/ > /dev/null 2>&1 || curl -s http://localhost:5001/ > /dev/null 2>&1; then
-              echo "✓ Server responding on port 5001"
-              break
+          stop_webserver() {
+            if [[ -f ./logs/web.pid ]]; then
+              kill "$(cat ./logs/web.pid)" 2>/dev/null || true
+              rm -f ./logs/web.pid
             fi
-            if ! kill -0 $WEB_PID 2>/dev/null; then
-              echo "ERROR: Webserver died during startup"
-              echo "=== Full web.log ==="
-              cat ./logs/web.log || true
-              exit 1
-            fi
-            echo "Wait $i/60..."
-            sleep 2
-          done
+            pkill -f "npm run start:local" 2>/dev/null || true
+          }
 
-          # Verify server is responsive
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5001/app/index.html 2>/dev/null || echo "000")
-          if [[ "$HTTP_CODE" == "000" ]]; then
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/app/index.html 2>/dev/null || echo "000")
-          fi
-          echo "Server HTTP response: $HTTP_CODE"
-          if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "304" ]]; then
-            echo "ERROR: Server not responding correctly (HTTP $HTTP_CODE)"
-            echo "=== Last 100 lines from web.log ==="
-            tail -n 100 ./logs/web.log || true
-            curl -v http://127.0.0.1:5001/app/index.html 2>&1 || true
-            exit 1
-          fi
-          echo "✓ Server is ready!"
-
-          # Log Camunda container status
-          echo ""
-          echo "=== Camunda Container Status ==="
-          docker ps | grep camunda || echo "Camunda container not found"
-          docker logs camunda 2>&1 | tail -n 20 || echo "Could not get Camunda logs"
-          echo ""
-
-          # Test Zeebe connectivity
-          echo "=== Testing Zeebe Connectivity ==="
-          timeout 5 bash -c 'echo > /dev/tcp/127.0.0.1/26500' && echo "✓ Port 26500 is open" || echo "✗ Port 26500 is closed"
-          echo ""
-
-          # Wait for Camunda (REST + Zeebe) to be ready
-          echo "=== Waiting for Camunda readiness ==="
-          for i in {1..60}; do
-            rest_ready=false
-            zeebe_ready=false
-
+          restart_camunda_for_mode() {
+            local mode="$1"
             if [[ "${NON_STANDALONE:-false}" == "true" ]]; then
-              tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080 || echo "000")
-              operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8081 || echo "000")
-              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
-                rest_ready=true
-              fi
+              echo "Non-standalone setup detected, reusing existing Camunda services for mode ${mode}"
+              return
+            fi
+
+            echo "Restarting Camunda for Tasklist mode ${mode}"
+            docker compose rm -sf camunda || true
+
+            if [[ "$mode" == "v1" ]]; then
+              CAMUNDA_TASKLIST_V2_MODE_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
+              CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
+              DATABASE=elasticsearch docker compose up -d camunda
             else
-              tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/tasklist || echo "000")
-              operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/operate || echo "000")
-              if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
-                rest_ready=true
+              CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTEDAPI=true \
+              CAMUNDA_SECURITY_AUTHORIZATIONS_ENABLED=false \
+              CAMUNDA_SECURITY_AUTHENTICATION_METHOD=NONE \
+              DATABASE=elasticsearch docker compose up -d camunda
+            fi
+          }
+
+          wait_for_camunda() {
+            echo ""
+            echo "=== Camunda Container Status ==="
+            docker ps | grep camunda || echo "Camunda container not found"
+            docker logs camunda 2>&1 | tail -n 20 || echo "Could not get Camunda logs"
+            echo ""
+            echo "=== Testing Zeebe Connectivity ==="
+            timeout 5 bash -c 'echo > /dev/tcp/127.0.0.1/26500' && echo "✓ Port 26500 is open" || echo "✗ Port 26500 is closed"
+            echo ""
+            echo "=== Waiting for Camunda readiness ==="
+            for i in {1..60}; do
+              rest_ready=false
+              zeebe_ready=false
+
+              if [[ "${NON_STANDALONE:-false}" == "true" ]]; then
+                tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080 || echo "000")
+                operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8081 || echo "000")
+                if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
+                  rest_ready=true
+                fi
+              else
+                tasklist_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/tasklist || echo "000")
+                operate_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/operate || echo "000")
+                if [[ "$tasklist_code" != "000" && "$tasklist_code" != "404" && "$operate_code" != "000" && "$operate_code" != "404" ]]; then
+                  rest_ready=true
+                fi
               fi
+
+              if timeout 2 bash -c 'echo > /dev/tcp/127.0.0.1/26500' 2>/dev/null; then
+                zeebe_ready=true
+              fi
+
+              if [[ "$rest_ready" == true && "$zeebe_ready" == true ]]; then
+                echo "✓ Camunda REST and Zeebe are ready"
+                return 0
+              fi
+
+              echo "Waiting for Camunda... ($i/60)"
+              sleep 2
+            done
+
+            return 1
+          }
+
+          start_webserver_for_mode() {
+            local mode="$1"
+            local web_log="./logs/web-${mode}.log"
+
+            echo "Starting local webserver for Tasklist mode ${mode}"
+            if [[ "${{ matrix.version }}" < "8.8" ]]; then
+              CAMUNDA_TASKLIST_V2_MODE_ENABLED=$([[ "$mode" == "v2" ]] && echo true || echo false) \
+              npm run start:local:ci > "$web_log" 2>&1 &
+            else
+              CAMUNDA_TASKLIST_V2_MODE_ENABLED=$([[ "$mode" == "v2" ]] && echo true || echo false) \
+              CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 \
+              npm run start:local:ci > "$web_log" 2>&1 &
+            fi
+            WEB_PID=$!
+            echo "$WEB_PID" > ./logs/web.pid
+            echo "Webserver PID: $WEB_PID"
+            sleep 15
+
+            if ! kill -0 "$WEB_PID" 2>/dev/null; then
+              echo "ERROR: Webserver crashed!"
+              echo "=== Last 150 lines from ${web_log} ==="
+              tail -n 150 "$web_log" || true
+              return 1
             fi
 
-            if timeout 2 bash -c 'echo > /dev/tcp/127.0.0.1/26500' 2>/dev/null; then
-              zeebe_ready=true
+            echo "Polling for server readiness..."
+            for i in {1..60}; do
+              if curl -s http://127.0.0.1:5001/ > /dev/null 2>&1 || curl -s http://localhost:5001/ > /dev/null 2>&1; then
+                echo "✓ Server responding on port 5001"
+                break
+              fi
+              if ! kill -0 "$WEB_PID" 2>/dev/null; then
+                echo "ERROR: Webserver died during startup"
+                echo "=== Full ${web_log} ==="
+                cat "$web_log" || true
+                return 1
+              fi
+              echo "Wait $i/60..."
+              sleep 2
+            done
+
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5001/app/index.html 2>/dev/null || echo "000")
+            if [[ "$HTTP_CODE" == "000" ]]; then
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/app/index.html 2>/dev/null || echo "000")
+            fi
+            echo "Server HTTP response: $HTTP_CODE"
+            if [[ "$HTTP_CODE" != "200" && "$HTTP_CODE" != "304" ]]; then
+              echo "ERROR: Server not responding correctly (HTTP $HTTP_CODE)"
+              echo "=== Last 100 lines from ${web_log} ==="
+              tail -n 100 "$web_log" || true
+              curl -v http://127.0.0.1:5001/app/index.html 2>&1 || true
+              return 1
+            fi
+            echo "✓ Server is ready!"
+          }
+
+          TEST_FAILURE=0
+          FIRST_MODE=true
+          for TASKLIST_MODE in ${{ matrix.tasklist_modes }}; do
+            echo ""
+            echo "=== Running Tasklist mode ${TASKLIST_MODE} for version ${{ matrix.version }} ==="
+
+            rm -rf fiori-app/webapp/test/html-report fiori-app/webapp/test/test-results
+            mkdir -p "artifacts/${TASKLIST_MODE}"
+
+            if [[ "$FIRST_MODE" == "true" ]]; then
+              echo "Reusing initially started Camunda services for first tasklist mode"
+            else
+              restart_camunda_for_mode "$TASKLIST_MODE"
+            fi
+            if ! wait_for_camunda; then
+              echo "Camunda readiness failed for mode ${TASKLIST_MODE}"
+              TEST_FAILURE=1
+              FIRST_MODE=false
+              continue
             fi
 
-            if [[ "$rest_ready" == true && "$zeebe_ready" == true ]]; then
-              echo "✓ Camunda REST and Zeebe are ready"
-              break
+            if ! start_webserver_for_mode "$TASKLIST_MODE"; then
+              TEST_FAILURE=1
+              stop_webserver
+              FIRST_MODE=false
+              continue
             fi
 
-            echo "Waiting for Camunda... ($i/60)"
-            sleep 2
+            npm run e2e:test:deployForms || true
+
+            echo ""
+            echo "=== Starting Playwright E2E Tests (${TASKLIST_MODE}) with Debug Info ==="
+            set +e
+            npm run e2e:test 2>&1 | tee "./logs/test-output-${TASKLIST_MODE}.log"
+            MODE_EXIT_CODE=${PIPESTATUS[0]}
+            set -e
+            echo "Tests for ${TASKLIST_MODE} finished with exit code: $MODE_EXIT_CODE"
+
+            mv fiori-app/webapp/test/html-report "artifacts/${TASKLIST_MODE}/html-report" 2>/dev/null || true
+            mv fiori-app/webapp/test/test-results "artifacts/${TASKLIST_MODE}/test-results" 2>/dev/null || true
+
+            stop_webserver
+
+            if [[ "$MODE_EXIT_CODE" -ne 0 ]]; then
+              TEST_FAILURE=1
+            fi
+            FIRST_MODE=false
           done
-          echo ""
 
-          # Deploy forms before tests (continue even if some forms fail)
-          npm run e2e:test:deployForms || true
-
-          echo ""
-          echo "=== Starting Playwright E2E Tests with Debug Info ==="
-          npm run e2e:test 2>&1 | tee -a ./logs/test-output.log
-          TEST_EXIT_CODE=${PIPESTATUS[0]}
-          echo "Tests finished with exit code: $TEST_EXIT_CODE"
-          exit $TEST_EXIT_CODE
+          exit "$TEST_FAILURE"
         working-directory: ./
 
       - name: Stop local webserver
@@ -411,10 +485,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: SAP BTP Plugin Fiori App v${{ matrix.version }} (Tasklist ${{ matrix.tasklist_mode }} mode)
+          name: SAP BTP Plugin Fiori App v${{ matrix.version }}
           path: |
-            fiori-app/webapp/test/html-report
-            fiori-app/webapp/test/test-results
-            logs/web.log
-            logs/test-output.log
+            artifacts
+            logs
           retention-days: 10
