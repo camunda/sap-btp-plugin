@@ -8,12 +8,12 @@ on:
         description: "Target version"
         type: choice
         required: false
-        default: "8.9"
+        default: "8.10"
         options:
-          - "8.6"
           - "8.7"
           - "8.8"
           - "8.9"
+          - "8.10"
 
 permissions:
   contents: read
@@ -32,13 +32,13 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             VERSION="${{ inputs.version }}"
             case "$VERSION" in
-              "8.6") MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true}]' ;;
               "8.7") MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true}]' ;;
               "8.8") MATRIX='[{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false}]' ;;
               "8.9") MATRIX='[{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]' ;;
+              "8.10") MATRIX='[{"version":"8.10","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false}]' ;;
             esac
           else
-            MATRIX='[{"version":"8.6","tasklist_mode":"v1","base":"stable/8.6","config_path":"fiori-app/webapp/config/8.6","non_standalone":true},{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true},{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false}]'
+            MATRIX='[{"version":"8.7","tasklist_mode":"v1","base":"stable/8.7","config_path":"fiori-app/webapp/config/8.7","non_standalone":true},{"version":"8.8","tasklist_mode":"v1","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.8","tasklist_mode":"v2","base":"stable/8.8","config_path":"fiori-app/webapp/config/8.8","non_standalone":false},{"version":"8.9","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.9","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.9","non_standalone":false},{"version":"8.10","tasklist_mode":"v1","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false},{"version":"8.10","tasklist_mode":"v2","base":"main","config_path":"fiori-app/webapp/config/8.10","non_standalone":false}]'
           fi
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
