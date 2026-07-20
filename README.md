@@ -1,5 +1,19 @@
 # Camunda BTP Plugin
 
+## Components
+
+This is an npm-workspaces monorepo (see root `package.json`). Five workspaces, each independently versioned/built:
+
+| Workspace | Package | What it is |
+|---|---|---|
+| `core` | `@camunda8/btp-plugin-core` | The CAP (SAP Cloud Application Programming Model) backend. The only piece that talks to Camunda 8 directly (Zeebe gRPC/REST, Tasklist, orchestration-cluster-api). Exposes the `BPMN`/`Inbound` OData/REST services, persists `UserTasks`/`BrowserClients`, hosts the job worker(s)/task listeners. Runs on `:4004`. No UI. |
+| `fiori-app` | `@camunda8/fiori-app` | The actual Fiori/UI5 app (TypeScript): views, controllers, routing. Talks to `core` only through `/backend/*` (OData/REST) and `/channel/*` (WebSocket) — never directly to Camunda. Runs on `:8095` at dev time. |
+| `user-task-fiori` | `@camunda8/user-task-fiori` | A UI5 component library, not an app on its own. Provides the `BPMNForm` control that renders a Camunda form-schema (JSON) into the Fiori design system. Consumed by `fiori-app` as a local workspace dependency (`file:../user-task-fiori`) and used in `MainStage.view.xml`/`MainStage.controller.ts`. |
+| `router` | uses `@sap/approuter` | The (dev-)approuter. Single entry point the browser talks to (`:5001`); proxies by path prefix to `fiori-app` (`/app/*`) and `core` (`/backend/*`, `/channel/*`), and handles XSUAA auth in hybrid/BTP mode. No business logic of its own. |
+| `websocket` | `@camunda8/websocket` | A CDS plugin (loaded by `core`) that adds a `ws`-based WebSocket server to the CAP backend, keyed by `channelId`. This is what lets `core` push a user task's form to the right browser tab in real time. Not a standalone service — it only exists inside `core`'s process. |
+
+`core`, `router`, and `websocket` are always deployed together (see the MTA modules below); `user-task-fiori` is only a build-time dependency of `fiori-app`, not deployed separately.
+
 ## Architecture (dev time)
 
 At dev time, three services run side by side and talk to each other through the (dev-)approuter:
