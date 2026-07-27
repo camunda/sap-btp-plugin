@@ -3,6 +3,7 @@ const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
 const formHelper = require("./form")
 const { getUserTaskType } = require("./userTaskType")
+const { createUserTaskPersistenceError } = require("./userTaskError")
 
 const ws = require("@camunda8/websocket")
 
@@ -51,16 +52,7 @@ module.exports = async (job, worker) => {
   } catch (err) {
     LOGGER.error(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}:`, err)
 
-    const wsPayload = {
-      type: "message",
-      channelId,
-      message: {
-        text: "Error persisting User Task",
-        description: "Camunda experienced a hiccup",
-        additionalText: JSON.stringify(err),
-        type: "Error"
-      }
-    }
+    const wsPayload = createUserTaskPersistenceError(channelId, err)
     ;(await ws.getClient()).send(JSON.stringify(wsPayload))
     return job.fail(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}`, 0)
   }
