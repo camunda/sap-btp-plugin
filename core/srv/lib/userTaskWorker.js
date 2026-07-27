@@ -2,7 +2,7 @@ const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
 const formHelper = require("./form")
-const retry = require("./retry")
+const { getUserTaskType } = require("./userTaskType")
 
 const ws = require("@camunda8/websocket")
 
@@ -17,33 +17,8 @@ module.exports = async (job, worker) => {
   LOGGER.info("user task worker executing...")
   job.variables && LOGGER.info(`user task variables: ${JSON.stringify(job.variables)}`)
 
-  let type
-  switch (job.type) {
-    case "sap-tl-creating":
-      type = "form"
-      break
-    case "sap-tl-completing-success":
-      type = "final-task-success"
-      break
-    case "sap-tl-completing-fail":
-      type = "final-task-fail"
-      break
-    // legacy support for job workers using custom headers
-    case "io.camunda.zeebe:userTask":
-      switch (job.customHeaders["final-user-task"]) {
-        case "success":
-          type = "final-task-success"
-          break
-        case "fail":
-          type = "final-task-fail"
-          break
-        default:
-          type = "form"
-      }
-      break
-    default:
-      LOGGER.error(`unknown worker type for job ${JSON.stringify(job)}`)
-  }
+  const type = getUserTaskType(job.type, job.customHeaders)
+  if (!type) LOGGER.error(`unknown worker type for job ${JSON.stringify(job)}`)
   const channelId = job.variables.channelId
 
   //> TODO: pass an instance of @camunda8/btp-plugin-core into here for canceling the process
