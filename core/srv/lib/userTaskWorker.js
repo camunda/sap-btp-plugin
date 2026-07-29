@@ -4,6 +4,7 @@ const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes(
 const formHelper = require("./form")
 const { getUserTaskType } = require("./userTaskType")
 const { createUserTaskPersistenceError } = require("./userTaskError")
+const { getChannelId, hasChannelId } = require("./userTaskChannel")
 
 const ws = require("@camunda8/websocket")
 
@@ -20,11 +21,11 @@ module.exports = async (job, worker) => {
 
   const type = getUserTaskType(job.type, job.customHeaders)
   if (!type) LOGGER.error(`unknown worker type for job ${JSON.stringify(job)}`)
-  const channelId = job.variables.channelId
+  const channelId = getChannelId(job)
 
   //> TODO: pass an instance of @camunda8/btp-plugin-core into here for canceling the process
   // bail out if no recipient (aka browser aka channel id) could be determined
-  if (!channelId || channelId === "") {
+  if (!hasChannelId(channelId)) {
     const msg = "No channel id provided -> can't continue!"
     LOGGER.error(msg)
 
