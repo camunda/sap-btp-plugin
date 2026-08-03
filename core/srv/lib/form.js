@@ -3,6 +3,7 @@ const LOGGER = cds.log("worker:form-helper")
 const ws = require("@camunda8/websocket")
 const { loadForm } = require("./formClient")
 const { createFormPayload } = require("./formPayload")
+const { createFormRetrievalError } = require("./formErrorPayload")
 
 module.exports = {
   async loadAndSendForm(job, type) {
@@ -16,16 +17,7 @@ module.exports = {
       // -> display an error, cancel the process
       LOGGER.error(`error retrieving form: ${JSON.stringify(err)}`)
 
-      const wsPayload = {
-        type: "message",
-        channelId,
-        message: {
-          text: "Error retrieving Form",
-          description: "Camunda experienced a hiccup",
-          additionalText: JSON.stringify(err),
-          type: "Error"
-        }
-      }
+      const wsPayload = createFormRetrievalError(channelId, err)
       ;(await ws.getClient()).send(JSON.stringify(wsPayload))
       return job.fail(
         `error retrieving form with id ${job.customHeaders["io.camunda.zeebe:formKey"]} and process definition id ${job.processDefinitionKey}`,
