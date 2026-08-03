@@ -2,6 +2,7 @@ const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:form-helper")
 const ws = require("@camunda8/websocket")
 const { loadForm } = require("./formClient")
+const { createFormPayload } = require("./formPayload")
 
 module.exports = {
   async loadAndSendForm(job, type) {
@@ -34,18 +35,7 @@ module.exports = {
     LOGGER.info(`retrieved form data: ${form.schema}`)
 
     // send received json form data via websocket to UI layer for further processing
-    const wsData = {
-      channelId,
-      type,
-      jobKey: job.key, // legacy: correlation id for gRPC completeJob
-      userTaskKey: job.customHeaders["io.camunda.zeebe:userTaskKey"], // new: REST API expects user task key from custom headers (Camunda 8.8+)
-      formData: form.schema,
-      variables: job.variables
-    }
-    // "persist" parent process id for use in subprocess worker via global variable scope
-    if (job.customHeaders.setProcessInstanceKey) {
-      wsData.parentProcessInstanceKey = job.processInstanceKey
-    }
+    const wsData = createFormPayload({ ...job, formData: form.schema }, type)
 
     ;(await ws.getClient()).send(JSON.stringify(wsData))
   }
