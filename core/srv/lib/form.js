@@ -1,25 +1,14 @@
 const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:form-helper")
-const retry = require("./retry")
 const ws = require("@camunda8/websocket")
+const { loadForm } = require("./formClient")
 
 module.exports = {
   async loadAndSendForm(job, type) {
     const channelId = job.variables.channelId
     let form = ""
     try {
-      /**
-       * @type {import("@camunda8/sdk").Tasklist.TasklistApiClient}
-       */
-      const tl = await require("./camunda").getClient("tl")
-      const promise = async () => {
-        return tl.getForm(job.customHeaders["io.camunda.zeebe:formKey"], job.processDefinitionKey)
-      }
-
-      /**
-       * @type {import("@camunda8/sdk").Tasklist.TasklistDto.Form}
-       */
-      form = await retry(promise, 40, 300) //> max 12 sec
+      form = await loadForm(job)
     } catch (err) {
       // this frequently happens when in the modelling layer,
       // the association btw user task service and form is cut/lost
