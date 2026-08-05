@@ -4,6 +4,7 @@ const { Camunda8 } = require("@camunda8/sdk")
 const createCamundaOrchestrationApiClient = require("@camunda8/orchestration-cluster-api").createCamundaClient
 const Duration = require("@camunda8/sdk").Zeebe.Duration
 const userTaskWorker = require("./userTaskWorker")
+const { TASK_LISTENER_DEFINITIONS } = require("./taskListenerDefinitions")
 
 const DEBUG = cds.log("camunda")._debug || process.env.DEBUG?.includes("camunda")
 
@@ -62,23 +63,11 @@ module.exports = Object.assign(
       
       const topology = await this.zeebe.topology()
       if (topology.gatewayVersion > "8.8") {
-        await Promise.all([
-          this._createTaskListenerWorker(
-            "sap-tl-creating",
-            userTaskWorker,
-            "camunda user task worker for creating jobs"
-          ),
-          this._createTaskListenerWorker(
-            "sap-tl-completing-success",
-            userTaskWorker,
-            "camunda user task worker for completing jobs"
-          ),
-          this._createTaskListenerWorker(
-            "sap-tl-completing-fail",
-            userTaskWorker,
-            "camunda user task worker for completing jobs"
+        await Promise.all(
+          TASK_LISTENER_DEFINITIONS.map(({ type, description }) =>
+            this._createTaskListenerWorker(type, userTaskWorker, description)
           )
-        ])
+        )
       }
     },
 
