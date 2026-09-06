@@ -97,7 +97,7 @@ services:
 
   camunda:
     container_name: camunda
-    image: camunda/camunda:8.9.2
+    image: camunda/camunda:8.9.19
     environment:
       - DATABASE=elasticsearch 
       - 'JAVA_TOOL_OPTIONS=-Xms512m -Xmx1g'
