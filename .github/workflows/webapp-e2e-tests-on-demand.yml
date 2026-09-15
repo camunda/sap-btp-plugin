@@ -136,6 +136,7 @@ jobs:
             docker compose --env-file "$ENV_FILE_REL" up -d 
           else
             echo "Using standalone camunda container"
+            export DATABASE="${DATABASE:-elasticsearch}"
             INITIAL_TASKLIST_MODE="${{ startsWith(matrix.tasklist_modes, 'v1') && 'v1' || 'v2' }}"
             if [[ "$INITIAL_TASKLIST_MODE" == "v1" ]]; then
               echo "Starting with Tasklist V1 mode enabled"
