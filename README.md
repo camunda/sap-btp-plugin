@@ -88,7 +88,7 @@ dev-approuter (:5001)              <- entry point, routes by path prefix
 $> source test/.env-localdev
 
 # boot your prefered camunda version, e.g. 8.9
-$> cd fiori-app/webapp/config/8.9; docker-compose up
+$> cd fiori-app/webapp/config/8.9; DATABASE=elasticsearch docker compose up -d camunda
 
 # boot up a the postgresql server
 $> cd test/docker/pgstandalone; docker-compose up
@@ -104,6 +104,19 @@ $> CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local
 
 - the dev-approuter is used in place of the approuter  
   it in turn starts the CAP backend
+
+> **Camunda 8.8+ (`fiori-app/webapp/config/8.9` and newer):** these compose stacks no longer run the old Keycloak/OAuth self-managed topology — they use the unified orchestration-cluster gateway on a single port (`:8080`) with **Basic Auth** (`demo`/`demo`). `test/.env-localdev` still defaults to `CAMUNDA_AUTH_STRATEGY=OAUTH` and `ZEEBE_REST_ADDRESS=http://localhost:8088`, which do not exist in these stacks and will fail with `UNAUTHENTICATED: Expected authentication information to start with 'Basic '` (gRPC) or `ECONNREFUSED`/`fetch failed` (REST, from the orchestration-cluster-api client). Override after sourcing `.env-localdev`:
+>
+> ```shell
+> $> source test/.env-localdev
+> $> export CAMUNDA_AUTH_STRATEGY=BASIC
+> $> export CAMUNDA_BASIC_AUTH_USERNAME=demo
+> $> export CAMUNDA_BASIC_AUTH_PASSWORD=demo
+> $> export CAMUNDA_REST_ADDRESS=http://localhost:8080
+> $> CAMUNDA_TASKLIST_BASE_URL=http://localhost:8080 npm run start:local
+> ```
+>
+> Also start only the `camunda` service (`docker compose up -d camunda`), not a bare `docker compose up` — the compose file also defines an unused `opensearch`/`kibana` pair that collides with `elasticsearch` on port `9200`, and requires the `DATABASE` env var (see the `docker-compose up` line above) to resolve `depends_on`.
 
 ### hybrid setup
 
