@@ -2,7 +2,9 @@ const cds = require("@sap/cds")
 const LOGGER = cds.log("worker:user-task")
 const DEBUG = cds.log("worker:user-task")._debug || process.env.DEBUG?.includes("worker:user-task")
 const formHelper = require("./form")
-const retry = require("./retry")
+const { getUserTaskType } = require("./userTaskType")
+const { createUserTaskPersistenceError } = require("./userTaskError")
+const { getChannelId, hasChannelId } = require("./userTaskChannel")
 
 const ws = require("@camunda8/websocket")
 
@@ -17,38 +19,13 @@ module.exports = async (job, worker) => {
   LOGGER.info("user task worker executing...")
   job.variables && LOGGER.info(`user task variables: ${JSON.stringify(job.variables)}`)
 
-  let type
-  switch (job.type) {
-    case "sap-tl-creating":
-      type = "form"
-      break
-    case "sap-tl-completing-success":
-      type = "final-task-success"
-      break
-    case "sap-tl-completing-fail":
-      type = "final-task-fail"
-      break
-    // legacy support for job workers using custom headers
-    case "io.camunda.zeebe:userTask":
-      switch (job.customHeaders["final-user-task"]) {
-        case "success":
-          type = "final-task-success"
-          break
-        case "fail":
-          type = "final-task-fail"
-          break
-        default:
-          type = "form"
-      }
-      break
-    default:
-      LOGGER.error(`unknown worker type for job ${JSON.stringify(job)}`)
-  }
-  const channelId = job.variables.channelId
+  const type = getUserTaskType(job.type, job.customHeaders)
+  if (!type) LOGGER.error(`unknown worker type for job ${JSON.stringify(job)}`)
+  const channelId = getChannelId(job)
 
   //> TODO: pass an instance of @camunda8/btp-plugin-core into here for canceling the process
   // bail out if no recipient (aka browser aka channel id) could be determined
-  if (!channelId || channelId === "") {
+  if (!hasChannelId(channelId)) {
     const msg = "No channel id provided -> can't continue!"
     LOGGER.error(msg)
 
@@ -76,16 +53,7 @@ module.exports = async (job, worker) => {
   } catch (err) {
     LOGGER.error(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}:`, err)
 
-    const wsPayload = {
-      type: "message",
-      channelId,
-      message: {
-        text: "Error persisting User Task",
-        description: "Camunda experienced a hiccup",
-        additionalText: JSON.stringify(err),
-        type: "Error"
-      }
-    }
+    const wsPayload = createUserTaskPersistenceError(channelId, err)
     ;(await ws.getClient()).send(JSON.stringify(wsPayload))
     return job.fail(`error persisting user task for PI ${job.processInstanceKey}, channel ${channelId}`, 0)
   }

@@ -1,4 +1,5 @@
 const retry = require("./retry")
+const { getProcessInstanceCondition, createUserTaskEntry } = require("./userTaskPersistenceData")
 
 /**
  * Persist user task information for later retrieval
@@ -9,9 +10,7 @@ const retry = require("./retry")
  * @param {import("#cds-models/camunda").UserTasks} params.UserTasks - CAP model for UserTasks
  */
 async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
-  const condition = job.variables.parentProcessInstanceKey
-    ? { in: [job.processInstanceKey, job.variables.parentProcessInstanceKey] }
-    : job.processInstanceKey
+  const condition = getProcessInstanceCondition(job.variables, job.processInstanceKey)
 
   // TODO: We should check the order of executions to avoid the race condition where the user task is persisted before the browser client record is created.
   await retry(
@@ -23,15 +22,7 @@ async function persistUserTask({ job, channelId, BrowserClients, UserTasks }) {
       })
 
       // Persist user task for resuming (and eventually completing) later
-      await UPSERT.into(UserTasks).entries({
-        processInstanceKey: job.processInstanceKey,
-        channelId,
-        user,
-        jobKey: job.key,
-        userTaskKey: job.customHeaders ? job.customHeaders["io.camunda.zeebe:userTaskKey"] : undefined,
-        formData: job.formData, //> we trust in CAP to serialize properly :)
-        variables: job.variables //> we trust in CAP to serialize properly :)
-      })
+      await UPSERT.into(UserTasks).entries(createUserTaskEntry(job, channelId, user))
     },
     5,
     2000
