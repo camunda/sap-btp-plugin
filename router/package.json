@@ -10,7 +10,7 @@
     "start:local": "node ../node_modules/dev-approuter/index.js"
   },
   "dependencies": {
-    "@sap/approuter": "^20.5.1"
+    "@sap/approuter": "^23.0.0"
   },
   "devDependencies": {
     "@camunda8/btp-plugin-core": "*",
